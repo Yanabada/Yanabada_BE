@@ -1,6 +1,6 @@
-package kr.co.fastcampus.Yanabada.domain.test.dto;
+package kr.co.fastcampus.yanabada.domain.test.dto;
 
-import kr.co.fastcampus.Yanabada.domain.test.entity.TestEntity;
+import kr.co.fastcampus.yanabada.domain.test.entity.TestEntity;
 import lombok.Builder;
 
 @Builder

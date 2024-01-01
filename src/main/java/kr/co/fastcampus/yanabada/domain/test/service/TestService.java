@@ -1,9 +1,9 @@
-package kr.co.fastcampus.Yanabada.domain.test.service;
+package kr.co.fastcampus.yanabada.domain.test.service;
 
-import kr.co.fastcampus.Yanabada.domain.test.dto.TestInfoResponse;
-import kr.co.fastcampus.Yanabada.domain.test.dto.TestSaveRequest;
-import kr.co.fastcampus.Yanabada.domain.test.entity.TestEntity;
-import kr.co.fastcampus.Yanabada.domain.test.repository.TestRepository;
+import kr.co.fastcampus.yanabada.domain.test.dto.TestInfoResponse;
+import kr.co.fastcampus.yanabada.domain.test.dto.TestSaveRequest;
+import kr.co.fastcampus.yanabada.domain.test.entity.TestEntity;
+import kr.co.fastcampus.yanabada.domain.test.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

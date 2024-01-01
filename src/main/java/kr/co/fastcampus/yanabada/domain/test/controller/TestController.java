@@ -1,9 +1,9 @@
-package kr.co.fastcampus.Yanabada.domain.test.controller;
+package kr.co.fastcampus.yanabada.domain.test.controller;
 
-import kr.co.fastcampus.Yanabada.domain.test.dto.TestInfoResponse;
-import kr.co.fastcampus.Yanabada.domain.test.dto.TestSaveRequest;
-import kr.co.fastcampus.Yanabada.domain.test.service.TestService;
-import kr.co.fastcampus.fastcatch.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.domain.test.dto.TestInfoResponse;
+import kr.co.fastcampus.yanabada.domain.test.dto.TestSaveRequest;
+import kr.co.fastcampus.yanabada.domain.test.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
