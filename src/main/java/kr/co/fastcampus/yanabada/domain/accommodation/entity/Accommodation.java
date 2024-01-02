@@ -37,6 +37,7 @@ public class Accommodation extends BaseEntity {
     @Column(nullable = false)
     private Double latitude;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private City city;
 
@@ -46,6 +47,7 @@ public class Accommodation extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
 
