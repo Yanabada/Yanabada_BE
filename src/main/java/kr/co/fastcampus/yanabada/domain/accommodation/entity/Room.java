@@ -1,0 +1,103 @@
+package kr.co.fastcampus.yanabada.domain.accommodation.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalTime;
+import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "room")
+@Entity
+public class Room extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "accommodation_id")
+    private Accommodation accommodation;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Integer price;
+
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime checkInTime;
+
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime checkOutTime;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private Integer minHeadCount;
+
+    @Column(nullable = false)
+    private Integer maxHeadCount;
+
+    @Column(nullable = false)
+    private Double rating;
+
+    private Room(
+        Accommodation accommodation,
+        String name,
+        Integer price,
+        LocalTime checkInTime,
+        LocalTime checkOutTime,
+        String description,
+        Integer minHeadCount,
+        Integer maxHeadCount,
+        Double rating
+    ) {
+        this.accommodation = accommodation;
+        this.name = name;
+        this.price = price;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.description = description;
+        this.minHeadCount = minHeadCount;
+        this.maxHeadCount = maxHeadCount;
+        this.rating = rating;
+    }
+
+    public static Room create(
+        Accommodation accommodation,
+        String name,
+        Integer price,
+        LocalTime checkInTime,
+        LocalTime checkOutTime,
+        String description,
+        Integer minHeadCount,
+        Integer maxHeadCount,
+        Double rating
+    ) {
+        return new Room(
+            accommodation,
+            name,
+            price,
+            checkInTime,
+            checkOutTime,
+            description,
+            minHeadCount,
+            maxHeadCount,
+            rating
+        );
+    }
+}
