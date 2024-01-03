@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "room_option")
+@Entity
 public class RoomOption {
 
     @Id
