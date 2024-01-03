@@ -1,13 +1,19 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Region;
@@ -54,6 +60,18 @@ public class Accommodation extends BaseEntity {
     @Column(nullable = false)
     private String image;
 
+    @OneToOne(
+        fetch = FetchType.LAZY, mappedBy = "accommodation",
+        cascade = CascadeType.ALL, orphanRemoval = true
+    )
+    private AccommodationOption accommodationOption;
+
+    @OneToMany(
+        fetch = FetchType.LAZY, mappedBy = "accommodation",
+        cascade = CascadeType.ALL, orphanRemoval = true
+    )
+    private final List<Room> rooms = new ArrayList<>();
+
     private Accommodation(
         String name,
         String address,
@@ -98,5 +116,13 @@ public class Accommodation extends BaseEntity {
             category,
             image
         );
+    }
+
+    public void registerAccommodationOption(AccommodationOption accommodationOption) {
+        this.accommodationOption = accommodationOption;
+    }
+
+    public void addRoom(Room room) {
+        rooms.add(room);
     }
 }

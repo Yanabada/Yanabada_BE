@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
@@ -56,6 +58,12 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private Double rating;
 
+    @OneToOne(
+        fetch = FetchType.LAZY, mappedBy = "room",
+        cascade = CascadeType.ALL, orphanRemoval = true
+    )
+    private RoomOption roomOption;
+
     private Room(
         Accommodation accommodation,
         String name,
@@ -100,5 +108,9 @@ public class Room extends BaseEntity {
             maxHeadCount,
             rating
         );
+    }
+
+    public void registerRoomOption(RoomOption accommodationOption) {
+        this.roomOption = accommodationOption;
     }
 }
