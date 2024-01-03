@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category;
-import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.City;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Region;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +39,7 @@ public class Accommodation extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private City city;
+    private Region region;
 
     @Column(nullable = false)
     private String phoneNumber;
@@ -59,7 +59,7 @@ public class Accommodation extends BaseEntity {
         String address,
         Double longitude,
         Double latitude,
-        City city,
+        Region region,
         String phoneNumber,
         String description,
         Category category,
@@ -69,7 +69,7 @@ public class Accommodation extends BaseEntity {
         this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.city = city;
+        this.region = region;
         this.phoneNumber = phoneNumber;
         this.description = description;
         this.category = category;
@@ -81,7 +81,7 @@ public class Accommodation extends BaseEntity {
         String address,
         Double longitude,
         Double latitude,
-        City city,
+        Region region,
         String phoneNumber,
         String description,
         Category category,
@@ -92,7 +92,7 @@ public class Accommodation extends BaseEntity {
             address,
             longitude,
             latitude,
-            city,
+            region,
             phoneNumber,
             description,
             category,

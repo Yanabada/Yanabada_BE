@@ -1,5 +1,5 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.entity.enums;
 
-public enum City {
+public enum Region {
     SEOUL
 }
