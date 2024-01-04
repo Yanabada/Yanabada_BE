@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
     COMMON_ENTITY_NOT_FOUND("존재하지 않는 엔티티입니다."),
+    ACCOMMODATION_NOT_FOUND("존재하지 않는 숙박 장소입니다."),
+    ROOM_NOT_FOUND("존재하지 않는 객실입니다."),
+    MEMBER_NOT_FOUND("존재하지 않는 회원입니다."),
     ;
 
     private final String errorMsg;
