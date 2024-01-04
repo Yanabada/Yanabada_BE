@@ -20,17 +20,17 @@ public class AccommodationService {
 
     @Transactional
     public void saveAccommodations(List<AccommodationSaveRequest> requests) {
-        for (AccommodationSaveRequest request : requests) {
-            Accommodation accommodation = accommodationRepository.save(request.toEntity());
-        }
+        requests.stream()
+            .map(AccommodationSaveRequest::toEntity)
+            .forEach(accommodationRepository::save);
     }
 
     @Transactional
     public void saveRooms(List<RoomSaveRequest> requests) {
-        for (RoomSaveRequest request : requests) {
-            Accommodation accommodation =
-                accommodationRepository.getAccommodation(request.accommodationId());
-            accommodation.addRoom(request.toEntity(accommodation));
-        }
+        requests.forEach(request -> {
+                Accommodation accommodation =
+                    accommodationRepository.getAccommodation(request.accommodationId());
+                accommodation.addRoom(request.toEntity(accommodation));
+            });
     }
 }
