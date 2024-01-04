@@ -28,9 +28,9 @@ public class AccommodationService {
     @Transactional
     public void saveRooms(List<RoomSaveRequest> requests) {
         requests.forEach(request -> {
-                Accommodation accommodation =
-                    accommodationRepository.getAccommodation(request.accommodationId());
-                accommodation.addRoom(request.toEntity(accommodation));
-            });
+            Accommodation accommodation =
+                accommodationRepository.getAccommodation(request.accommodationId());
+            accommodation.addRoom(request.toEntity(accommodation));
+        });
     }
 }
