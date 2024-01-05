@@ -1,9 +1,9 @@
 package kr.co.fastcampus.yanabada.common.exception;
 
-import kr.co.fastcampus.yanabada.common.response.ErrorCode;
+import static kr.co.fastcampus.yanabada.common.response.ErrorCode.ACCOMMODATION_NOT_FOUND;
 
 public class OrderNotFoundException extends BaseException {
     public OrderNotFoundException() {
-        super(ErrorCode.ACCOMMODATION_NOT_FOUND.getMessage());
+        super(ACCOMMODATION_NOT_FOUND.getMessage());
     }
 }

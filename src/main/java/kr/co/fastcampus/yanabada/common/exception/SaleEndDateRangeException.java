@@ -1,9 +1,9 @@
 package kr.co.fastcampus.yanabada.common.exception;
 
-import kr.co.fastcampus.yanabada.common.response.ErrorCode;
+import static kr.co.fastcampus.yanabada.common.response.ErrorCode.INVALID_SALE_END_DATE_RANGE;
 
 public class SaleEndDateRangeException extends BaseException {
     public SaleEndDateRangeException() {
-        super(ErrorCode.INVALID_SALE_END_DATE_RANGE.getMessage());
+        super(INVALID_SALE_END_DATE_RANGE.getMessage());
     }
 }

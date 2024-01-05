@@ -1,9 +1,9 @@
 package kr.co.fastcampus.yanabada.common.exception;
 
-import kr.co.fastcampus.yanabada.common.response.ErrorCode;
+import static kr.co.fastcampus.yanabada.common.response.ErrorCode.ACCESS_FORBIDDEN;
 
 public class AccessForbiddenException extends BaseException {
     public AccessForbiddenException() {
-        super(ErrorCode.ACCESS_FORBIDDEN.getMessage());
+        super(ACCESS_FORBIDDEN.getMessage());
     }
 }
