@@ -58,6 +58,9 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private Double rating;
 
+    @Column(nullable = false)
+    private String image;
+
     @OneToOne(
         fetch = FetchType.LAZY, mappedBy = "room",
         cascade = CascadeType.ALL, orphanRemoval = true
@@ -73,7 +76,8 @@ public class Room extends BaseEntity {
         String description,
         Integer minHeadCount,
         Integer maxHeadCount,
-        Double rating
+        Double rating,
+        String image
     ) {
         this.accommodation = accommodation;
         this.name = name;
@@ -84,6 +88,7 @@ public class Room extends BaseEntity {
         this.minHeadCount = minHeadCount;
         this.maxHeadCount = maxHeadCount;
         this.rating = rating;
+        this.image = image;
     }
 
     public static Room create(
@@ -95,7 +100,8 @@ public class Room extends BaseEntity {
         String description,
         Integer minHeadCount,
         Integer maxHeadCount,
-        Double rating
+        Double rating,
+        String image
     ) {
         return new Room(
             accommodation,
@@ -106,7 +112,8 @@ public class Room extends BaseEntity {
             description,
             minHeadCount,
             maxHeadCount,
-            rating
+            rating,
+            image
         );
     }
 
