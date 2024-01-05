@@ -1,5 +1,7 @@
 package kr.co.fastcampus.yanabada.common.config;
 
+import kr.co.fastcampus.yanabada.common.jwt.JwtAuthFilter;
+import kr.co.fastcampus.yanabada.common.jwt.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     private static final String[] PERMIT_PATHS = {
             "/",
@@ -51,8 +54,8 @@ public class SecurityConfig {
 //        .successHandler(oAuth2LoginSuccessHandler); // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
 
 
-        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 앞에 추가한다.
-//        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
 
         return http.build();
     }
