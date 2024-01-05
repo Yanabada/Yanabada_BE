@@ -5,7 +5,7 @@ import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.dto.request.OrderSaveRequest;
-import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,6 @@ public class OrderService {
     public void saveOrder(OrderSaveRequest request) {
         Room room = roomRepository.getRoom(request.roomId());
         Member member = memberRepository.getMember(request.memberId());
-        RoomOrder roomOrder = orderRepository.save(request.toEntity(room, member));
+        Order order = orderRepository.save(request.toEntity(room, member));
     }
 }

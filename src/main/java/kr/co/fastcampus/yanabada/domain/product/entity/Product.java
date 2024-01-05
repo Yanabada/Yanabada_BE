@@ -12,7 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_order_id")
-    private RoomOrder roomOrder;
+    private Order order;
 
     @Column(nullable = false)
     private Integer price;
@@ -52,7 +52,7 @@ public class Product {
     private ProductStatus status;
 
     private Product(
-        RoomOrder roomOrder,
+        Order order,
         Integer price,
         String description,
         Boolean canNegotiate,
@@ -60,7 +60,7 @@ public class Product {
         Boolean isAutoCancel,
         ProductStatus status
     ) {
-        this.roomOrder = roomOrder;
+        this.order = order;
         this.price = price;
         this.description = description;
         this.canNegotiate = canNegotiate;
@@ -70,7 +70,7 @@ public class Product {
     }
 
     public static Product create(
-        RoomOrder roomOrder,
+        Order order,
         Integer price,
         String description,
         Boolean canNegotiate,
@@ -79,7 +79,7 @@ public class Product {
         ProductStatus status
     ) {
         return new Product(
-            roomOrder,
+            order,
             price,
             description,
             canNegotiate,
