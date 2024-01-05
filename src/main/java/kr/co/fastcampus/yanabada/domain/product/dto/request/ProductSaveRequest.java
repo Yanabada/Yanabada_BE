@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.product.dto;
+package kr.co.fastcampus.yanabada.domain.product.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
