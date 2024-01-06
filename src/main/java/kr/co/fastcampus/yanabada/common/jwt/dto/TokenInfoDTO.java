@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.common.jwt;
+package kr.co.fastcampus.yanabada.common.jwt.dto;
 
 public record TokenInfoDTO (
     String accessToken,

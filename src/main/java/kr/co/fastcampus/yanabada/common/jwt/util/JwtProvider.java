@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.common.jwt;
+package kr.co.fastcampus.yanabada.common.jwt.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -6,16 +6,20 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.entity.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import javax.management.relation.Role;
 import java.security.Key;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component

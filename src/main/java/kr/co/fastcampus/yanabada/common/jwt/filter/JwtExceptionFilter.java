@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.common.jwt;
+package kr.co.fastcampus.yanabada.common.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;

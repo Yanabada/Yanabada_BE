@@ -1,9 +1,10 @@
-package kr.co.fastcampus.yanabada.common.jwt;
+package kr.co.fastcampus.yanabada.common.jwt.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -19,8 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static kr.co.fastcampus.yanabada.common.jwt.JwtConstant.AUTHORIZATION_HEADER;
-import static kr.co.fastcampus.yanabada.common.jwt.JwtConstant.BEARER_PREFIX;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_PREFIX;
 
 @Slf4j
 @Component
@@ -29,6 +30,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        /* 토큰 재발급, 로그아웃일 경우 해당 필터 실행 안됨 */
+        return request.getRequestURI().contains("token/");
+    }
 
     @Override
     protected void doFilterInternal(

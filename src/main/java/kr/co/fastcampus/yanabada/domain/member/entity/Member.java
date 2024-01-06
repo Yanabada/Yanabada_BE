@@ -2,11 +2,15 @@ package kr.co.fastcampus.yanabada.domain.member.entity;
 
 import jakarta.persistence.*;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Member extends BaseEntity {
 

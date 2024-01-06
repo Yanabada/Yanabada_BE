@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.common.jwt;
+package kr.co.fastcampus.yanabada.common.jwt.constant;
 
 public class JwtConstant {
     public static final String BEARER_TYPE = "Bearer";
