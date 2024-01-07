@@ -14,7 +14,8 @@ public record RoomSaveRequest(
     String description,
     Integer minHeadCount,
     Integer maxHeadCount,
-    Double rating
+    Double rating,
+    String image
 ) {
 
     public Room toEntity(Accommodation accommodation) {
@@ -27,7 +28,8 @@ public record RoomSaveRequest(
             description,
             minHeadCount,
             maxHeadCount,
-            rating
+            rating,
+            image
         );
     }
 }
