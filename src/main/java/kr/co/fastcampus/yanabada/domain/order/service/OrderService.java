@@ -30,7 +30,7 @@ public class OrderService {
         RoomOrder roomOrder = orderRepository.save(request.toEntity(room, member));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ReservationDetailsDto getReservationDetails(Long reservationId) {
         RoomOrder roomOrder = orderRepository.findById(reservationId)
             .orElseThrow(RoomNotFoundException::new);
