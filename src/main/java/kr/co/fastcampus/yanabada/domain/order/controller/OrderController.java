@@ -6,6 +6,7 @@ import kr.co.fastcampus.yanabada.domain.order.dto.response.ReservationDetailsDto
 import kr.co.fastcampus.yanabada.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +29,13 @@ public class OrderController {
     }
 
     @GetMapping("/{reservationId}")
-    public ResponseBody<ReservationDetailsDto> getReservationDetails(@PathVariable Long reservationId) {
-        ReservationDetailsDto reservationDetailsDto = orderService.getReservationDetails(reservationId);
-        return ResponseBody.ok(reservationDetailsDto);
+    public ResponseEntity<ReservationDetailsDto> getReservationDetails(
+        @PathVariable Long reservationId) {
+
+        ReservationDetailsDto reservationDetailsDto =
+            orderService.getReservationDetails(reservationId);
+
+        return ResponseEntity.ok(reservationDetailsDto);
     }
 
 }
