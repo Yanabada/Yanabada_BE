@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
 
-    default Accommodation getAccommodation(Long accommodationId) {
-        return findById(accommodationId).orElseThrow(AccommodationNotFoundException::new);
+    default Accommodation getAccommodation(Long id) {
+        return findById(id).orElseThrow(AccommodationNotFoundException::new);
     }
 }
