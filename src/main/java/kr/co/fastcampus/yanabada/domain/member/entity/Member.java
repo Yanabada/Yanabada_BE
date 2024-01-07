@@ -23,7 +23,8 @@ public class Member extends BaseEntity {
     private String password;
     private String phoneNumber;
     private String imageUrl;
-    private Integer point;
+    @Builder.Default
+    private Integer point = 0;
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
     @Enumerated(EnumType.STRING)

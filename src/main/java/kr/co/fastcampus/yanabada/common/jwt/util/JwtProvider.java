@@ -1,32 +1,30 @@
 package kr.co.fastcampus.yanabada.common.jwt.util;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
+import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.entity.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
 
-//    private final RefreshTokenService tokenService;
+    private final TokenService tokenService;
+
     @Value("${jwt.secretKey}")
     private String secretKeyPlain;
     private Key secretKey;
@@ -38,25 +36,25 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfoDTO generateTokenInfo(String email, RoleType role, ProviderType provider) {
+    public TokenInfoDTO generateTokenInfo(String email, String role, String provider) {
         String accessToken = generateAccessToken(email, role, provider);
         String refreshToken = generateRefreshToken(email, role, provider);
 
-//        tokenService.saveTokenInfo(email, refreshToken, accessToken); todo: 토큰을 redis에 저장
+        tokenService.saveRefreshToken(email, provider, refreshToken);
         return new TokenInfoDTO(accessToken, refreshToken);
     }
 
-    private String generateAccessToken(String email, RoleType role, ProviderType provider) {
+    public String generateAccessToken(String email, String role, String provider) {
         return generateToken(email, role, provider, JwtConstant.ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    private String generateRefreshToken(String email, RoleType role, ProviderType provider) {
+    public String generateRefreshToken(String email, String role, String provider) {
         return generateToken(email, role, provider, JwtConstant.REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private String generateToken(
-            String email, RoleType role,
-            ProviderType provider, long tokenExpireTime
+            String email, String role,
+            String provider, long tokenExpireTime
     ) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
@@ -74,11 +72,8 @@ public class JwtProvider {
 
     public boolean verifyToken(String token) {
         try {
-            Jws<Claims> claims =
-                    Jwts.parserBuilder().setSigningKey(secretKey)
-                    .build().parseClaimsJws(token);
             // 토큰의 만료 시간과 현재 시간비교
-            return claims.getBody()
+            return parseClaims(token)
                     .getExpiration()
                     .after(new Date());
         } catch (Exception e) {
@@ -87,17 +82,24 @@ public class JwtProvider {
     }
 
     public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey)
-                .build().parseClaimsJws(token).getBody().getSubject();
+        return parseClaims(token).getSubject();
     }
 
-    public RoleType getRole(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey)
-                .build().parseClaimsJws(token).getBody().get("role", RoleType.class);
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
 
-    public ProviderType getProvider(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey)
-                .build().parseClaimsJws(token).getBody().get("role", ProviderType.class);
+    public String getProvider(String token) {
+        return parseClaims(token).get("provider", String.class);
+    }
+
+    private Claims parseClaims(String accessToken) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(secretKey)
+                    .build().parseClaimsJws(accessToken).getBody();
+        } catch (Exception e) {
+            e.printStackTrace();    //todo: CannotParseToken
+            throw e;
+        }
     }
 }

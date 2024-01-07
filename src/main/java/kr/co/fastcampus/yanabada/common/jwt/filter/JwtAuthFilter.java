@@ -1,9 +1,13 @@
 package kr.co.fastcampus.yanabada.common.jwt.filter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -57,10 +61,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new RuntimeException("Access Token 만료!"); //todo: Custom Ex
         }
 
-        // AccessToken의 값이 있고, 유효한 경우에 진행한다.
-        if (jwtProvider.verifyToken(token)) {
+        try {
             String email = jwtProvider.getEmail(token);
-            ProviderType provider = jwtProvider.getProvider(token);
+            ProviderType provider = ProviderType.valueOf(jwtProvider.getProvider(token));
+
             Member findMember = memberRepository.getMember(email, provider);
 
             PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
@@ -68,6 +72,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // SecurityContext에 인증 객체를 등록해준다.
             Authentication auth = getAuthentication(principalDetails);
             SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch(MemberNotFoundException e) {
+            throw new RuntimeException("Illegal Token");   //todo
         }
 
         filterChain.doFilter(request, response);

@@ -27,4 +27,9 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public Member findMember(String email, ProviderType provider) {
+        return memberRepository.getMember(email, provider);
+    }
+
 }

@@ -18,7 +18,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
-    Optional<Member> findMemberByEmailAndProviderType(String email, ProviderType providerType);
+    boolean existsByEmailAndProviderType(String email, ProviderType provider);
 
+    Optional<Member> findMemberByEmailAndProviderType(String email, ProviderType providerType);
 
 }
