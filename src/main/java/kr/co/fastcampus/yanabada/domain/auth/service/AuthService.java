@@ -31,7 +31,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
-    public void signUp(SignUpRequest signUpRequest) {
+    public Long signUp(SignUpRequest signUpRequest) {
         if(memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
             throw new RuntimeException("이미 존재하는 이메일");  //todo custom + 닉네임도 중복 체크
         }
@@ -47,18 +47,15 @@ public class AuthService {
                 .providerType(EMAIL)
                 .build();
 
-        memberRepository.save(member);
-
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
     }
 
     @Transactional
-    public String login(LoginRequest loginRequest) {
+    public TokenInfoDTO login(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        TokenInfoDTO tokenInfoDTO
-                = jwtProvider.generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
 
-        return tokenInfoDTO.accessToken();
-
+        return jwtProvider.generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
     }
 }

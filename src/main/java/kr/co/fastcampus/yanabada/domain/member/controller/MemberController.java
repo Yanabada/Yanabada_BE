@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -24,13 +25,7 @@ public class MemberController {
         return "test";
     }
 
-    @GetMapping("/test/member")
-    public String testMember() {
-        memberService.saveMember();
-        return "test";
-    }
-
-    @GetMapping("/test/redis/utils")
+    @GetMapping("/redis/utils")
     public String testRedisUtils() {
         redisUtils.setData("hi", "hihihi", 60000L);
         ValueOperations<String, String> stringValueOperations = stringStringRedisTemplate.opsForValue();
@@ -38,7 +33,7 @@ public class MemberController {
         return "test-redis-utils";
     }
 
-    @GetMapping("/test/redis/get/{key}")
+    @GetMapping("/redis/get/{key}")
     public String getTest(@PathVariable("key") String key) {
         log.info("key={}", key);
         ValueOperations<String, String> stringValueOperations = stringStringRedisTemplate.opsForValue();

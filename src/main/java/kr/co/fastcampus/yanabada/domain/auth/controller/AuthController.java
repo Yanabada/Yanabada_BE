@@ -1,7 +1,10 @@
 package kr.co.fastcampus.yanabada.domain.auth.controller;
 
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
@@ -27,14 +30,13 @@ public class AuthController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public String signUp(@RequestBody SignUpRequest signUpRequest) {
-        authService.signUp(signUpRequest);
-        return "sign-up-success";
+    public ResponseBody<Long> signUp(@RequestBody SignUpRequest signUpRequest) {
+        return ResponseBody.ok(authService.signUp(signUpRequest));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public ResponseBody<TokenInfoDTO> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseBody.ok(authService.login(loginRequest));
     }
 
     @PostMapping("token/logout")
@@ -52,7 +54,7 @@ public class AuthController {
         if(StringUtils.hasText(refreshToken) && jwtProvider.verifyToken(refreshToken)) {
             String value = tokenService.getValue(refreshToken);
             if(value==null) {
-                throw new RuntimeException("RefreshToken이 만료되었습니다.");  //todo
+                throw new TokenExpiredException();  //todo: ControllerAdvice에서 핸들러 처리
             }
             String[] splits = value.split(" ");
             String email = splits[0];
