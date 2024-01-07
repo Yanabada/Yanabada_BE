@@ -8,6 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -37,8 +39,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        /* 토큰 재발급, 로그아웃일 경우 해당 필터 실행 안됨 */
-        return request.getRequestURI().contains("token/");
+        /* 토큰 로그인, 회원가입, 리프레시 토큰 재발급, 로그아웃일 경우 해당 필터 실행 안됨 */
+        return request.getRequestURI().contains("token/")
+                || request.getRequestURI().contains("/sign-up")
+                || request.getRequestURI().contains("/login");
     }
 
     @Override
@@ -56,9 +60,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // AccessToken을 검증하고, 만료되었을경우 예외를 발생시킨다.
         if (!jwtProvider.verifyToken(token)) {
-            throw new RuntimeException("Access Token 만료!"); //todo: Custom Ex
+            throw new TokenExpiredException();
         }
 
         try {
@@ -69,11 +72,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
 
-            // SecurityContext에 인증 객체를 등록해준다.
+            // SecurityContext에 인증 객체를 등록
             Authentication auth = getAuthentication(principalDetails);
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch(MemberNotFoundException e) {
-            throw new RuntimeException("Illegal Token");   //todo
+            throw new TokenNotValidatedException();
         }
 
         filterChain.doFilter(request, response);

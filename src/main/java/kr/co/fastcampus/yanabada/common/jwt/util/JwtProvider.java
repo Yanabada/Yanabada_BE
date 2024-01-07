@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import kr.co.fastcampus.yanabada.common.exception.ClaimParseFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -31,7 +32,6 @@ public class JwtProvider {
 
     @PostConstruct
     protected void init() {
-        log.info("JwtProvider.init() : secretKeyPlain={}", secretKeyPlain);
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKeyPlain);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -63,22 +63,17 @@ public class JwtProvider {
         Date now = new Date();
 
         return Jwts.builder()
-                .setClaims(claims)          // Payload를 구성하는 속성들을 정의한다.
-                .setIssuedAt(now)           // 발행일자를 넣는다.
-                .setExpiration(new Date(now.getTime() + tokenExpireTime))     // 토큰의 만료일시를 설정한다.
-                .signWith(secretKey)        // 지정된 서명 알고리즘과 비밀 키를 사용하여 토큰을 서명한다.
+                .setClaims(claims)          // Payload 설정
+                .setIssuedAt(now)           // 발행일자 설정
+                .setExpiration(new Date(now.getTime() + tokenExpireTime))     // 토큰 만료일짜 설정
+                .signWith(secretKey)        // 비밀 키로 토큰 서명
                 .compact();
     }
 
     public boolean verifyToken(String token) {
-        try {
-            // 토큰의 만료 시간과 현재 시간비교
-            return parseClaims(token)
-                    .getExpiration()
-                    .after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
+        return parseClaims(token)
+                .getExpiration()
+                .after(new Date());
     }
 
     public String getEmail(String token) {
@@ -98,8 +93,7 @@ public class JwtProvider {
             return Jwts.parserBuilder().setSigningKey(secretKey)
                     .build().parseClaimsJws(accessToken).getBody();
         } catch (Exception e) {
-            e.printStackTrace();    //todo: CannotParseToken
-            throw e;
+            throw new ClaimParseFailedException();
         }
     }
 }
