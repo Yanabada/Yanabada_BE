@@ -1,17 +1,13 @@
 package kr.co.fastcampus.yanabada.domain.order.service;
 
-import kr.co.fastcampus.yanabada.common.exception.RoomNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.OrderNotFoundException;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.dto.request.OrderSaveRequest;
-<<<<<<< HEAD
 import kr.co.fastcampus.yanabada.domain.order.dto.response.OrderInfoResponse;
-import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
-=======
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
->>>>>>> 2875de4826a9576556a51ff2418d1b53e952bbde
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +33,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderInfoResponse getOrderInfo(Long orderId) {
         Order order = orderRepository.findById(orderId)
-            .orElseThrow(RoomNotFoundException::new);
+            .orElseThrow(OrderNotFoundException::new);
 
         return OrderInfoResponse.from(order);
     }
