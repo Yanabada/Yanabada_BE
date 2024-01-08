@@ -43,7 +43,7 @@ public class ProductService {
         }
         validateProductSaveRequest(request, order);
 
-        return new ProductIdResponse(
+        return ProductIdResponse.from(
             productRepository.save(request.toEntity(order))
         );
     }
