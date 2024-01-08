@@ -29,26 +29,26 @@ public class OrderInfoResponse {
     private final Integer totalPayment;
     private final String paymentMethod;
 
-    public static OrderInfoResponse from(Order Order) {
+    public static OrderInfoResponse from(Order order) {
         return OrderInfoResponse.builder()
-            .orderId(Order.getId())
-            .orderDate(Order.getCheckInDate())
-            .accommodationName(Order.getRoom().getAccommodation().getName())
-            .accommodationImage(Order.getRoom().getAccommodation().getImage())
-            .roomName(Order.getRoom().getName())
-            .checkInDate(Order.getCheckInDate())
-            .checkOutDate(Order.getCheckOutDate())
-            .price(Order.getPrice())
-            .adultCount(Order.getAdultCount())
-            .childCount(Order.getChildCount())
-            .maxHeadCount(Order.getRoom().getMaxHeadCount())
-            .reservationPersonName(Order.getReservationPersonName())
-            .reservationPersonPhoneNumber(Order.getReservationPersonPhoneNumber())
-            .userPersonName(Order.getUserPersonName())
-            .userPersonPhoneNumber(Order.getUserPersonPhoneNumber())
+            .orderId(order.getId())
+            .orderDate(order.getCheckInDate())
+            .accommodationName(order.getRoom().getAccommodation().getName())
+            .accommodationImage(order.getRoom().getAccommodation().getImage())
+            .roomName(order.getRoom().getName())
+            .checkInDate(order.getCheckInDate())
+            .checkOutDate(order.getCheckOutDate())
+            .price(order.getPrice())
+            .adultCount(order.getAdultCount())
+            .childCount(order.getChildCount())
+            .maxHeadCount(order.getRoom().getMaxHeadCount())
+            .reservationPersonName(order.getReservationPersonName())
+            .reservationPersonPhoneNumber(order.getReservationPersonPhoneNumber())
+            .userPersonName(order.getUserPersonName())
+            .userPersonPhoneNumber(order.getUserPersonPhoneNumber())
             .roomOptions(null) // RoomOptions는 현재 구현되지 않았습니다. 화면 디자인 Fix 후 업데이트 예정.
-            .totalPayment(Order.getPrice())
-            .paymentMethod(Order.getPaymentType().name())
+            .totalPayment(order.getPrice())
+            .paymentMethod(order.getPaymentType().name())
             .build();
     }
 }
