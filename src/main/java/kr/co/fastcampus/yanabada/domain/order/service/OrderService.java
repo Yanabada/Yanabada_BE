@@ -6,8 +6,12 @@ import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.dto.request.OrderSaveRequest;
+<<<<<<< HEAD
 import kr.co.fastcampus.yanabada.domain.order.dto.response.OrderInfoResponse;
 import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
+=======
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
+>>>>>>> 2875de4826a9576556a51ff2418d1b53e952bbde
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,14 +31,14 @@ public class OrderService {
     public void saveOrder(OrderSaveRequest request) {
         Room room = roomRepository.getRoom(request.roomId());
         Member member = memberRepository.getMember(request.memberId());
-        RoomOrder roomOrder = orderRepository.save(request.toEntity(room, member));
+        Order order = orderRepository.save(request.toEntity(room, member));
     }
 
     @Transactional(readOnly = true)
     public OrderInfoResponse getOrderInfo(Long orderId) {
-        RoomOrder roomOrder = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
             .orElseThrow(RoomNotFoundException::new);
 
-        return OrderInfoResponse.from(roomOrder);
+        return OrderInfoResponse.from(order);
     }
 }

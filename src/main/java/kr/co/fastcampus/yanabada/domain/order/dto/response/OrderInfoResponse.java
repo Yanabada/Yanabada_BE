@@ -2,7 +2,7 @@ package kr.co.fastcampus.yanabada.domain.order.dto.response;
 
 import java.time.LocalDate;
 import java.util.Map;
-import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -29,26 +29,26 @@ public class OrderInfoResponse {
     private final Integer totalPayment;
     private final String paymentMethod;
 
-    public static OrderInfoResponse from(RoomOrder roomOrder) {
+    public static OrderInfoResponse from(Order Order) {
         return OrderInfoResponse.builder()
-            .orderId(roomOrder.getId())
-            .orderDate(roomOrder.getCheckInDate())
-            .accommodationName(roomOrder.getRoom().getAccommodation().getName())
-            .accommodationImage(roomOrder.getRoom().getAccommodation().getImage())
-            .roomName(roomOrder.getRoom().getName())
-            .checkInDate(roomOrder.getCheckInDate())
-            .checkOutDate(roomOrder.getCheckOutDate())
-            .price(roomOrder.getPrice())
-            .adultCount(roomOrder.getAdultCount())
-            .childCount(roomOrder.getChildCount())
-            .maxHeadCount(roomOrder.getRoom().getMaxHeadCount())
-            .reservationPersonName(roomOrder.getReservationPersonName())
-            .reservationPersonPhoneNumber(roomOrder.getReservationPersonPhoneNumber())
-            .userPersonName(roomOrder.getUserPersonName())
-            .userPersonPhoneNumber(roomOrder.getUserPersonPhoneNumber())
+            .orderId(Order.getId())
+            .orderDate(Order.getCheckInDate())
+            .accommodationName(Order.getRoom().getAccommodation().getName())
+            .accommodationImage(Order.getRoom().getAccommodation().getImage())
+            .roomName(Order.getRoom().getName())
+            .checkInDate(Order.getCheckInDate())
+            .checkOutDate(Order.getCheckOutDate())
+            .price(Order.getPrice())
+            .adultCount(Order.getAdultCount())
+            .childCount(Order.getChildCount())
+            .maxHeadCount(Order.getRoom().getMaxHeadCount())
+            .reservationPersonName(Order.getReservationPersonName())
+            .reservationPersonPhoneNumber(Order.getReservationPersonPhoneNumber())
+            .userPersonName(Order.getUserPersonName())
+            .userPersonPhoneNumber(Order.getUserPersonPhoneNumber())
             .roomOptions(null) // RoomOptions는 현재 구현되지 않았습니다. 화면 디자인 Fix 후 업데이트 예정.
-            .totalPayment(roomOrder.getPrice())
-            .paymentMethod(roomOrder.getPaymentType().name())
+            .totalPayment(Order.getPrice())
+            .paymentMethod(Order.getPaymentType().name())
             .build();
     }
 }

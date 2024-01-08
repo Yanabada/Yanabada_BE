@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "room_order")
 @Entity
-public class RoomOrder extends BaseEntity {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,7 +74,7 @@ public class RoomOrder extends BaseEntity {
     @Column(nullable = false)
     private Integer childCount;
 
-    private RoomOrder(
+    private Order(
         Room room,
         Member member,
         LocalDate checkInDate,
@@ -104,7 +104,7 @@ public class RoomOrder extends BaseEntity {
         this.childCount = childCount;
     }
 
-    public static RoomOrder create(
+    public static Order create(
         Room room,
         Member member,
         LocalDate checkInDate,
@@ -119,7 +119,7 @@ public class RoomOrder extends BaseEntity {
         Integer adultCount,
         Integer childCount
     ) {
-        return new RoomOrder(
+        return new Order(
             room,
             member,
             checkInDate,
