@@ -29,8 +29,8 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private static final String[] PERMIT_PATHS = {
-            "/api",
-            "/api/**"
+            "/",
+            "/**"
     };
 
     @Bean

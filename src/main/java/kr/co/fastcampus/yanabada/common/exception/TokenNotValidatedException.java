@@ -2,8 +2,10 @@ package kr.co.fastcampus.yanabada.common.exception;
 
 import kr.co.fastcampus.yanabada.common.response.ErrorCode;
 
+import static kr.co.fastcampus.yanabada.common.response.ErrorCode.TOKEN_NOT_VALIDATED;
+
 public class TokenNotValidatedException extends BaseException {
     public TokenNotValidatedException() {
-        super(ErrorCode.TOKEN_NOT_VALIDATED.getMessage());
+        super(TOKEN_NOT_VALIDATED.getMessage());
     }
 }

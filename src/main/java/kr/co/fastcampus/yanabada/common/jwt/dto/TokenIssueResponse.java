@@ -1,6 +1,6 @@
 package kr.co.fastcampus.yanabada.common.jwt.dto;
 
-public record TokenInfoDTO (
+public record TokenIssueResponse(
     String accessToken,
     String refreshToken
 ) {

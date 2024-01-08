@@ -1,18 +1,15 @@
 package kr.co.fastcampus.yanabada.domain.auth.service;
 
-import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
-import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
-import kr.co.fastcampus.yanabada.domain.member.entity.RoleType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +49,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenInfoDTO login(LoginRequest loginRequest) {
+    public TokenIssueResponse login(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 

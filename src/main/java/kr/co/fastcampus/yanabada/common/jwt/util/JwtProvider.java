@@ -7,10 +7,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import kr.co.fastcampus.yanabada.common.exception.ClaimParseFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
-import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
-import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
-import kr.co.fastcampus.yanabada.domain.member.entity.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,12 +34,12 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfoDTO generateTokenInfo(String email, String role, String provider) {
+    public TokenIssueResponse generateTokenInfo(String email, String role, String provider) {
         String accessToken = generateAccessToken(email, role, provider);
         String refreshToken = generateRefreshToken(email, role, provider);
 
         tokenService.saveRefreshToken(email, provider, refreshToken);
-        return new TokenInfoDTO(accessToken, refreshToken);
+        return new TokenIssueResponse(accessToken, refreshToken);
     }
 
     public String generateAccessToken(String email, String role, String provider) {

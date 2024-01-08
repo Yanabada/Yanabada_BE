@@ -16,35 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberService memberService;
-    private final RedisUtils redisUtils;
-    private final StringRedisTemplate stringStringRedisTemplate;
-
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
-    @GetMapping("/redis/utils")
-    public String testRedisUtils() {
-        redisUtils.setData("hi", "hihihi", 60000L);
-        ValueOperations<String, String> stringValueOperations = stringStringRedisTemplate.opsForValue();
-        stringValueOperations.set("hihi", "hihivalue");
-        return "test-redis-utils";
-    }
-
-    @GetMapping("/redis/get/{key}")
-    public String getTest(@PathVariable("key") String key) {
-        log.info("key={}", key);
-        ValueOperations<String, String> stringValueOperations = stringStringRedisTemplate.opsForValue();
-        String value = stringValueOperations.get(key);
-        if(value==null) {
-            value = redisUtils.getData(key);
-        }
-        if(value==null) return "null";
-        return value;
-    }
-
 
 
 }

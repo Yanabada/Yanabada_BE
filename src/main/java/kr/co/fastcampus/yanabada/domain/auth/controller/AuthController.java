@@ -1,7 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.auth.controller;
 
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
-import kr.co.fastcampus.yanabada.common.jwt.dto.TokenInfoDTO;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<TokenInfoDTO> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseBody<TokenIssueResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
