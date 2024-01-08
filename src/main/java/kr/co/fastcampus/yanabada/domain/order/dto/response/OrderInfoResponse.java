@@ -25,6 +25,7 @@ public record OrderInfoResponse(
     Integer totalPayment,
     String paymentMethod
 ) {
+
     public static OrderInfoResponse from(Order order) {
         RoomOption roomOption = order.getRoom().getRoomOption();
         Map<String, Boolean> roomOptionsMap = Map.ofEntries(
