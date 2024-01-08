@@ -1,12 +1,13 @@
 package kr.co.fastcampus.yanabada.common.jwt.filter;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_PREFIX;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
@@ -23,11 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-
-import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
-import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_PREFIX;
 
 @Slf4j
 @Component
@@ -75,7 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // SecurityContext에 인증 객체를 등록
             Authentication auth = getAuthentication(principalDetails);
             SecurityContextHolder.getContext().setAuthentication(auth);
-        } catch(MemberNotFoundException e) {
+        } catch (MemberNotFoundException e) {
             throw new TokenNotValidatedException();
         }
 

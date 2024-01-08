@@ -2,7 +2,7 @@ package kr.co.fastcampus.yanabada.domain.auth.dto;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-public record LoginRequest (
+public record LoginRequest(
     String email,
     String password
 ) {

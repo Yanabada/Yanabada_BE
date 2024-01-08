@@ -1,15 +1,13 @@
 package kr.co.fastcampus.yanabada.common.security;
 
+import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import java.util.Collection;
+import java.util.List;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
-
-import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 public record PrincipalDetails(
         String email,

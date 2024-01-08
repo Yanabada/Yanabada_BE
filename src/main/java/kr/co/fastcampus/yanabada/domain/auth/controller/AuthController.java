@@ -1,5 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.auth.controller;
 
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -14,9 +16,11 @@ import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
-import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -51,9 +55,9 @@ public class AuthController {
 
         log.info("token = {}", refreshToken);
 
-        if(StringUtils.hasText(refreshToken) && jwtProvider.verifyToken(refreshToken)) {
+        if (StringUtils.hasText(refreshToken) && jwtProvider.verifyToken(refreshToken)) {
             String value = tokenService.getValue(refreshToken);
-            if(value==null) {
+            if (value == null) {
                 throw new TokenExpiredException();  //todo: ControllerAdvice에서 핸들러 처리
             }
             String[] splits = value.split(" ");

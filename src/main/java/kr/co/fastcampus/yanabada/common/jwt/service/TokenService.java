@@ -1,11 +1,11 @@
 package kr.co.fastcampus.yanabada.common.jwt.service;
 
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
+
 import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
 
 @Service
 @RequiredArgsConstructor

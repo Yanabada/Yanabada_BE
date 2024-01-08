@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.common.config;
 
+import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,8 +28,8 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private static final String[] PERMIT_PATHS = {
-            "/",
-            "/**"
+        "/",
+        "/**"
     };
 
     @Bean
@@ -49,12 +48,6 @@ public class SecurityConfig {
         );
 
         //todo: oauth 설정 예정
-//        .oauth2Login() // OAuth2 로그인 설정시작
-//        .userInfoEndpoint().userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
-//        .and()
-//        .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
-//        .successHandler(oAuth2LoginSuccessHandler); // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
-
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
@@ -78,7 +71,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
+    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() { // h2-console 화면설정
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console());
