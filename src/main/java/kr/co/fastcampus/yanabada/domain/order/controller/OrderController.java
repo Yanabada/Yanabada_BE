@@ -29,14 +29,14 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ResponseBody<OrderInfoResponse>> getOrderInfo(
+    public ResponseBody<OrderInfoResponse> getOrderInfo(
         @PathVariable Long orderId
     ) {
 
         OrderInfoResponse orderInfoResponse =
             orderService.getOrderInfo(orderId);
 
-        return ResponseEntity.ok(ResponseBody.ok(orderInfoResponse));
+        return ResponseBody.ok(orderInfoResponse);
 
     }
 
