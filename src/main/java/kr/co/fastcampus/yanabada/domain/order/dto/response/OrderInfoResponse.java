@@ -1,8 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.order.dto.response;
 
 import java.time.LocalDate;
-import java.util.Map;
-import kr.co.fastcampus.yanabada.domain.accommodation.entity.RoomOption;
+import kr.co.fastcampus.yanabada.domain.accommodation.dto.response.RoomOptionResponse;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 
 public record OrderInfoResponse(
@@ -21,28 +20,14 @@ public record OrderInfoResponse(
     String reservationPersonPhoneNumber,
     String userPersonName,
     String userPersonPhoneNumber,
-    Map<String, Boolean> roomOptions,
+    RoomOptionResponse roomOptions,
     Integer totalPayment,
     String paymentMethod
 ) {
 
     public static OrderInfoResponse from(Order order) {
-        RoomOption roomOption = order.getRoom().getRoomOption();
-        Map<String, Boolean> roomOptionsMap = Map.ofEntries(
-            Map.entry("canPark", roomOption.getCanPark()),
-            Map.entry("isPartyRoom", roomOption.getIsPartyRoom()),
-            Map.entry("canAccompanyPet", roomOption.getCanAccompanyPet()),
-            Map.entry("isKidsRoom", roomOption.getIsKidsRoom()),
-            Map.entry("isCityView", roomOption.getIsCityView()),
-            Map.entry("isOceanView", roomOption.getIsOceanView()),
-            Map.entry("hasPc", roomOption.getHasPc()),
-            Map.entry("hasOtt", roomOption.getHasOtt()),
-            Map.entry("hasBathtub", roomOption.getHasBathtub()),
-            Map.entry("hasAmenity", roomOption.getHasAmenity()),
-            Map.entry("hasBreakfast", roomOption.getHasBreakfast()),
-            Map.entry("canCook", roomOption.getCanCook()),
-            Map.entry("isNoKids", roomOption.getIsNoKids())
-        );
+        RoomOptionResponse roomOptionResponse = RoomOptionResponse.from(
+            order.getRoom().getRoomOption());
 
         return new OrderInfoResponse(
             order.getId(),
@@ -60,7 +45,7 @@ public record OrderInfoResponse(
             order.getReservationPersonPhoneNumber(),
             order.getUserPersonName(),
             order.getUserPersonPhoneNumber(),
-            roomOptionsMap,
+            roomOptionResponse,
             order.getPrice(),
             order.getPaymentType().name()
         );
