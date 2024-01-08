@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.order.service;
 
+import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.OrderNotFoundException;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
@@ -31,9 +32,13 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderInfoResponse getOrderInfo(Long orderId) {
+    public OrderInfoResponse getOrderInfo(Long orderId, Long currentUserId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(OrderNotFoundException::new);
+
+        if (!order.getMember().getId().equals(currentUserId)) {
+            throw new AccessForbiddenException();
+        }
 
         return OrderInfoResponse.from(order);
     }
