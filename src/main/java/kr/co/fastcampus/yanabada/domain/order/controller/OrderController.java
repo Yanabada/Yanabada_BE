@@ -34,12 +34,7 @@ public class OrderController {
         @PathVariable Long orderId,
         @RequestParam Long currentUserId
     ) {
-
-        OrderInfoResponse orderInfoResponse =
-            orderService.getOrderInfo(orderId, currentUserId);
-
-        return ResponseBody.ok(orderInfoResponse);
-
+        return ResponseBody.ok(orderService.getOrderInfo(orderId, currentUserId));
     }
 
 }
