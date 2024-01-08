@@ -2,7 +2,7 @@ package kr.co.fastcampus.yanabada.domain.order.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.order.dto.request.OrderSaveRequest;
-import kr.co.fastcampus.yanabada.domain.order.dto.response.ReservationDetailsDto;
+import kr.co.fastcampus.yanabada.domain.order.dto.response.OrderInfoResponse;
 import kr.co.fastcampus.yanabada.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +28,16 @@ public class OrderController {
         return ResponseBody.ok();
     }
 
-    @GetMapping("/{reservationId}")
-    public ResponseEntity<ReservationDetailsDto> getReservationDetails(
-        @PathVariable Long reservationId) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ResponseBody<OrderInfoResponse>> getOrderInfo(
+        @PathVariable Long orderId
+    ) {
 
-        ReservationDetailsDto reservationDetailsDto =
-            orderService.getReservationDetails(reservationId);
+        OrderInfoResponse orderInfoResponse =
+            orderService.getOrderInfo(orderId);
 
-        return ResponseEntity.ok(reservationDetailsDto);
+        return ResponseEntity.ok(ResponseBody.ok(orderInfoResponse));
+
     }
 
 }
