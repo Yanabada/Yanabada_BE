@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    default Member getMember(Long memberId) {
-        return findById(memberId).orElseThrow(MemberNotFoundException::new);
+    default Member getMember(Long id) {
+        return findById(id).orElseThrow(MemberNotFoundException::new);
     }
 }

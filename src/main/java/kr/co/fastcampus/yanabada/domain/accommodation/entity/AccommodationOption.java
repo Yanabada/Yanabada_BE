@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,4 +26,53 @@ public class AccommodationOption {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation;
+
+    @Column(nullable = false)
+    private Boolean hasSauna;
+
+    @Column(nullable = false)
+    private Boolean hasRooftop;
+
+    @Column(nullable = false)
+    private Boolean hasPool;
+
+    @Column(nullable = false)
+    private Boolean hasGym;
+
+    @Column(nullable = false)
+    private Boolean hasLoungeBar;
+
+    private AccommodationOption(
+        Accommodation accommodation,
+        Boolean hasSauna,
+        Boolean hasRooftop,
+        Boolean hasPool,
+        Boolean hasGym,
+        Boolean hasLoungeBar
+    ) {
+        this.accommodation = accommodation;
+        this.hasSauna = hasSauna;
+        this.hasRooftop = hasRooftop;
+        this.hasPool = hasPool;
+        this.hasGym = hasGym;
+        this.hasLoungeBar = hasLoungeBar;
+    }
+
+    public static AccommodationOption create(
+        Accommodation accommodation,
+        Boolean hasSauna,
+        Boolean hasRooftop,
+        Boolean hasPool,
+        Boolean hasGym,
+        Boolean hasLoungeBar
+    ) {
+        return new AccommodationOption(
+            accommodation,
+            hasSauna,
+            hasRooftop,
+            hasPool,
+            hasGym,
+            hasLoungeBar
+        );
+    }
 }

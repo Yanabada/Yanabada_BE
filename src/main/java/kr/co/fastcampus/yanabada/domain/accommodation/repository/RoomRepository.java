@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    default Room getRoom(Long roomId) {
-        return findById(roomId).orElseThrow(RoomNotFoundException::new);
+    default Room getRoom(Long id) {
+        return findById(id).orElseThrow(RoomNotFoundException::new);
     }
 }
