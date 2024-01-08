@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    default Member getMember(Long memberId) {
-        return findById(memberId).orElseThrow(MemberNotFoundException::new);
+    default Member getMember(Long id) {
+        return findById(id).orElseThrow(MemberNotFoundException::new);
     }
 
     default Member getMember(String email, ProviderType providerType) {

@@ -3,7 +3,7 @@ package kr.co.fastcampus.yanabada.domain.order.dto.request;
 import java.time.LocalDate;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
-import kr.co.fastcampus.yanabada.domain.order.entity.RoomOrder;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 
@@ -23,8 +23,8 @@ public record OrderSaveRequest(
     Integer childCount
 ) {
 
-    public RoomOrder toEntity(Room room, Member member) {
-        return RoomOrder.create(
+    public Order toEntity(Room room, Member member) {
+        return Order.create(
             room,
             member,
             checkInDate,
