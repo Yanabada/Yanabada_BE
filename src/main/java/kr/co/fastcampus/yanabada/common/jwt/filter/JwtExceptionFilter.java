@@ -47,11 +47,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         Exception e,
         int status
     ) throws IOException {
-        String responseBody = objectMapper
-            .writeValueAsString(ResponseBody.fail(e.getMessage()));
         response.setStatus(status);
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
+        String responseBody = objectMapper
+            .writeValueAsString(ResponseBody.fail(e.getMessage()));
         response.getWriter().write(responseBody);
     }
 }
