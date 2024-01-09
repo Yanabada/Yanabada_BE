@@ -69,10 +69,7 @@ public class Order extends BaseEntity {
     private PaymentType paymentType;
 
     @Column(nullable = false)
-    private Integer adultCount;
-
-    @Column(nullable = false)
-    private Integer childCount;
+    private String code;
 
     private Order(
         Room room,
@@ -86,8 +83,7 @@ public class Order extends BaseEntity {
         String userPersonName,
         String userPersonPhoneNumber,
         PaymentType paymentType,
-        Integer adultCount,
-        Integer childCount
+        String code
     ) {
         this.room = room;
         this.member = member;
@@ -100,8 +96,7 @@ public class Order extends BaseEntity {
         this.userPersonName = userPersonName;
         this.userPersonPhoneNumber = userPersonPhoneNumber;
         this.paymentType = paymentType;
-        this.adultCount = adultCount;
-        this.childCount = childCount;
+        this.code = code;
     }
 
     public static Order create(
@@ -116,8 +111,7 @@ public class Order extends BaseEntity {
         String userPersonName,
         String userPersonPhoneNumber,
         PaymentType paymentType,
-        Integer adultCount,
-        Integer childCount
+        String code
     ) {
         return new Order(
             room,
@@ -131,8 +125,7 @@ public class Order extends BaseEntity {
             userPersonName,
             userPersonPhoneNumber,
             paymentType,
-            adultCount,
-            childCount
+            code
         );
     }
 }
