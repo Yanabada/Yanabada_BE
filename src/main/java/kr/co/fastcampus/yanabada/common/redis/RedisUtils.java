@@ -2,15 +2,13 @@ package kr.co.fastcampus.yanabada.common.redis;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.hash.Jackson2HashMapper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class RedisUtils<T> {
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -19,9 +17,7 @@ public class RedisUtils<T> {
 
 
     public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
-
         this.redisTemplate = redisTemplate;
-
         this.hashOperations = redisTemplate.opsForHash();
     }
 

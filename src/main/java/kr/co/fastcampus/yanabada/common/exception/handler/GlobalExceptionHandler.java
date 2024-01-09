@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
@@ -102,6 +103,15 @@ public class GlobalExceptionHandler {
         BadCredentialsException e
     ) {
         log.error("[BadCredentialsException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseBody<Void> tokenExpiredException(
+        TokenExpiredException e
+    ) {
+        log.error("[TokenExpiredException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
 }

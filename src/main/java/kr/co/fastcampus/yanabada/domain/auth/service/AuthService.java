@@ -3,7 +3,10 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.LoginRequest;
@@ -52,10 +55,16 @@ public class AuthService {
 
     @Transactional
     public TokenIssueResponse login(LoginRequest loginRequest) {
-        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();  //todo: BadCredentialException을 새로운 커스텀 Ex에 감싸서 보낼지 고민
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return jwtProvider.generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
+        TokenIssueResponse tokenIssue
+            = tokenService.getTokenIssue(loginRequest.email(), EMAIL.name());
+        if (tokenIssue == null) {
+            tokenIssue = jwtProvider
+                .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
+        }
+        return tokenIssue;
     }
 
     @Transactional
@@ -66,10 +75,12 @@ public class AuthService {
     }
 
     @Transactional
-    public void generateNewAccessToken(String refreshToken) {
+    public TokenRefreshResponse generateNewAccessToken(String refreshToken) {
         String email = jwtProvider.getEmail(refreshToken);
+        String role = jwtProvider.getRole(refreshToken);
         String provider = jwtProvider.getProvider(refreshToken);
-        TokenIssueResponse tokenIssue
-            = tokenService.getTokenIssue(email, provider);
+        String newAccessToken = jwtProvider.generateAccessToken(email, role, provider);
+        tokenService.updateAccessToken(email, provider, newAccessToken);
+        return new TokenRefreshResponse(newAccessToken);
     }
 }

@@ -21,6 +21,7 @@ public class TokenService {
     ) {
         String key = email + " " + provider;
         redisUtils.setDataAsHash(key, tokenIssue, 300000L);
+        //todo : exprie시간 변경 예정
     }
 
     public TokenIssueResponse getTokenIssue(
@@ -29,6 +30,10 @@ public class TokenService {
     ) {
         String key = email + " " + provider;
         return redisUtils.getDataAsHash(key);
+    }
+
+    public boolean isExistToken(String email, String provider) {
+        return getTokenIssue(email, provider) != null;
     }
 
     public void updateAccessToken(
@@ -46,7 +51,7 @@ public class TokenService {
     }
 
     public void deleteToken(String email, String provider) {
-        String key = email + provider;
+        String key = email +" " + provider;
         redisUtils.deleteData(key);
     }
 
