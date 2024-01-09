@@ -36,9 +36,9 @@ public class JwtProvider {
     public TokenIssueResponse generateTokenInfo(String email, String role, String provider) {
         String accessToken = generateAccessToken(email, role, provider);
         String refreshToken = generateRefreshToken(email, role, provider);
-
-        tokenService.saveRefreshToken(email, provider, refreshToken);
-        return new TokenIssueResponse(accessToken, refreshToken);
+        TokenIssueResponse tokenIssue = new TokenIssueResponse(accessToken, refreshToken);
+        tokenService.saveTokenIssue(email, provider, tokenIssue);
+        return tokenIssue;
     }
 
     public String generateAccessToken(String email, String role, String provider) {

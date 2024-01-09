@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.common.jwt.service;
 
 import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
 
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,26 +12,42 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final RedisUtils redisUtils;
+    private final RedisUtils<TokenIssueResponse> redisUtils;
 
-    @Transactional
-    public void saveRefreshToken(
-            String email,
-            String provider,
-            String refreshToken
+    public void saveTokenIssue(
+        String email,
+        String provider,
+        TokenIssueResponse tokenIssue
     ) {
-        String value = email + " " + provider;
-        redisUtils.setData(refreshToken, value, REFRESH_TOKEN_EXPIRE_TIME);
+        String key = email + " " + provider;
+        redisUtils.setDataAsHash(key, tokenIssue, 300000L);
     }
 
-    @Transactional
-    public String getValue(String refreshToken) {
-        return redisUtils.getData(refreshToken);
+    public TokenIssueResponse getTokenIssue(
+        String email,
+        String provider
+    ) {
+        String key = email + " " + provider;
+        return redisUtils.getDataAsHash(key);
     }
 
-    @Transactional
-    public void deleteRefreshToken(String refreshToken) {
-        redisUtils.deleteData(refreshToken);
+    public void updateAccessToken(
+        String email,
+        String provider,
+        String newAccessToken
+    ) {
+        String key = email + " " + provider;
+        TokenIssueResponse tokenIssue = redisUtils.getDataAsHash(key);
+        TokenIssueResponse newTokenIssue = TokenIssueResponse.builder()
+            .accessToken(newAccessToken)
+            .refreshToken(tokenIssue.refreshToken())
+            .build();
+        redisUtils.setDataAsHash(key, newTokenIssue, REFRESH_TOKEN_EXPIRE_TIME);
+    }
+
+    public void deleteToken(String email, String provider) {
+        String key = email + provider;
+        redisUtils.deleteData(key);
     }
 
 }
