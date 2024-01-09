@@ -8,8 +8,8 @@ import kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchO
 
 public record ProductSearchRequest(
     String keyword,
-    LocalDate from,
-    LocalDate to,
+    LocalDate checkInDate,
+    LocalDate checkOutDate,
     Integer adult,
     Integer child,
     Double smallX,

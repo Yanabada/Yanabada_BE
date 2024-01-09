@@ -88,7 +88,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .where(
                 notEqualStatusCanceled(),
                 containKeyword(request.keyword()),
-                equalSchedule(request.from(), request.to()),
+                equalSchedule(request.checkInDate(), request.checkOutDate()),
                 greaterOrEqualCapacity(request.adult(), request.child()),
                 isInMap(request.smallX(), request.smallY(), request.bigX(), request.bigY()),
                 hideSoldOut(request.isHidingSoldOut()),
