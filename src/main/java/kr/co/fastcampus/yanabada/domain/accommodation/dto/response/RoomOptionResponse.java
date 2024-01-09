@@ -1,7 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.dto.response;
 
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.RoomOption;
+import lombok.Builder;
 
+@Builder
 public record RoomOptionResponse(
     Boolean canPark,
     Boolean isPartyRoom,
@@ -19,20 +21,20 @@ public record RoomOptionResponse(
 ) {
 
     public static RoomOptionResponse from(RoomOption roomOption) {
-        return new RoomOptionResponse(
-            roomOption.getCanPark(),
-            roomOption.getIsPartyRoom(),
-            roomOption.getCanAccompanyPet(),
-            roomOption.getIsKidsRoom(),
-            roomOption.getIsCityView(),
-            roomOption.getIsOceanView(),
-            roomOption.getHasPc(),
-            roomOption.getHasOtt(),
-            roomOption.getHasBathtub(),
-            roomOption.getHasAmenity(),
-            roomOption.getHasBreakfast(),
-            roomOption.getCanCook(),
-            roomOption.getIsNoKids()
-        );
+        return RoomOptionResponse.builder()
+            .canPark(roomOption.getCanPark())
+            .isPartyRoom(roomOption.getIsPartyRoom())
+            .canAccompanyPet(roomOption.getCanAccompanyPet())
+            .isKidsRoom(roomOption.getIsKidsRoom())
+            .isCityView(roomOption.getIsCityView())
+            .isOceanView(roomOption.getIsOceanView())
+            .hasPc(roomOption.getHasPc())
+            .hasOtt(roomOption.getHasOtt())
+            .hasBathtub(roomOption.getHasBathtub())
+            .hasAmenity(roomOption.getHasAmenity())
+            .hasBreakfast(roomOption.getHasBreakfast())
+            .canCook(roomOption.getCanCook())
+            .isNoKids(roomOption.getIsNoKids())
+            .build();
     }
 }
