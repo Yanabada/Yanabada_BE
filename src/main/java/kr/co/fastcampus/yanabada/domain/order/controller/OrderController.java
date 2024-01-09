@@ -29,9 +29,8 @@ public class OrderController {
 
     @GetMapping("/can-sell")
     public ResponseBody<List<OrderSummaryResponse>> getSellableOrders() {
-        return ResponseBody
-            .ok(
-                orderService.getSellableOrders(1L)
-            );
+        return ResponseBody.ok(
+            orderService.getSellableOrders(1L)
+        );
     }
 }
