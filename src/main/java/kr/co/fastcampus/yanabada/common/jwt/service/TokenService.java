@@ -51,7 +51,7 @@ public class TokenService {
     }
 
     public void deleteToken(String email, String provider) {
-        String key = email +" " + provider;
+        String key = email + " " + provider;
         redisUtils.deleteData(key);
     }
 

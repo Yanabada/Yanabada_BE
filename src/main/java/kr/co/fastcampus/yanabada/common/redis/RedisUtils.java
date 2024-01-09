@@ -37,7 +37,7 @@ public class RedisUtils<T> {
 
     public T getDataAsHash(String key) {
         Map<String, Object> loadedHash = hashOperations.entries(key);
-        if(loadedHash.isEmpty()) {
+        if (loadedHash.isEmpty()) {
             return null;
         }
         return (T) mapper.fromHash(loadedHash);
