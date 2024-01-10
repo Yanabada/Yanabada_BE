@@ -3,7 +3,11 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
+import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.SignUpRequest;
@@ -26,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenService tokenService;
 
     @Transactional
     public Long signUp(SignUpRequest signUpRequest) {
@@ -53,6 +58,29 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return jwtProvider.generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
+        TokenIssueResponse tokenIssue
+            = tokenService.getTokenIssue(loginRequest.email(), EMAIL.name());
+        if (tokenIssue == null) {
+            tokenIssue = jwtProvider
+                .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
+        }
+        return tokenIssue;
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        String email = jwtProvider.getEmail(refreshToken);
+        String provider = jwtProvider.getProvider(refreshToken);
+        tokenService.deleteToken(email, provider);
+    }
+
+    @Transactional
+    public TokenRefreshResponse generateNewAccessToken(String refreshToken) {
+        String email = jwtProvider.getEmail(refreshToken);
+        String role = jwtProvider.getRole(refreshToken);
+        String provider = jwtProvider.getProvider(refreshToken);
+        String newAccessToken = jwtProvider.generateAccessToken(email, role, provider);
+        tokenService.updateAccessToken(email, provider, newAccessToken);
+        return new TokenRefreshResponse(newAccessToken);
     }
 }

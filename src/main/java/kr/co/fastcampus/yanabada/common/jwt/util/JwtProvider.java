@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.common.jwt.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -8,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import kr.co.fastcampus.yanabada.common.exception.ClaimParseFailedException;
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -36,9 +38,9 @@ public class JwtProvider {
     public TokenIssueResponse generateTokenInfo(String email, String role, String provider) {
         String accessToken = generateAccessToken(email, role, provider);
         String refreshToken = generateRefreshToken(email, role, provider);
-
-        tokenService.saveRefreshToken(email, provider, refreshToken);
-        return new TokenIssueResponse(accessToken, refreshToken);
+        TokenIssueResponse tokenIssue = new TokenIssueResponse(accessToken, refreshToken);
+        tokenService.saveTokenIssue(email, provider, tokenIssue);
+        return tokenIssue;
     }
 
     public String generateAccessToken(String email, String role, String provider) {
@@ -89,6 +91,8 @@ public class JwtProvider {
         try {
             return Jwts.parserBuilder().setSigningKey(secretKey)
                     .build().parseClaimsJws(accessToken).getBody();
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException();
         } catch (Exception e) {
             throw new ClaimParseFailedException();
         }
