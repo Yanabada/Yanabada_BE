@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.product.dto.response;
 
 import java.time.LocalDate;
+import kr.co.fastcampus.yanabada.common.utils.SalesPercentageCalculator;
 import kr.co.fastcampus.yanabada.domain.accommodation.dto.response.AccommodationInfoResponse;
 import kr.co.fastcampus.yanabada.domain.accommodation.dto.response.RoomInfoResponse;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
@@ -48,7 +49,9 @@ public record ProductInfoResponse(
             .sellingPrice(product.getPrice())
             .price(room.getPrice())
             .purchasePrice(order.getPrice())
-            .salesPercentage(15) //TODO feature/18 merge 되면, 할인율 계산기 로직으로 변경 예정
+            .salesPercentage(
+                SalesPercentageCalculator.calculate(order.getPrice(), product.getPrice())
+            )
             .accommodationInfo(AccommodationInfoResponse.from(accommodation))
             .roomInfo(RoomInfoResponse.from(room))
             .build();
