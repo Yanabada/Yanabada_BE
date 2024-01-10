@@ -15,8 +15,6 @@ public record OrderInfoResponse(
     LocalDate checkInDate,
     LocalDate checkOutDate,
     Integer price,
-    Integer adultCount,
-    Integer childCount,
     Integer maxHeadCount,
     String reservationPersonName,
     String reservationPersonPhoneNumber,
@@ -40,8 +38,6 @@ public record OrderInfoResponse(
             .checkInDate(order.getCheckInDate())
             .checkOutDate(order.getCheckOutDate())
             .price(order.getPrice())
-            .adultCount(order.getAdultCount())
-            .childCount(order.getChildCount())
             .maxHeadCount(order.getRoom().getMaxHeadCount())
             .reservationPersonName(order.getReservationPersonName())
             .reservationPersonPhoneNumber(order.getReservationPersonPhoneNumber())
