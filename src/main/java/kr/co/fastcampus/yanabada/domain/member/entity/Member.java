@@ -22,6 +22,12 @@ public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    public Long getId() {
+        return id;
+    }
+
     private String email;
     private String memberName;
     private String nickName;
@@ -35,5 +41,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
     private String deviceKey;
+
 
 }
