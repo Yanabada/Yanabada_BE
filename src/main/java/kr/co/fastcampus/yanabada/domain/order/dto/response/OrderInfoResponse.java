@@ -20,15 +20,11 @@ public record OrderInfoResponse(
     String reservationPersonPhoneNumber,
     String userPersonName,
     String userPersonPhoneNumber,
-    RoomOptionResponse roomOptions,
     Integer totalPayment,
     String paymentMethod
 ) {
 
     public static OrderInfoResponse from(Order order) {
-        RoomOptionResponse roomOptionResponse = RoomOptionResponse.from(
-            order.getRoom().getRoomOption());
-
         return OrderInfoResponse.builder()
             .orderId(order.getId())
             .orderDate(order.getCheckInDate())
@@ -43,7 +39,6 @@ public record OrderInfoResponse(
             .reservationPersonPhoneNumber(order.getReservationPersonPhoneNumber())
             .userPersonName(order.getUserPersonName())
             .userPersonPhoneNumber(order.getUserPersonPhoneNumber())
-            .roomOptions(roomOptionResponse)
             .totalPayment(order.getPrice())
             .paymentMethod(order.getPaymentType().name())
             .build();
