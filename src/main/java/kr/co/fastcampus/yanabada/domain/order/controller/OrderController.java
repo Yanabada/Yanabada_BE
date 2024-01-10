@@ -1,10 +1,13 @@
 package kr.co.fastcampus.yanabada.domain.order.controller;
 
+import java.util.List;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.order.dto.request.OrderSaveRequest;
+import kr.co.fastcampus.yanabada.domain.order.dto.response.OrderSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,4 +27,10 @@ public class OrderController {
         return ResponseBody.ok();
     }
 
+    @GetMapping("/can-sell")
+    public ResponseBody<List<OrderSummaryResponse>> getSellableOrders() {
+        return ResponseBody.ok(
+            orderService.getSellableOrders(1L)
+        );
+    }
 }

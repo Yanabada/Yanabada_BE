@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.common.utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import kr.co.fastcampus.yanabada.common.exception.RandomCodeLengthRangeException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,9 @@ public class OrderCodeGenerator {
     private static String generateRandomCode(int length) {
         String uuid = UUID.randomUUID().toString();
 
+        if (length <= 0 || length > uuid.length()) {
+            throw new RandomCodeLengthRangeException();
+        }
         return uuid.substring(uuid.length() - length);
     }
 }
