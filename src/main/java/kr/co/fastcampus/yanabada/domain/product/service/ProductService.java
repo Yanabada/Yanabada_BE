@@ -15,6 +15,7 @@ import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductIdResponse;
+import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductInfoResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductSummaryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,11 @@ public class ProductService {
         return ProductIdResponse.from(
             productRepository.save(request.toEntity(order))
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ProductInfoResponse getProductById(Long productId) {
+        return ProductInfoResponse.from(productRepository.getProduct(productId));
     }
 
     @Transactional(readOnly = true)
