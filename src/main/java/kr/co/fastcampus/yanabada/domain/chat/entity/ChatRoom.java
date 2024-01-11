@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.chat.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.OneToMany;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
@@ -40,6 +44,12 @@ public class ChatRoom extends BaseEntity {
 
     private LocalDateTime buyerLastCheckTime;
 
+    @OneToMany(
+        fetch = FetchType.LAZY, mappedBy = "chat_room",
+        cascade = CascadeType.ALL, orphanRemoval = true
+    )
+    private final List<ChatMessage> messages = new ArrayList<>();
+
     private ChatRoom(
         Product product,
         Member seller,
@@ -68,5 +78,9 @@ public class ChatRoom extends BaseEntity {
             sellerLastCheckTime,
             buyerLastCheckTime
         );
+    }
+
+    public void addChatMessage(ChatMessage message) {
+        messages.add(message);
     }
 }
