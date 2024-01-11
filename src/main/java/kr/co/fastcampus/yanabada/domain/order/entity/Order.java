@@ -1,5 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.order.entity;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.*;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -127,5 +129,9 @@ public class Order extends BaseEntity {
             paymentType,
             code
         );
+    }
+
+    public void cancel() {
+        status = CANCELED;
     }
 }
