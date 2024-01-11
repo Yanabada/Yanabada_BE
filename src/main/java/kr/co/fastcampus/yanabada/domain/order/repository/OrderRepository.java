@@ -27,4 +27,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         @Param("member") Member member,
         @Param("today") LocalDate today
     );
+
+    @Query(
+        """
+        SELECT o
+        FROM Order o
+        WHERE
+            o.status = 'RESERVED' AND
+            o.checkOutDate < :today
+        """
+    )
+    List<Order> getByCheckOutDateExpired(@Param("today") LocalDate today);
 }
