@@ -45,7 +45,7 @@ public class ChatRoom extends BaseEntity {
     private LocalDateTime buyerLastCheckTime;
 
     @OneToMany(
-        fetch = FetchType.LAZY, mappedBy = "chat_room",
+        fetch = FetchType.LAZY, mappedBy = "chatRoom",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
     private final List<ChatMessage> messages = new ArrayList<>();
