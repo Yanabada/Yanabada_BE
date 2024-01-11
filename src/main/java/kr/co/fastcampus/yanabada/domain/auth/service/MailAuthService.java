@@ -7,6 +7,7 @@ import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,15 @@ import org.springframework.stereotype.Service;
 public class MailAuthService {
 
     private final JavaMailSender mailSender;
+    @Value("${email.user}")
+    private String user;
+    private final int AUTH_CODE_LEN = 6;
 
     public EmailAuthCodeResponse sendEmail(EmailAuthCodeRequest emailAuthCodeRequest) {
         int authCode = makeRandomNumber();
-        String from = "tjdtn@ajou.ac.kr"; //todo: 환경 변수 분리
-        String title = "회원 가입 인증 이메일 입니다.";
+        String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
-        sendToSmtp(from, emailAuthCodeRequest.email(), title, content);
+        sendToSmtp(user, emailAuthCodeRequest.email(), title, content);
         return new EmailAuthCodeResponse(authCode);
     }
 
@@ -48,8 +51,8 @@ public class MailAuthService {
     private Integer makeRandomNumber() {
         Random r = new Random();
         StringBuilder randomNumber = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            randomNumber.append(r.nextInt(6));  //TODO: 상수처리
+        for (int i = 0; i < AUTH_CODE_LEN; i++) {
+            randomNumber.append(r.nextInt(AUTH_CODE_LEN));
         }
         return Integer.parseInt(randomNumber.toString());
     }
