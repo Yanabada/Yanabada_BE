@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.chat.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +41,9 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "buyer_id")
     private Member buyer;
 
+    @Column(name = "chat_room_code", nullable = false)
+    private String code;
+
     private LocalDateTime sellerLastCheckTime;
 
     private LocalDateTime buyerLastCheckTime;
@@ -54,12 +58,14 @@ public class ChatRoom extends BaseEntity {
         Product product,
         Member seller,
         Member buyer,
+        String code,
         LocalDateTime sellerLastCheckTime,
         LocalDateTime buyerLastCheckTime
     ) {
         this.product = product;
         this.seller = seller;
         this.buyer = buyer;
+        this.code = code;
         this.sellerLastCheckTime = sellerLastCheckTime;
         this.buyerLastCheckTime = buyerLastCheckTime;
     }
@@ -68,6 +74,7 @@ public class ChatRoom extends BaseEntity {
         Product product,
         Member seller,
         Member buyer,
+        String code,
         LocalDateTime sellerLastCheckTime,
         LocalDateTime buyerLastCheckTime
     ) {
@@ -75,6 +82,7 @@ public class ChatRoom extends BaseEntity {
             product,
             seller,
             buyer,
+            code,
             sellerLastCheckTime,
             buyerLastCheckTime
         );
