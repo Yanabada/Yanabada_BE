@@ -81,26 +81,4 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
-    @PostMapping("/email/duplication-check")
-    public ResponseBody<DuplCheckResponse> checkDuplEmail(
-        @RequestBody EmailDuplCheckRequest emailRequest
-    ) {
-        return ResponseBody.ok(memberService.isExistEmail(emailRequest));
-    }
-
-    @PostMapping("/nickname/duplication-check")
-    public ResponseBody<DuplCheckResponse> checkDuplNickName(
-        @RequestBody NickNameDuplCheckRequest nickNameRequest
-    ) {
-        return ResponseBody.ok(memberService.isExistNickName(nickNameRequest));
-    }
-
-    @PostMapping("/email/verification")
-    public void verifyEmaAil() {
-    }
-
-    @PostMapping("/phone-number/verification")
-    public void verifyPhoneNumber() {
-    }
-
 }
