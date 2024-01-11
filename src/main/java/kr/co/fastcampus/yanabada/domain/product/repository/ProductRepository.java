@@ -18,7 +18,7 @@ public interface ProductRepository
         JOIN FETCH p.order
         WHERE
             p.status = 'ON_SALE' AND
-            p.saleEndDate <= :today
+            p.saleEndDate < :today
         """
     )
     List<Product> getBySaleEndDateExpired(@Param("today") LocalDate today);
