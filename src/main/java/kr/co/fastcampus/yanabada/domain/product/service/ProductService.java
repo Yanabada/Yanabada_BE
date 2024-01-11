@@ -73,7 +73,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductIdResponse patchProduct(
+    public ProductIdResponse updateProduct(
         Long memberId,
         Long productId,
         ProductPatchRequest request

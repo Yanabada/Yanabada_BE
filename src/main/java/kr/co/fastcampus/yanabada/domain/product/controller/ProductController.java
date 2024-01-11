@@ -56,12 +56,12 @@ public class ProductController {
     }
 
     @PatchMapping("/{productId}")
-    public ResponseBody<ProductIdResponse> patchProduct(
+    public ResponseBody<ProductIdResponse> modifyProduct(
         @PathVariable("productId") Long productId,
         @RequestBody ProductPatchRequest request
     ) {
         return ResponseBody.ok(
-            productService.patchProduct(1L, productId, request)
+            productService.updateProduct(1L, productId, request)
         );
     }
 }
