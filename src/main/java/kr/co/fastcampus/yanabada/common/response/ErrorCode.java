@@ -19,6 +19,7 @@ public enum ErrorCode {
     CLAIM_PARSE_FAILED("토큰의 클레임을 읽을 수 없습니다."),
     TOKEN_EXPIRED("토큰이 만료되었습니다."),
     TOKEN_NOT_VALIDATED("잘못된 토큰입니다."),
+    TOKEN_NOT_EXIST_AT_CACHE("이미 로그아웃 처리된 토큰입니다.")
 
     ;
 

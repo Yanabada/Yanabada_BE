@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
@@ -37,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        /* 토큰 로그인, 회원가입, 리프레시 토큰 재발급, 로그아웃일 경우 해당 필터 실행 안됨 */
+        /* 토큰 로그인, 회원가입 경우 해당 필터 실행 안됨 */
         return request.getRequestURI().contains("/sign-up")
                 || request.getRequestURI().contains("/login");  //todo: 로그아웃 추가 고민
     }
@@ -66,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (!tokenService.isExistToken(email, provider)) {
             /* 로그아웃 된 토큰 사용 */
-            throw new TokenExpiredException();
+            throw new TokenNotExistAtCacheException();
         }
 
         try {

@@ -6,7 +6,6 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,17 +18,18 @@ public class TokenService {
         String provider,
         TokenIssueResponse tokenIssue
     ) {
-        String key = email + " " + provider;
-        redisUtils.setDataAsHash(key, tokenIssue, 300000L);
-        //todo : exprie시간 변경 예정
+        redisUtils.setDataAsHash(
+            getKey(email, provider),
+            tokenIssue,
+            REFRESH_TOKEN_EXPIRE_TIME
+        );
     }
 
     public TokenIssueResponse getTokenIssue(
         String email,
         String provider
     ) {
-        String key = email + " " + provider;
-        return redisUtils.getDataAsHash(key);
+        return redisUtils.getDataAsHash(getKey(email, provider));
     }
 
     public boolean isExistToken(String email, String provider) {
@@ -41,7 +41,7 @@ public class TokenService {
         String provider,
         String newAccessToken
     ) {
-        String key = email + " " + provider;
+        String key = getKey(email, provider);
         TokenIssueResponse tokenIssue = redisUtils.getDataAsHash(key);
         TokenIssueResponse newTokenIssue = TokenIssueResponse.builder()
             .accessToken(newAccessToken)
@@ -51,8 +51,11 @@ public class TokenService {
     }
 
     public void deleteToken(String email, String provider) {
-        String key = email + " " + provider;
-        redisUtils.deleteData(key);
+        redisUtils.deleteData(getKey(email, provider));
+    }
+
+    private String getKey(String email, String provider) {
+        return email + " " + provider;
     }
 
 }

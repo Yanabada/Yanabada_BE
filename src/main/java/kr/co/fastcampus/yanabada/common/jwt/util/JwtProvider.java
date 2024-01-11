@@ -1,5 +1,8 @@
 package kr.co.fastcampus.yanabada.common.jwt.util;
 
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.ACCESS_TOKEN_EXPIRE_TIME;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -44,11 +47,11 @@ public class JwtProvider {
     }
 
     public String generateAccessToken(String email, String role, String provider) {
-        return generateToken(email, role, provider, JwtConstant.ACCESS_TOKEN_EXPIRE_TIME);
+        return generateToken(email, role, provider, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
     public String generateRefreshToken(String email, String role, String provider) {
-        return generateToken(email, role, provider, JwtConstant.REFRESH_TOKEN_EXPIRE_TIME);
+        return generateToken(email, role, provider, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private String generateToken(
