@@ -11,6 +11,7 @@ public enum ErrorCode {
     ROOM_NOT_FOUND("존재하지 않는 객실입니다."),
     MEMBER_NOT_FOUND("존재하지 않는 회원입니다."),
     ORDER_NOT_FOUND("존재하지 않는 예약입니다."),
+    PRODUCT_NOT_FOUND("존재하지 않는 상품입니다."),
     ACCESS_FORBIDDEN("권한이 없습니다."),
     ORDER_NOT_SELLABLE("판매할 수 없는 예약입니다."),
     INVALID_SELLING_PRICE_RANGE("판매가는 구매가보다 클 수 없습니다."),
@@ -21,6 +22,8 @@ public enum ErrorCode {
     CLAIM_PARSE_FAILED("토큰의 클레임을 읽을 수 없습니다."),
     TOKEN_EXPIRED("토큰이 만료되었습니다."),
     TOKEN_NOT_VALIDATED("잘못된 토큰입니다."),
+    TOKEN_NOT_EXIST_AT_CACHE("이미 로그아웃 처리된 토큰입니다.")
+
     ;
 
     private final String message;
