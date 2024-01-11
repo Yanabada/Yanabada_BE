@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
+import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -94,4 +97,27 @@ public class GlobalExceptionHandler {
         return ResponseBody.fail(e.getParameterName()
             + " 파라미터가 빈 값이거나 잘못된 유형입니다.");
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseBody<Void> badCredentialsException(
+        BadCredentialsException e
+    ) {
+        log.error("[BadCredentialsException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseBody<TokenExpiredResponse> tokenExpiredException(
+        TokenExpiredException e
+    ) {
+        log.error("[TokenExpiredException] Message = {}", e.getMessage());
+        return ResponseBody.fail(
+            e.getMessage(),
+            new TokenExpiredResponse(true)
+        );
+    }
+
+
 }

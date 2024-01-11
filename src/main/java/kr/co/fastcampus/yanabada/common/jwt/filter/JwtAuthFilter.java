@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
+import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -32,13 +34,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final TokenService tokenService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        /* 토큰 로그인, 회원가입, 리프레시 토큰 재발급, 로그아웃일 경우 해당 필터 실행 안됨 */
-        return request.getRequestURI().contains("token/")
-                || request.getRequestURI().contains("/sign-up")
-                || request.getRequestURI().contains("/login");
+        /* 토큰 로그인, 회원가입 경우 해당 필터 실행 안됨 */
+        return request.getRequestURI().contains("/sign-up")
+                || request.getRequestURI().contains("/login");  //todo: 로그아웃 추가 고민
     }
 
     @Override
@@ -60,11 +62,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new TokenExpiredException();
         }
 
-        try {
-            String email = jwtProvider.getEmail(token);
-            ProviderType provider = ProviderType.valueOf(jwtProvider.getProvider(token));
+        String email = jwtProvider.getEmail(token);
+        String provider = jwtProvider.getProvider(token);
 
-            Member findMember = memberRepository.getMember(email, provider);
+        if (!tokenService.isExistToken(email, provider)) {
+            /* 로그아웃 된 토큰 사용 */
+            throw new TokenNotExistAtCacheException();
+        }
+
+        try {
+            Member findMember = memberRepository
+                .getMember(email, ProviderType.valueOf(provider));
 
             PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
 

@@ -1,18 +1,15 @@
 package kr.co.fastcampus.yanabada.domain.auth.controller;
 
 import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_PREFIX;
 
-import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
-import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
-import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
-import kr.co.fastcampus.yanabada.domain.member.entity.Member;
-import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
-import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -29,9 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final TokenService tokenService;
-    private final JwtProvider jwtProvider;
-    private final MemberService memberService;
 
     @PostMapping("/sign-up")
     public ResponseBody<Long> signUp(@RequestBody SignUpRequest signUpRequest) {
@@ -43,36 +37,28 @@ public class AuthController {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
-    @PostMapping("token/logout")
-    public String logout(@RequestHeader(AUTHORIZATION_HEADER) final String refreshToken) {
-
-        tokenService.deleteRefreshToken(refreshToken);
-        return "success";   //todo: return값 변경 예정
+    @PostMapping("/logout")
+    public ResponseBody<Void> logout(
+        @RequestHeader(AUTHORIZATION_HEADER) final String refreshToken
+    ) {
+        authService.logout(extractTokenFromRawToken(refreshToken));
+        return ResponseBody.ok();
     }
 
-    @PostMapping("/token/refresh")
-    public String refresh(@RequestHeader(AUTHORIZATION_HEADER) final String refreshToken) {
+    @PostMapping("/refresh-token")
+    public ResponseBody<TokenRefreshResponse> refreshToken(
+        @RequestHeader(AUTHORIZATION_HEADER) final String refreshToken
+    ) {
+        return ResponseBody.ok(
+            authService.generateNewAccessToken(extractTokenFromRawToken(refreshToken))
+        );
+    }
 
-        log.info("token = {}", refreshToken);
-
-        if (StringUtils.hasText(refreshToken) && jwtProvider.verifyToken(refreshToken)) {
-            String value = tokenService.getValue(refreshToken);
-            if (value == null) {
-                throw new TokenExpiredException();  //todo: ControllerAdvice에서 핸들러 처리
-            }
-            String[] splits = value.split(" ");
-            String email = splits[0];
-            ProviderType provider = ProviderType.valueOf(splits[1]);
-            Member findMember = memberService.findMember(email, provider);
-
-            return jwtProvider.generateAccessToken(
-                    findMember.getEmail(),
-                    findMember.getRoleType().name(),
-                    findMember.getProviderType().name()
-            );
+    private String extractTokenFromRawToken(String rawToken) {
+        if (StringUtils.hasText(rawToken) && rawToken.startsWith(BEARER_PREFIX)) {
+            return rawToken.substring(BEARER_PREFIX.length());
         }
-
-        return "Not Valid refreshToken"; //todo: 반환 값 변경 예정
-    }
+        return null;
+    }   //todo: JwtUtils와 코드 중복인데, 어떻게 처리할 지 고민
 
 }
