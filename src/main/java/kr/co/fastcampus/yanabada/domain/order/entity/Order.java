@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.order.entity;
 
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.USED;
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.CANCELED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -133,5 +134,9 @@ public class Order extends BaseEntity {
 
     public void use() {
         status = USED;
+    }
+
+    public void cancel() {
+        status = CANCELED;
     }
 }
