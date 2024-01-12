@@ -86,7 +86,6 @@ public class ProductService {
             throw new AccessForbiddenException();
         }
 
-        validateSellableOrder(order);
         validateUpdatableProduct(product);
 
         if (request.price() != null) {
@@ -127,7 +126,7 @@ public class ProductService {
         if (order.getStatus() != OrderStatus.RESERVED) {
             throw new OrderNotSellableException();
         }
-        if (LocalDate.now().isAfter(order.getCheckInDate())) {
+        if (productRepository.existOnSaleOrBookingByOrder(order)) {
             throw new OrderNotSellableException();
         }
     }
