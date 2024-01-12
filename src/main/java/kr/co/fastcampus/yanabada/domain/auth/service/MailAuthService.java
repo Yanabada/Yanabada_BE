@@ -19,10 +19,10 @@ public class MailAuthService {
     private final JavaMailSender mailSender;
     @Value("${email.user}")
     private String user;
-    private final int AUTH_CODE_LEN = 6;
+    private static final int AUTH_CODE_LENGTH = 6;
 
     public EmailAuthCodeResponse sendEmail(EmailAuthCodeRequest emailAuthCodeRequest) {
-        int authCode = makeRandomNumber();
+        int authCode = makeRandomCode();
         String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
         sendToSmtp(user, emailAuthCodeRequest.email(), title, content);
@@ -48,11 +48,11 @@ public class MailAuthService {
         }
     }
 
-    private Integer makeRandomNumber() {
+    private Integer makeRandomCode() {
         Random r = new Random();
         StringBuilder randomNumber = new StringBuilder();
-        for (int i = 0; i < AUTH_CODE_LEN; i++) {
-            randomNumber.append(r.nextInt(AUTH_CODE_LEN));
+        for (int i = 0; i < AUTH_CODE_LENGTH; i++) {
+            randomNumber.append(r.nextInt(AUTH_CODE_LENGTH));
         }
         return Integer.parseInt(randomNumber.toString());
     }

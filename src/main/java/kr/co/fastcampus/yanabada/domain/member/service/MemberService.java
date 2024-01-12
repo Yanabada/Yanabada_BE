@@ -3,11 +3,11 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
 import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlChangeRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameChangeRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordChangeRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberChangeRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -28,7 +28,7 @@ public class MemberService {
 
     @Transactional
     public void modifyPassword(
-        PasswordChangeRequest passwordRequest,
+        PasswordModifyRequest passwordRequest,
         String email,
         ProviderType providerType
     ) {
@@ -38,7 +38,7 @@ public class MemberService {
 
     @Transactional
     public void modifyNickName(
-        NickNameChangeRequest nickNameRequest,
+        NickNameModifyRequest nickNameRequest,
         String email,
         ProviderType providerType
     ) {
@@ -48,7 +48,7 @@ public class MemberService {
 
     @Transactional
     public void modifyPhoneNumber(
-        PhoneNumberChangeRequest phoneNumberRequest,
+        PhoneNumberModifyRequest phoneNumberRequest,
         String email,
         ProviderType providerType
     ) {
@@ -58,7 +58,7 @@ public class MemberService {
 
     @Transactional
     public void modifyImageUrl(
-        ImgUrlChangeRequest imgUrlRequest,
+        ImgUrlModifyRequest imgUrlRequest,
         String email,
         ProviderType providerType
     ) {

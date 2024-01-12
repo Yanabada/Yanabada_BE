@@ -5,6 +5,7 @@ import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_P
 
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
+import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
@@ -47,7 +48,7 @@ public class AuthController {
     public ResponseBody<Void> logout(
         @RequestHeader(AUTHORIZATION_HEADER) final String refreshToken
     ) {
-        authService.logout(extractTokenFromRawToken(refreshToken));
+        authService.logout(JwtUtils.extractTokenFromRawToken(refreshToken));
         return ResponseBody.ok();
     }
 
@@ -56,16 +57,9 @@ public class AuthController {
         @RequestHeader(AUTHORIZATION_HEADER) final String refreshToken
     ) {
         return ResponseBody.ok(
-            authService.generateNewAccessToken(extractTokenFromRawToken(refreshToken))
+            authService.generateNewAccessToken(JwtUtils.extractTokenFromRawToken(refreshToken))
         );
     }
-
-    private String extractTokenFromRawToken(String rawToken) {
-        if (StringUtils.hasText(rawToken) && rawToken.startsWith(BEARER_PREFIX)) {
-            return rawToken.substring(BEARER_PREFIX.length());
-        }
-        return null;
-    }   //todo: JwtUtils와 코드 중복인데, 어떻게 처리할 지 고민
 
     @PostMapping("/duplication/email")
     public ResponseBody<DuplCheckResponse> checkDuplEmail(

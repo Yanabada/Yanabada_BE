@@ -2,10 +2,10 @@ package kr.co.fastcampus.yanabada.domain.member.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlChangeRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameChangeRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordChangeRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberChangeRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class MemberController {
     @PutMapping("/password")
     public ResponseBody<Void> modifyPassword(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody PasswordChangeRequest passwordRequest
+        @RequestBody PasswordModifyRequest passwordRequest
     ) {
         memberService.modifyPassword(
             passwordRequest, principalDetails.email(), principalDetails.provider()
@@ -46,7 +46,7 @@ public class MemberController {
     @PutMapping("/nickname")
     public ResponseBody<Void> modifyNickName(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody NickNameChangeRequest nickNameRequest
+        @RequestBody NickNameModifyRequest nickNameRequest
     ) {
         memberService.modifyNickName(
             nickNameRequest, principalDetails.email(), principalDetails.provider()
@@ -57,7 +57,7 @@ public class MemberController {
     @PutMapping("/phone-number")
     public ResponseBody<Void> modifyPhoneNumber(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody PhoneNumberChangeRequest phoneNumberRequest
+        @RequestBody PhoneNumberModifyRequest phoneNumberRequest
     ) {
         memberService.modifyPhoneNumber(
             phoneNumberRequest, principalDetails.email(), principalDetails.provider()
@@ -68,9 +68,8 @@ public class MemberController {
     @PutMapping("/image")
     public ResponseBody<Void> modifyImage(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ImgUrlChangeRequest imgUrlRequest
+        @RequestBody ImgUrlModifyRequest imgUrlRequest
     ) {
-        log.info("imgRequest={}", imgUrlRequest.imageUrl());
         memberService.modifyImageUrl(
             imgUrlRequest, principalDetails.email(), principalDetails.provider()
         );
