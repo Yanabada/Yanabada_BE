@@ -12,6 +12,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
+
 import java.util.Arrays;
 import java.util.List;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -43,6 +45,16 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
             .groupBy(order)
             .having(count.eq(ZERO_COUNT))
             .orderBy(order.id.desc())
+            .fetch();
+    }
+
+    @Override
+    public List<Order> getByCheckInDateExpired() {
+        return queryFactory.selectFrom(order)
+            .where(
+                equalStatus(OrderStatus.RESERVED),
+                lessCheckInDate(LocalDate.now())
+            )
             .fetch();
     }
 
@@ -79,5 +91,13 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         }
 
         return order.status.eq(status);
+    }
+
+    private BooleanExpression lessCheckInDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
+        return order.checkInDate.lt(date);
     }
 }

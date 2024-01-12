@@ -7,4 +7,6 @@ import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 public interface OrderRepositoryCustom {
 
     List<Order> getSellableByMember(Member member);
+
+    List<Order> getByCheckInDateExpired();
 }

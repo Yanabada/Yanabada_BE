@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.auth.dto;
+package kr.co.fastcampus.yanabada.domain.auth.dto.request;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 

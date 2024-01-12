@@ -1,5 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.product.entity;
 
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -107,5 +109,9 @@ public class Product {
 
     public void updateIsAutoCancel(Boolean isAutoCancel) {
         this.isAutoCancel = isAutoCancel;
+    }
+
+    public void cancel() {
+        status = CANCELED;
     }
 }

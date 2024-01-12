@@ -13,6 +13,7 @@ import static kr.co.fastcampus.yanabada.domain.order.entity.QOrder.order;
 import static kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchOrderCondition.RECENT;
 import static kr.co.fastcampus.yanabada.domain.product.entity.QProduct.product;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
 
@@ -77,6 +78,15 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .isEmpty();
     }
 
+    public List<Product> getBySaleEndDateExpired() {
+        return queryFactory.selectFrom(product)
+            .where(
+                containStatuses(ON_SALE, BOOKING),
+                lessSaleEndDate(LocalDate.now())
+            )
+            .fetch();
+    }
+
     private JPAQuery<Product> createQuery(ProductSearchRequest request) {
         NumberTemplate<Integer> salesPercentage = Expressions.numberTemplate(
             Integer.class,
@@ -114,8 +124,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     }
 
     private BooleanExpression notEqualStatusCanceled() {
-        return product.status.ne(ON_SALE).or(
-            product.saleEndDate.goe(LocalDate.now()));
+        return product.status.ne(CANCELED);
     }
 
     private BooleanExpression containKeyword(String keyword) {
@@ -284,5 +293,13 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             );
 
         return booleanBuilder;
+    }
+
+    private BooleanExpression lessSaleEndDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
+        return product.saleEndDate.lt(date);
     }
 }

@@ -14,12 +14,15 @@ import kr.co.fastcampus.yanabada.domain.order.dto.response.OrderSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
+    public static final String CRON_SCHEDULING = "0 0 0 * * *";
 
     private final OrderRepository orderRepository;
 
@@ -34,6 +37,7 @@ public class OrderService {
         Order order = orderRepository.save(request.toEntity(room, member));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderSummaryResponse> getSellableOrders(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
@@ -53,6 +57,12 @@ public class OrderService {
         }
 
         return OrderInfoResponse.from(order);
+    }
 
+    @Transactional
+    @Scheduled(cron = CRON_SCHEDULING)
+    public void updateOrdersUsed() {
+        orderRepository.getByCheckInDateExpired()
+            .forEach(Order::use);
     }
 }
