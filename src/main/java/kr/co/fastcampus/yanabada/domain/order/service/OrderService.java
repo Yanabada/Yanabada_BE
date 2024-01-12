@@ -35,6 +35,7 @@ public class OrderService {
         Order order = orderRepository.save(request.toEntity(room, member));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderSummaryResponse> getSellableOrders(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
