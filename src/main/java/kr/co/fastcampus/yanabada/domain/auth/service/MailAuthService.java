@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailAuthService {
 
+    private static final int AUTH_CODE_LENGTH = 6;
     private final JavaMailSender mailSender;
     @Value("${email.user}")
     private String user;
-    private static final int AUTH_CODE_LENGTH = 6;
 
     public EmailAuthCodeResponse sendEmail(EmailAuthCodeRequest emailAuthCodeRequest) {
         int authCode = makeRandomCode();
