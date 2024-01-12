@@ -1,7 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
-import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
-import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 
 import io.micrometer.common.util.StringUtils;
 import java.time.LocalDate;
@@ -147,7 +146,7 @@ public class ProductService {
     }
 
     private void validateUpdatableProduct(Product product) {
-        if (product.getStatus() == CANCELED || product.getStatus() == SOLD_OUT) {
+        if (product.getStatus() != ON_SALE) {
             throw new InvalidStatusProductUpdateException();
         }
     }
