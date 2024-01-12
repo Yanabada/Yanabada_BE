@@ -68,7 +68,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     @Override
     public boolean existOnSaleOrBookingByOrder(Order order) {
-         return !queryFactory.selectFrom(product)
+        return !queryFactory.selectFrom(product)
             .where(
                 equalOrder(order),
                 containStatuses(ON_SALE, BOOKING)
