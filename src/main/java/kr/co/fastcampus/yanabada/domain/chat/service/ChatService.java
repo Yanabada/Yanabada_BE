@@ -1,8 +1,11 @@
 package kr.co.fastcampus.yanabada.domain.chat.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
+import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
-import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomIdResponse;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
 import kr.co.fastcampus.yanabada.domain.chat.repository.ChatMessageRepository;
 import kr.co.fastcampus.yanabada.domain.chat.repository.ChatRoomRepository;
@@ -27,14 +30,30 @@ public class ChatService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public ChatRoomIdResponse saveChatRoom(ChatRoomSaveRequest request) {
+    public ChatRoomInfoResponse saveChatRoom(ChatRoomSaveRequest request) {
         Product product = productRepository.getProduct(request.productId());
-        Member seller = memberRepository.getMember(product.getOrder().getMember().getId());
-        Member buyer = memberRepository.getMember(request.buyerId());
+        checkNegotiationPossibility(product);
+        Long sellerId = product.getOrder().getMember().getId();
+        Long buyerId = request.buyerId();
+        checkIfOwnProduct(sellerId, buyerId);
+        Member seller = memberRepository.getMember(sellerId);
+        Member buyer = memberRepository.getMember(buyerId);
         LocalDateTime now = LocalDateTime.now();
-        ChatRoom chatRoom =chatRoomRepository.save(
+        ChatRoom chatRoom = chatRoomRepository.save(
             request.toEntity(product, seller, buyer, now, now)
         );
-        return ChatRoomIdResponse.from(chatRoom);
+        return ChatRoomInfoResponse.from(chatRoom);
+    }
+
+    private void checkNegotiationPossibility(Product product) {
+        if (!product.getCanNegotiate()) {
+            throw new NegotiationNotPossibleException();
+        }
+    }
+
+    private void checkIfOwnProduct(Long sellerId, Long buyerId) {
+        if (Objects.equals(sellerId, buyerId)) {
+            throw new CannotNegotiateOwnProductException();
+        }
     }
 }
