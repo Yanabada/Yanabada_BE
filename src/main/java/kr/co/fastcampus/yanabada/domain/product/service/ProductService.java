@@ -73,7 +73,7 @@ public class ProductService {
     @Transactional
     @Scheduled(cron = CRON_SCHEDULING)
     public void cancelProductsSaleEndDateExpired() {
-        List<Product> products = productRepository.getBySaleEndDateExpired(LocalDate.now());
+        List<Product> products = productRepository.getBySaleEndDateExpired();
         products.forEach(
             product -> {
                 product.cancel();
