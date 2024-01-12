@@ -5,6 +5,7 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 import java.util.Collection;
 import java.util.List;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,13 +13,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 public record PrincipalDetails(
         String email,
         String password,
-        String memberName
+        String memberName,
+        ProviderType provider
 ) implements UserDetails {
 
     public static PrincipalDetails of(Member member) {
         return new PrincipalDetails(member.getEmail(),
                 member.getPassword(),
-                member.getMemberName()
+                member.getMemberName(),
+                member.getProviderType()
         );
     }
 
