@@ -1,6 +1,5 @@
 package kr.co.fastcampus.yanabada.domain.order.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -42,7 +41,7 @@ public class OrderService {
     public List<OrderSummaryResponse> getSellableOrders(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
-        return orderRepository.getSellableByMember(member, LocalDate.now())
+        return orderRepository.getSellableByMember(member)
             .stream()
             .map(OrderSummaryResponse::from)
             .collect(Collectors.toList());

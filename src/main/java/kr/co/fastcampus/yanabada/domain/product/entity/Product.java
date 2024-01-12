@@ -91,6 +91,26 @@ public class Product {
         );
     }
 
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateCanNegotiate(Boolean canNegotiate) {
+        this.canNegotiate = canNegotiate;
+    }
+
+    public void updateSaleEndDate(LocalDate saleEndDate) {
+        this.saleEndDate = saleEndDate;
+    }
+
+    public void updateIsAutoCancel(Boolean isAutoCancel) {
+        this.isAutoCancel = isAutoCancel;
+    }
+
     public void cancel() {
         status = CANCELED;
     }

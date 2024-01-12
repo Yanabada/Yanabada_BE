@@ -1,7 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.auth.controller;
 
 import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
-import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.BEARER_PREFIX;
 
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
@@ -19,7 +18,6 @@ import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
