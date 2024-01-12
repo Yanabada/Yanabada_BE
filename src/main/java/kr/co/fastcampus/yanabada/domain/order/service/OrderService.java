@@ -62,7 +62,7 @@ public class OrderService {
     @Transactional
     @Scheduled(cron = CRON_SCHEDULING)
     public void updateOrdersUsed() {
-        orderRepository.getByCheckOutDateExpired(LocalDate.now())
+        orderRepository.getByCheckInDateExpired()
             .forEach(Order::use);
     }
 }

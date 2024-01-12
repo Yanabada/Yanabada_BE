@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository
+    extends JpaRepository<Order, Long>, OrderRepositoryCustom {
 
     @Query(
         """
@@ -27,15 +28,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         @Param("member") Member member,
         @Param("today") LocalDate today
     );
-
-    @Query(
-        """
-        SELECT o
-        FROM Order o
-        WHERE
-            o.status = 'RESERVED' AND
-            o.checkOutDate < :today
-        """
-    )
-    List<Order> getByCheckOutDateExpired(@Param("today") LocalDate today);
 }
