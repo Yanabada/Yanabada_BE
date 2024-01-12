@@ -13,7 +13,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
-
 import java.util.Arrays;
 import java.util.List;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
