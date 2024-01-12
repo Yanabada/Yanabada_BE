@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.accommodation.dto.request;
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
 
 
 public record RoomSaveRequest(
@@ -15,7 +16,8 @@ public record RoomSaveRequest(
     Integer minHeadCount,
     Integer maxHeadCount,
     Double rating,
-    String image
+    String image,
+    RoomCancelPolicy cancelPolicy
 ) {
 
     public Room toEntity(Accommodation accommodation) {
@@ -29,7 +31,8 @@ public record RoomSaveRequest(
             minHeadCount,
             maxHeadCount,
             rating,
-            image
+            image,
+            cancelPolicy
         );
     }
 }
