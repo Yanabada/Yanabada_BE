@@ -81,7 +81,7 @@ public class ChatService {
     @Transactional(readOnly = true)
     public List<ChatRoomSummaryResponse> getChatRooms(Long memberId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByMemberId(memberId);
-        List<ChatRoomSummaryResponse> ChatRoomSummaryResponses = chatRooms.stream()
+        List<ChatRoomSummaryResponse> chatRoomSummaryResponses = chatRooms.stream()
             .filter(chatRoom -> !chatRoom.getMessages().isEmpty())
             .map(chatRoom -> {
                 List<ChatMessage> messages = chatRoom.getMessages();
@@ -101,7 +101,7 @@ public class ChatService {
                 return createChatRoomSummaryResponse(chatRoom, partner, messages, unreadCount);
             })
             .toList();
-        return sortChatRoomSummaryResponse(ChatRoomSummaryResponses);
+        return sortChatRoomSummaryResponse(chatRoomSummaryResponses);
     }
 
     private ChatRoomSummaryResponse createChatRoomSummaryResponse(
