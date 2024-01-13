@@ -157,7 +157,7 @@ public class ChatService {
             .toList();
     }
 
-    private void checkChatRoomMember(ChatRoom chatRoom ,Member member) {
+    private void checkChatRoomMember(ChatRoom chatRoom, Member member) {
         if (!member.equals(chatRoom.getSeller()) && !member.equals(chatRoom.getBuyer())) {
             throw new IncorrectChatRoomMember();
         }

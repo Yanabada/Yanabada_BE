@@ -13,7 +13,7 @@ public record ChatRoomSummaryResponse(
     String partnerImage,
     String partnerNickname,
     String lastChatMessage,
-    @JsonFormat( pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     LocalDateTime lastSentMessageTime,
     Long productId,
     String productName,

@@ -40,7 +40,7 @@ public class ChatController {
     @GetMapping("/{chatRoomCode}")
     public ResponseBody<List<ChatMessageInfoResponse>> getChatRoom(
     //Principal 을 통해 로그인한 멤버 id를 가져올 예정
-    @PathVariable("chatRoomCode") String chatRoomCode
+        @PathVariable("chatRoomCode") String chatRoomCode
     ) {
         Long memberId = 1L;
         return ResponseBody.ok(chatService.getChatRoomMessages(memberId, chatRoomCode));
