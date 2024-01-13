@@ -18,7 +18,9 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public ResponseBody<ChatRoomInfoResponse> addChatRoom(@RequestBody ChatRoomSaveRequest request){
-        return ResponseBody.ok(chatService.saveChatRoom(request));
+    public ResponseBody<ChatRoomInfoResponse> getOrAddChatRoom(
+        @RequestBody ChatRoomSaveRequest request
+    ) {
+        return ResponseBody.ok(chatService.getOrSaveChatRoom(request));
     }
 }
