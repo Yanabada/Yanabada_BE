@@ -7,9 +7,11 @@ import java.util.Optional;
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
+import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomModifyResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
@@ -160,6 +162,24 @@ public class ChatService {
     private void checkChatRoomMember(ChatRoom chatRoom, Member member) {
         if (!member.equals(chatRoom.getSeller()) && !member.equals(chatRoom.getBuyer())) {
             throw new IncorrectChatRoomMember();
+        }
+    }
+
+    @Transactional
+    public ChatRoomModifyResponse updateChatRoom(Long memberId, ChatRoomModifyRequest request) {
+        ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
+        Member member = memberRepository.getMember(memberId);
+        updateLastCheckTime(chatRoom, member);
+        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+    }
+
+    private void updateLastCheckTime(ChatRoom chatRoom, Member member) {
+        checkChatRoomMember(chatRoom, member);
+        LocalDateTime lastCheckTime = LocalDateTime.now();
+        if (member.equals(chatRoom.getSeller())) {
+            chatRoom.updateSellerLastCheckTime(lastCheckTime);
+        } else {
+            chatRoom.updateBuyerLastCheckTime(lastCheckTime);
         }
     }
 }
