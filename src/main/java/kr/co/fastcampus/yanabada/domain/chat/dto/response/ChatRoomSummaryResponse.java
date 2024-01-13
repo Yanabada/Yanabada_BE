@@ -1,9 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.chat.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import lombok.Builder;
 
 @Builder
@@ -12,8 +12,8 @@ public record ChatRoomSummaryResponse(
     String partnerImage,
     String partnerNickname,
     String lastChatMessage,
-    @JsonFormat(pattern = "HH:mm")
-    LocalTime lastSentMessageTime,
+    LocalDateTime lastSentMessageTime,
+    Long productId,
     String productName,
     Integer unreadMessageCount
 ) {
@@ -22,7 +22,7 @@ public record ChatRoomSummaryResponse(
         String chatRoomCode,
         Member partner,
         ChatMessage message,
-        String productName,
+        Product product,
         int unreadMessageCount
     ) {
         return ChatRoomSummaryResponse.builder()
@@ -30,8 +30,9 @@ public record ChatRoomSummaryResponse(
             .partnerImage(partner.getImageUrl())
             .partnerNickname(partner.getNickName())
             .lastChatMessage(message.getContent())
-            .lastSentMessageTime(LocalTime.from(message.getSendDateTime()))
-            .productName(productName)
+            .lastSentMessageTime(message.getSendDateTime())
+            .productId(product.getId())
+            .productName(product.getOrder().getRoom().getAccommodation().getName())
             .unreadMessageCount(unreadMessageCount)
             .build();
     }
