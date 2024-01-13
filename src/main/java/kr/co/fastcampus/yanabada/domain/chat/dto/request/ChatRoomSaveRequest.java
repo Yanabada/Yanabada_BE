@@ -2,9 +2,7 @@ package kr.co.fastcampus.yanabada.domain.chat.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-
 import java.time.LocalDateTime;
-
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
