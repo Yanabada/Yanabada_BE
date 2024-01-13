@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.chat.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -12,6 +13,7 @@ public record ChatRoomSummaryResponse(
     String partnerImage,
     String partnerNickname,
     String lastChatMessage,
+    @JsonFormat( pattern = "yyyy-MM-dd HH:mm")
     LocalDateTime lastSentMessageTime,
     Long productId,
     String productName,
