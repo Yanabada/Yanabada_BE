@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +49,15 @@ public class ChatRoom extends BaseEntity {
 
     private LocalDateTime buyerLastCheckTime;
 
+    private Boolean hasSellerLeft;
+
+    private Boolean hasBuyerLeft;
+
     @OneToMany(
         fetch = FetchType.LAZY, mappedBy = "chatRoom",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
+    @OrderBy("createdDate asc")
     private final List<ChatMessage> messages = new ArrayList<>();
 
     private ChatRoom(
@@ -60,7 +66,9 @@ public class ChatRoom extends BaseEntity {
         Member buyer,
         String code,
         LocalDateTime sellerLastCheckTime,
-        LocalDateTime buyerLastCheckTime
+        LocalDateTime buyerLastCheckTime,
+        Boolean hasSellerLeft,
+        Boolean hasBuyerLeft
     ) {
         this.product = product;
         this.seller = seller;
@@ -68,6 +76,8 @@ public class ChatRoom extends BaseEntity {
         this.code = code;
         this.sellerLastCheckTime = sellerLastCheckTime;
         this.buyerLastCheckTime = buyerLastCheckTime;
+        this.hasSellerLeft = hasSellerLeft;
+        this.hasBuyerLeft = hasBuyerLeft;
     }
 
     public static ChatRoom create(
@@ -84,7 +94,9 @@ public class ChatRoom extends BaseEntity {
             buyer,
             code,
             sellerLastCheckTime,
-            buyerLastCheckTime
+            buyerLastCheckTime,
+            false,
+            false
         );
     }
 
