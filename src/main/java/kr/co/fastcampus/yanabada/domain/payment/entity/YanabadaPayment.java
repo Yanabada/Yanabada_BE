@@ -37,8 +37,26 @@ public class YanabadaPayment extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String bankImage;
 
+    @Column(nullable = false)
+    private Long balance;
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
     public void updateAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
+    public void updateBalance(Long amount) {
+        this.balance = this.balance + amount;
+    }
 }

@@ -5,7 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +30,29 @@ public class YanabadaPaymentHistory {
 
     @Column(nullable = false)
     private Long chargePrice;
+
+    @Column(nullable = false)
+    private LocalDateTime transactionTime; // 거래 시간 필드
+
+    @ManyToOne
+    @JoinColumn(name = "yanabada_payment_id", referencedColumnName = "id")
+    private YanabadaPayment yanabadaPayment;
+
+    public YanabadaPayment getYanabadaPayment() {
+        return this.yanabadaPayment;
+    }
+
+    public LocalDateTime getTransactionTime() {
+        return transactionTime;
+    }
+
+    public void setYanabadaPaymentId(Long yanabadaPaymentId) {
+        this.yanabadaPaymentId = yanabadaPaymentId;
+    }
+
+    public void setChargePrice(Long chargePrice) {
+        this.chargePrice = chargePrice;
+    }
 
     public void updateChargePrice(Long chargePrice) {
         this.chargePrice = chargePrice;

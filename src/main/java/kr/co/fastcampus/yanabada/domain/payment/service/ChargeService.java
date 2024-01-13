@@ -21,7 +21,7 @@ public class ChargeService {
 
         YanabadaPayment payment = yanabadaPaymentRepository.findByMemberId(memberId)
             .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다."));
-        payment.setBalance(payment.getBalance() + amount);
+        payment.updateBalance(amount);  // 잔액 업데이트
         yanabadaPaymentRepository.save(payment);
 
         // 충전 내역 기록

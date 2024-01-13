@@ -1,13 +1,12 @@
 package kr.co.fastcampus.yanabada.domain.payment.dto.response;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionHistoryResponse(
     String name,
     String image,
     String accountNum,
-    BigDecimal price,
+    Long price,
     LocalDateTime time
 ) {
 
