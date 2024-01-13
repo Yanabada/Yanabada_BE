@@ -13,6 +13,7 @@ import static kr.co.fastcampus.yanabada.domain.order.entity.QOrder.order;
 import static kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchOrderCondition.RECENT;
 import static kr.co.fastcampus.yanabada.domain.product.entity.QProduct.product;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
 
@@ -27,12 +28,15 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchCategory;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchOption;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchOrderCondition;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
+import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,7 +50,6 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     private final JPAQueryFactory queryFactory;
-
 
     @Override
     public Page<Product> getBySearchRequest(ProductSearchRequest request) {
@@ -62,6 +65,26 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         int totalCount = getTotalCount(query);
 
         return new PageImpl<>(products, pageable, totalCount);
+    }
+
+    @Override
+    public boolean existOnSaleOrBookingByOrder(Order order) {
+        return !queryFactory.selectFrom(product)
+            .where(
+                equalOrder(order),
+                containStatuses(ON_SALE, BOOKING)
+            )
+            .fetch()
+            .isEmpty();
+    }
+
+    public List<Product> getBySaleEndDateExpired() {
+        return queryFactory.selectFrom(product)
+            .where(
+                containStatuses(ON_SALE, BOOKING),
+                lessSaleEndDate(LocalDate.now())
+            )
+            .fetch();
     }
 
     private JPAQuery<Product> createQuery(ProductSearchRequest request) {
@@ -101,8 +124,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     }
 
     private BooleanExpression notEqualStatusCanceled() {
-        return product.status.ne(ON_SALE).or(
-            product.saleEndDate.goe(LocalDate.now()));
+        return product.status.ne(CANCELED);
     }
 
     private BooleanExpression containKeyword(String keyword) {
@@ -226,6 +248,14 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return orderSpecifiers;
     }
 
+    private BooleanExpression equalOrder(Order order) {
+        if (order == null) {
+            return null;
+        }
+
+        return product.order.eq(order);
+    }
+
     private int getOffset(Integer page) {
         if (page == null || page <= 0) {
             return DEFAULT_PAGE_OFFSET;
@@ -244,5 +274,32 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     private int getTotalCount(JPAQuery<?> query) {
         return query.fetch().size();
+    }
+
+    private BooleanBuilder containStatuses(ProductStatus... statuses) {
+        if (statuses == null) {
+            return null;
+        }
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        Arrays.stream(statuses)
+            .forEach(
+                status -> {
+                    if (status != null) {
+                        booleanBuilder.or(product.status.eq(status));
+                    }
+                }
+            );
+
+        return booleanBuilder;
+    }
+
+    private BooleanExpression lessSaleEndDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
+        return product.saleEndDate.lt(date);
     }
 }

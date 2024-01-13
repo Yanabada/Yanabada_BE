@@ -24,3 +24,9 @@ spring:
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
 
+email:
+  host: smtp.gmail.com
+  port: 587
+  user: tjdtn0219@ajou.ac.kr
+  password: wvuh cnxb oizl gnjv
+

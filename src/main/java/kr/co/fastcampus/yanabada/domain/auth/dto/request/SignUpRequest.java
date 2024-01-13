@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.auth.dto;
+package kr.co.fastcampus.yanabada.domain.auth.dto.request;
 
 public record SignUpRequest(
     String email,

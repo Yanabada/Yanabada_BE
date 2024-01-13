@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
+import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -119,5 +120,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(EmailSendFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> emailSendFailedException(
+        EmailSendFailedException e
+    ) {
+        log.error("[EmailSendFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
 
 }
