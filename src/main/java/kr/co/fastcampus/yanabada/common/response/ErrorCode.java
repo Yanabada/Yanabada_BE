@@ -25,6 +25,9 @@ public enum ErrorCode {
     TOKEN_NOT_EXIST_AT_CACHE("이미 로그아웃 처리된 토큰입니다."),
     INVALID_STATUS_PRODUCT_UPDATE("판매되거나 취소된 상품은 수정할 수 없습니다."),
 
+    NEGOTIATION_NOT_POSSIBLE("네고 불가능한 상품입니다."),
+    CANNOT_NEGOTIATE_OWN_PRODUCT("자신이 등록한 상품을 네고할 순 없습니다."),
+
     EMAIL_SEND_FAILED("이메일 전송에 실패하였습니다."),
     ;
 

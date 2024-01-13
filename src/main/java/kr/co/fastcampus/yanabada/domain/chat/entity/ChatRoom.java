@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.chat.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,34 +42,49 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "buyer_id")
     private Member buyer;
 
+    @Column(name = "chat_room_code", nullable = false)
+    private String code;
+
     private LocalDateTime sellerLastCheckTime;
 
     private LocalDateTime buyerLastCheckTime;
+
+    private Boolean hasSellerLeft;
+
+    private Boolean hasBuyerLeft;
 
     @OneToMany(
         fetch = FetchType.LAZY, mappedBy = "chatRoom",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
+    @OrderBy("createdDate asc")
     private final List<ChatMessage> messages = new ArrayList<>();
 
     private ChatRoom(
         Product product,
         Member seller,
         Member buyer,
+        String code,
         LocalDateTime sellerLastCheckTime,
-        LocalDateTime buyerLastCheckTime
+        LocalDateTime buyerLastCheckTime,
+        Boolean hasSellerLeft,
+        Boolean hasBuyerLeft
     ) {
         this.product = product;
         this.seller = seller;
         this.buyer = buyer;
+        this.code = code;
         this.sellerLastCheckTime = sellerLastCheckTime;
         this.buyerLastCheckTime = buyerLastCheckTime;
+        this.hasSellerLeft = hasSellerLeft;
+        this.hasBuyerLeft = hasBuyerLeft;
     }
 
     public static ChatRoom create(
         Product product,
         Member seller,
         Member buyer,
+        String code,
         LocalDateTime sellerLastCheckTime,
         LocalDateTime buyerLastCheckTime
     ) {
@@ -75,8 +92,11 @@ public class ChatRoom extends BaseEntity {
             product,
             seller,
             buyer,
+            code,
             sellerLastCheckTime,
-            buyerLastCheckTime
+            buyerLastCheckTime,
+            false,
+            false
         );
     }
 
