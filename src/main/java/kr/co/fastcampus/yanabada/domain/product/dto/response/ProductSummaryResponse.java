@@ -15,6 +15,7 @@ public record ProductSummaryResponse(
     String image,
     String accommodationName,
     String roomName,
+    String address,
     LocalDate checkIn,
     LocalDate checkOut,
     Integer min,
@@ -41,6 +42,7 @@ public record ProductSummaryResponse(
             .image(accommodation.getImage())
             .accommodationName(accommodation.getName())
             .roomName(room.getName())
+            .address(accommodation.getAddress())
             .checkIn(order.getCheckInDate())
             .checkOut(order.getCheckOutDate())
             .min(room.getMinHeadCount())

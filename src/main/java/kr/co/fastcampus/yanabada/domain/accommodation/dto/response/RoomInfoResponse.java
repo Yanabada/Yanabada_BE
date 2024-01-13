@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.accommodation.dto.response;
 
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
 import lombok.Builder;
 
 @Builder
@@ -16,6 +17,7 @@ public record RoomInfoResponse(
     Integer maxHeadCount,
     Double rating,
     String image,
+    RoomCancelPolicy cancelPolicy,
     RoomOptionInfoResponse option
 ) {
 
@@ -31,6 +33,7 @@ public record RoomInfoResponse(
             .maxHeadCount(room.getMaxHeadCount())
             .rating(room.getRating())
             .image(room.getImage())
+            .cancelPolicy(room.getCancelPolicy())
             .option(RoomOptionInfoResponse.from(room.getRoomOption()))
             .build();
     }
