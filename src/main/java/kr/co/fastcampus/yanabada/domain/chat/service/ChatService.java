@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
+import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
@@ -142,5 +144,23 @@ public class ChatService {
                 return lastMessageTime2.compareTo(lastMessageTime1);
             })
             .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatMessageInfoResponse> getChatRoomMessages(Long memberId, String chatRoomCode) {
+        ChatRoom chatRoom = chatRoomRepository.getChatroom(chatRoomCode);
+        Member member = memberRepository.getMember(memberId);
+        checkChatRoomMember(chatRoom, member);
+        return chatRoom.getMessages().stream()
+            .map(message -> ChatMessageInfoResponse.create(
+                message.getSender(), message.getContent(), message.getSendDateTime()
+            ))
+            .toList();
+    }
+
+    private void checkChatRoomMember(ChatRoom chatRoom ,Member member) {
+        if (!member.equals(chatRoom.getSeller()) && !member.equals(chatRoom.getBuyer())) {
+            throw new IncorrectChatRoomMember();
+        }
     }
 }
