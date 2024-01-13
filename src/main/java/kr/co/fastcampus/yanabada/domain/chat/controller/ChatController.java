@@ -51,7 +51,7 @@ public class ChatController {
     @PutMapping
     public ResponseBody<ChatRoomModifyResponse> modifyChatRoom(
         @RequestBody ChatRoomModifyRequest request
-    ){
+    ) {
         Long memberId = 1L;
         return ResponseBody.ok(chatService.updateChatRoom(memberId, request));
     }
