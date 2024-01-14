@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.chat.controller;
 
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.domain.chat.dto.ReceivedChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
@@ -10,6 +11,8 @@ import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomModifyResponse
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +29,15 @@ public class ChatController {
 
     private final ChatService chatService;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/message")
+    public void message(ReceivedChatMessage message) {
+        messagingTemplate.convertAndSend(
+            "/sub/chatroom/" + message.chatRoomCode(), chatService.saveChatMessage(message)
+        );
+    }
+
     @PostMapping
     public ResponseBody<ChatRoomInfoResponse> getOrAddChatRoom(
         @RequestBody ChatRoomSaveRequest request
@@ -35,7 +47,7 @@ public class ChatController {
 
     @GetMapping
     public ResponseBody<List<ChatRoomSummaryResponse>> getChatRooms(
-    //Principal 을 통해 로그인한 멤버 id를 가져올 예정
+        //Principal 을 통해 로그인한 멤버 id를 가져올 예정
     ) {
         Long memberId = 1L;
         return ResponseBody.ok(chatService.getChatRooms(memberId));
