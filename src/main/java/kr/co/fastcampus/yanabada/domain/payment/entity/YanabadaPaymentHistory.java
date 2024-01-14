@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +23,6 @@ public class YanabadaPaymentHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private Long yanabadaPaymentId;
 
     @Column(nullable = false)
     private Long chargePrice;
@@ -46,16 +42,15 @@ public class YanabadaPaymentHistory {
         return transactionTime;
     }
 
-    public void setYanabadaPaymentId(Long yanabadaPaymentId) {
-        this.yanabadaPaymentId = yanabadaPaymentId;
-    }
-
     public void setChargePrice(Long chargePrice) {
         this.chargePrice = chargePrice;
     }
 
-    public void updateChargePrice(Long chargePrice) {
-        this.chargePrice = chargePrice;
+    public void setYanabadaPayment(YanabadaPayment yanabadaPayment) {
+        this.yanabadaPayment = yanabadaPayment;
     }
 
+    public void setTransactionTime(LocalDateTime transactionTime) {
+        this.transactionTime = transactionTime;
+    }
 }

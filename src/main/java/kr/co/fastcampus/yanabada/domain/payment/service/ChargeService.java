@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanabadaPayment;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanabadaPaymentRepository;
@@ -30,8 +31,12 @@ public class ChargeService {
 
     private void recordTransaction(Long memberId, Long amount) {
         YanabadaPaymentHistory history = new YanabadaPaymentHistory();
-        history.setYanabadaPaymentId(memberId);
+        YanabadaPayment payment = yanabadaPaymentRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다."));
+
+        history.setYanabadaPayment(payment);
         history.setChargePrice(amount);
+        history.setTransactionTime(LocalDateTime.now()); // 현재 시간을 거래 시간으로 설정
         yanabadaPaymentHistoryRepository.save(history);
     }
 }

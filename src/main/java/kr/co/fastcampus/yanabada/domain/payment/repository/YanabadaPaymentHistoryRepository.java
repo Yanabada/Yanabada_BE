@@ -5,6 +5,6 @@ import kr.co.fastcampus.yanabada.domain.payment.entity.YanabadaPaymentHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface YanabadaPaymentHistoryRepository extends
-    JpaRepository<YanabadaPaymentRepository, Long> {
+    JpaRepository<YanabadaPaymentHistory, Long> {
     List<YanabadaPaymentHistory> findByYanabadaPaymentId(Long yanabadaPaymentId);
 }
