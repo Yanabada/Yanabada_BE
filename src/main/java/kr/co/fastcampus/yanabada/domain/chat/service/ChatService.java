@@ -234,7 +234,7 @@ public class ChatService {
     private void addMessageToChatRoom(
         ChatRoom chatRoom, ReceivedChatMessage message, Member sender, LocalDateTime sendTime
     ) {
-        chatRoom.getMessages().add(message.toEntity(chatRoom, sender, sendTime));
+        chatRoom.addChatMessage(message.toEntity(chatRoom, sender, sendTime));
     }
 
     private SendChatMessage createSendChatMessage(
