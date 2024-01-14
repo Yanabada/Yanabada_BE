@@ -176,7 +176,7 @@ public class ChatService {
     private void updateLastCheckTime(ChatRoom chatRoom, Member member) {
         checkChatRoomMember(chatRoom, member);
         LocalDateTime lastCheckTime = LocalDateTime.now();
-        if (member.equals(chatRoom.getSeller())) {
+        if (isSeller(member, chatRoom)) {
             chatRoom.updateSellerLastCheckTime(lastCheckTime);
         } else {
             chatRoom.updateBuyerLastCheckTime(lastCheckTime);
