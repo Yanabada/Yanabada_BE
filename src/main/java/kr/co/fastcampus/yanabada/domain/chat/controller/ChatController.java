@@ -47,7 +47,6 @@ public class ChatController {
 
     @GetMapping
     public ResponseBody<List<ChatRoomSummaryResponse>> getChatRooms(
-        //Principal 을 통해 로그인한 멤버 id를 가져올 예정
     ) {
         Long memberId = 1L;
         return ResponseBody.ok(chatService.getChatRooms(memberId));
