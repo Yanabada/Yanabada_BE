@@ -2,21 +2,19 @@ package kr.co.fastcampus.yanabada.domain.payment.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class YanabadaPaymentHistory {
 
@@ -30,27 +28,29 @@ public class YanabadaPaymentHistory {
     @Column(nullable = false)
     private LocalDateTime transactionTime; // 거래 시간 필드
 
-    @ManyToOne
-    @JoinColumn(name = "yanabada_payment_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "yanabada_payment_id")
     private YanabadaPayment yanabadaPayment;
 
-    public YanabadaPayment getYanabadaPayment() {
-        return this.yanabadaPayment;
-    }
-
-    public LocalDateTime getTransactionTime() {
-        return transactionTime;
-    }
-
-    public void setChargePrice(Long chargePrice) {
-        this.chargePrice = chargePrice;
-    }
-
-    public void setYanabadaPayment(YanabadaPayment yanabadaPayment) {
+    private YanabadaPaymentHistory(
+        YanabadaPayment yanabadaPayment,
+        Long chargePrice,
+        LocalDateTime transactionTime
+    ) {
         this.yanabadaPayment = yanabadaPayment;
+        this.chargePrice = chargePrice;
+        this.transactionTime = transactionTime;
     }
 
-    public void setTransactionTime(LocalDateTime transactionTime) {
-        this.transactionTime = transactionTime;
+    public static YanabadaPaymentHistory create(
+        YanabadaPayment yanabadaPayment,
+        Long chargePrice,
+        LocalDateTime transactionTime
+    ) {
+        return new YanabadaPaymentHistory(
+            yanabadaPayment,
+            chargePrice,
+            transactionTime
+        );
     }
 }

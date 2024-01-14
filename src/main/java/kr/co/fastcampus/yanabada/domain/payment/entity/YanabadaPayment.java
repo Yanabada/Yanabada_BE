@@ -1,20 +1,27 @@
 package kr.co.fastcampus.yanabada.domain.payment.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
+import java.util.ArrayList;
+import java.util.List;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
-import lombok.AllArgsConstructor;
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class YanabadaPayment extends BaseEntity {
 
@@ -22,8 +29,9 @@ public class YanabadaPayment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long memberId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(nullable = false, length = 13)
     private String accountNumber;
@@ -40,23 +48,46 @@ public class YanabadaPayment extends BaseEntity {
     @Column(nullable = false)
     private Long balance;
 
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
-    }
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "yanabadaPayment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    @OrderBy("transactionTime asc")
+    private final List<YanabadaPaymentHistory> paymentHistories = new ArrayList<>();
 
-    public void setAccountNumber(String accountNumber) {
+    private YanabadaPayment(
+        Member member,
+        String accountNumber,
+        String simplePassword,
+        String bankName,
+        String bankImage,
+        Long balance
+    ) {
+        this.member = member;
         this.accountNumber = accountNumber;
-    }
-
-    public void setBankName(String bankName) {
+        this.simplePassword = simplePassword;
         this.bankName = bankName;
+        this.bankImage = bankImage;
+        this.balance = balance;
     }
 
-    public void updateAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public void updateBalance(Long amount) {
-        this.balance = this.balance + amount;
+    public static YanabadaPayment create(
+        Member member,
+        String accountNumber,
+        String simplePassword,
+        String bankName,
+        String bankImage,
+        Long balance
+    ) {
+        return new YanabadaPayment(
+            member,
+            accountNumber,
+            simplePassword,
+            bankName,
+            bankImage,
+            balance
+        );
     }
 }
