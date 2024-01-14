@@ -7,6 +7,8 @@ import java.util.Optional;
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
+import kr.co.fastcampus.yanabada.domain.chat.dto.ReceivedChatMessage;
+import kr.co.fastcampus.yanabada.domain.chat.dto.SendChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
@@ -217,5 +219,27 @@ public class ChatService {
         } else {
             chatRoom.updateHasBuyerLeft(true);
         }
+    }
+
+    @Transactional
+    public SendChatMessage saveChatMessage(ReceivedChatMessage message) {
+        ChatRoom chatRoom = chatRoomRepository.getChatroom(message.chatRoomCode());
+        Member sender = memberRepository.getMember(message.sendId());
+        LocalDateTime sendTime = LocalDateTime.now();
+        checkChatRoomMember(chatRoom, sender);
+        addMessageToChatRoom(chatRoom, message, sender, sendTime);
+        return createSendChatMessage(chatRoom, sender, message, sendTime);
+    }
+
+    private void addMessageToChatRoom(
+        ChatRoom chatRoom, ReceivedChatMessage message, Member sender, LocalDateTime sendTime
+    ) {
+        chatRoom.getMessages().add(message.toEntity(chatRoom, sender, sendTime));
+    }
+
+    private SendChatMessage createSendChatMessage(
+        ChatRoom chatRoom, Member sender, ReceivedChatMessage message, LocalDateTime sendTime
+    ) {
+        return SendChatMessage.from(chatRoom, sender, message.content(), sendTime);
     }
 }
