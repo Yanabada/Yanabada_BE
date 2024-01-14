@@ -24,7 +24,6 @@ public class OAuth2Attribute {
         String attributeKey,
         Map<String, Object> attributes) {
         if (provider.equals("kakao")) {
-            log.info("kakao.attributeKey={}", attributeKey);
             return ofKakao(provider, "email", attributes);
             //todo: 다른 OAuth 구현 시 조건문 추가
         }
@@ -48,12 +47,12 @@ public class OAuth2Attribute {
             .build();
     }
 
-    // OAuth2User 객체에 넣어주기 위해서 Map으로 값들을 반환해준다.
-    Map<String, Object> convertToMap() {
+    Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", attributeKey);
         map.put("key", attributeKey);
         map.put("email", email);
+        map.put("name", name);
         map.put("provider", provider);
 
         return map;
