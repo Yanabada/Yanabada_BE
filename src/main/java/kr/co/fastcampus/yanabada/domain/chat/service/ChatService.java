@@ -115,7 +115,7 @@ public class ChatService {
         List<ChatMessage> messages,
         int unreadCount
     ) {
-        return ChatRoomSummaryResponse.create(
+        return ChatRoomSummaryResponse.from(
             chatRoom.getCode(),
             partner,
             messages.get(messages.size() - 1),
@@ -155,7 +155,7 @@ public class ChatService {
         Member member = memberRepository.getMember(memberId);
         checkChatRoomMember(chatRoom, member);
         return chatRoom.getMessages().stream()
-            .map(message -> ChatMessageInfoResponse.create(
+            .map(message -> ChatMessageInfoResponse.from(
                 message.getSender(), message.getContent(), message.getSendDateTime()
             ))
             .toList();
@@ -172,7 +172,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
         Member member = memberRepository.getMember(memberId);
         updateLastCheckTime(chatRoom, member);
-        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+        return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
 
     private void updateLastCheckTime(ChatRoom chatRoom, Member member) {
@@ -198,7 +198,7 @@ public class ChatService {
         } else {
             handleBuyerAction(chatRoom);
         }
-        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+        return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
 
     private boolean isSeller(Member member, ChatRoom chatRoom) {
