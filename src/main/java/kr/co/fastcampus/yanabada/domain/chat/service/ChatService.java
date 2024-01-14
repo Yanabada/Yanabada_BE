@@ -182,4 +182,40 @@ public class ChatService {
             chatRoom.updateBuyerLastCheckTime(lastCheckTime);
         }
     }
+
+    @Transactional
+    public ChatRoomModifyResponse modifyOrDeleteChatRoom(
+        Long memberId, ChatRoomModifyRequest request
+    ) {
+        ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
+        Member member = memberRepository.getMember(memberId);
+        checkChatRoomMember(chatRoom, member);
+
+        if (isSeller(member, chatRoom)) {
+            handleSellerAction(chatRoom);
+        } else {
+            handleBuyerAction(chatRoom);
+        }
+        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+    }
+
+    private boolean isSeller(Member member, ChatRoom chatRoom) {
+        return member.equals(chatRoom.getSeller());
+    }
+
+    private void handleSellerAction(ChatRoom chatRoom) {
+        if (chatRoom.getHasBuyerLeft()) {
+            chatRoomRepository.delete(chatRoom);
+        } else {
+            chatRoom.updateHasSellerLeft(true);
+        }
+    }
+
+    private void handleBuyerAction(ChatRoom chatRoom) {
+        if (chatRoom.getHasSellerLeft()) {
+            chatRoomRepository.delete(chatRoom);
+        } else {
+            chatRoom.updateHasBuyerLeft(true);
+        }
+    }
 }
