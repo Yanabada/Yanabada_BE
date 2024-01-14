@@ -14,7 +14,7 @@ public record ChatMessageInfoResponse(
     LocalDateTime sendDateTime
 ) {
 
-    public static ChatMessageInfoResponse create(
+    public static ChatMessageInfoResponse from(
         Member sender, String content, LocalDateTime sendDateTime
     ) {
         return ChatMessageInfoResponse.builder()
