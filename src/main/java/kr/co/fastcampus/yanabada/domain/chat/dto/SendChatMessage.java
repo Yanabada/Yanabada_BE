@@ -1,8 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.chat.dto;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import lombok.Builder;
