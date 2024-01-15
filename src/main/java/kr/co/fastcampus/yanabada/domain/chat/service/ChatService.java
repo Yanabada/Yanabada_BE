@@ -186,11 +186,11 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
         Member member = memberRepository.getMember(memberId);
         checkChatRoomMember(chatRoom, member);
-
+        LocalDateTime lastCheckTime = LocalDateTime.now();
         if (isSeller(member, chatRoom)) {
-            handleSellerAction(chatRoom);
+            handleSellerAction(chatRoom, lastCheckTime);
         } else {
-            handleBuyerAction(chatRoom);
+            handleBuyerAction(chatRoom, lastCheckTime);
         }
         return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
@@ -203,7 +203,8 @@ public class ChatService {
         return member.equals(chatRoom.getBuyer());
     }
 
-    private void handleSellerAction(ChatRoom chatRoom) {
+    private void handleSellerAction(ChatRoom chatRoom, LocalDateTime lastCheckTime) {
+        chatRoom.updateSellerLastCheckTime(lastCheckTime);
         if (chatRoom.getHasBuyerLeft()) {
             chatRoomRepository.delete(chatRoom);
         } else {
@@ -211,7 +212,8 @@ public class ChatService {
         }
     }
 
-    private void handleBuyerAction(ChatRoom chatRoom) {
+    private void handleBuyerAction(ChatRoom chatRoom, LocalDateTime lastCheckTime) {
+        chatRoom.updateBuyerLastCheckTime(lastCheckTime);
         if (chatRoom.getHasSellerLeft()) {
             chatRoomRepository.delete(chatRoom);
         } else {
