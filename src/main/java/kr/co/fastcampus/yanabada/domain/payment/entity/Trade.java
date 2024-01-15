@@ -55,7 +55,10 @@ public class Trade extends BaseEntity {
     private String userPersonPhoneNumber;
 
     @Column(nullable = false)
-    private Integer price; //판매가
+    private Integer price; //원가
+
+    @Column(nullable = false)
+    private Integer sellingPrice; //판매가
 
     @Column(nullable = false)
     private Integer fee; //수수료
@@ -79,6 +82,7 @@ public class Trade extends BaseEntity {
         String reservationPersonPhoneNumber,
         String userPersonName,
         String userPersonPhoneNumber,
+        Integer price,
         Integer sellingPrice,
         Integer fee,
         PaymentType paymentType,
@@ -92,7 +96,8 @@ public class Trade extends BaseEntity {
         this.reservationPersonPhoneNumber = reservationPersonPhoneNumber;
         this.userPersonName = userPersonName;
         this.userPersonPhoneNumber = userPersonPhoneNumber;
-        this.price = sellingPrice;
+        this.price = price;
+        this.sellingPrice = sellingPrice;
         this.fee = fee;
         this.paymentType = paymentType;
         this.code = code;
@@ -108,6 +113,7 @@ public class Trade extends BaseEntity {
         String userPersonName,
         String userPersonPhoneNumber,
         Integer price,
+        Integer sellingPrice,
         Integer fee,
         PaymentType paymentType,
         String code,
@@ -122,6 +128,7 @@ public class Trade extends BaseEntity {
             userPersonName,
             userPersonPhoneNumber,
             price,
+            sellingPrice,
             fee,
             paymentType,
             code,
