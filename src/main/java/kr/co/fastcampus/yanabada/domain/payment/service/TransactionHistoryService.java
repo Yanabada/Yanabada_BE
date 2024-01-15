@@ -5,24 +5,25 @@ import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TransactionHistoryResponse;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import kr.co.fastcampus.yanabada.domain.payment.entity.YanabadaPaymentHistory;
-import kr.co.fastcampus.yanabada.domain.payment.repository.YanabadaPaymentHistoryRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPaymentHistory;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPaymentHistoryRepository;
 
 @Service
 public class TransactionHistoryService {
-    private final YanabadaPaymentHistoryRepository yanabadaPaymentHistoryRepository;
+    private final YanoljaPaymentHistoryRepository yanoljaPaymentHistoryRepository;
 
-    public TransactionHistoryService(YanabadaPaymentHistoryRepository yanabadaPaymentHistoryRepository) {
-        this.yanabadaPaymentHistoryRepository = yanabadaPaymentHistoryRepository;
+    public TransactionHistoryService(
+        YanoljaPaymentHistoryRepository yanoljaPaymentHistoryRepository) {
+        this.yanoljaPaymentHistoryRepository = yanoljaPaymentHistoryRepository;
     }
 
     public List<TransactionHistoryResponse> getTransactionHistory(Long memberId) {
-        List<YanabadaPaymentHistory> histories = yanabadaPaymentHistoryRepository.findByYanabadaPaymentId(memberId);
+        List<YanoljaPaymentHistory> histories = yanoljaPaymentHistoryRepository.findByYanoljaPaymentId(memberId);
         return histories.stream()
             .map(history -> {
-                String name = history.getYanabadaPayment().getBankName();
-                String image = history.getYanabadaPayment().getBankImage();
-                String accountNum = history.getYanabadaPayment().getAccountNumber();
+                String name = history.getYanoljaPayment().getBankName();
+                String image = history.getYanoljaPayment().getBankImage();
+                String accountNum = history.getYanoljaPayment().getAccountNumber();
                 Long price = history.getChargePrice();
                 LocalDateTime time = history.getTransactionTime();
 

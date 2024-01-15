@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class YanabadaPaymentHistory {
+public class YanoljaPaymentHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,25 +30,25 @@ public class YanabadaPaymentHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yanabada_payment_id")
-    private YanabadaPayment yanabadaPayment;
+    private YanoljaPayment yanoljaPayment;
 
-    private YanabadaPaymentHistory(
-        YanabadaPayment yanabadaPayment,
+    private YanoljaPaymentHistory(
+        YanoljaPayment yanoljaPayment,
         Long chargePrice,
         LocalDateTime transactionTime
     ) {
-        this.yanabadaPayment = yanabadaPayment;
+        this.yanoljaPayment = yanoljaPayment;
         this.chargePrice = chargePrice;
         this.transactionTime = transactionTime;
     }
 
-    public static YanabadaPaymentHistory create(
-        YanabadaPayment yanabadaPayment,
+    public static YanoljaPaymentHistory create(
+        YanoljaPayment yanoljaPayment,
         Long chargePrice,
         LocalDateTime transactionTime
     ) {
-        return new YanabadaPaymentHistory(
-            yanabadaPayment,
+        return new YanoljaPaymentHistory(
+            yanoljaPayment,
             chargePrice,
             transactionTime
         );

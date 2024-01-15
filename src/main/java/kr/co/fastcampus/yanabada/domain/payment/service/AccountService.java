@@ -1,29 +1,29 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayment;
 import org.springframework.stereotype.Service;
 import java.util.Random;
-import kr.co.fastcampus.yanabada.domain.payment.entity.YanabadaPayment;
-import kr.co.fastcampus.yanabada.domain.payment.repository.YanabadaPaymentRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPaymentRepository;
 
 @Service
 public class AccountService {
-    private final YanabadaPaymentRepository yanabadaPaymentRepository;
+    private final YanoljaPaymentRepository yanoljaPaymentRepository;
     private final Random random = new Random();
     private String verificationCode;
 
-    public AccountService(YanabadaPaymentRepository yanabadaPaymentRepository) {
-        this.yanabadaPaymentRepository = yanabadaPaymentRepository;
+    public AccountService(YanoljaPaymentRepository yanoljaPaymentRepository) {
+        this.yanoljaPaymentRepository = yanoljaPaymentRepository;
     }
 
     public void linkAccount(Long memberId, String accountNumber, String bankName) {
         if (!isAccountNumberValid(accountNumber)) {
             throw new IllegalArgumentException("계좌번호는 13자리 숫자여야 합니다.");
         }
-        YanabadaPayment yanabadaPayment = new YanabadaPayment();
-        yanabadaPayment.setMemberId(memberId);
-        yanabadaPayment.setAccountNumber(accountNumber);
-        yanabadaPayment.setBankName(bankName);
-        yanabadaPaymentRepository.save(yanabadaPayment);
+        YanoljaPayment yanoljaPayment = new YanoljaPayment();
+        yanoljaPayment.setMemberId(memberId);
+        yanoljaPayment.setAccountNumber(accountNumber);
+        yanoljaPayment.setBankName(bankName);
+        yanoljaPaymentRepository.save(yanoljaPayment);
     }
 
     public String generateVerificationCode() {

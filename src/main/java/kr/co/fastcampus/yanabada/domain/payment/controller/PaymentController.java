@@ -9,7 +9,6 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.request.OpenBankingConsentRe
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.PasswordRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.AccountLinkingResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TransactionHistoryResponse;
-import kr.co.fastcampus.yanabada.domain.payment.entity.YanabadaPaymentHistory;
 import kr.co.fastcampus.yanabada.domain.payment.service.AccountService;
 import kr.co.fastcampus.yanabada.domain.payment.service.ChargeService;
 import kr.co.fastcampus.yanabada.domain.payment.service.OpenBankingService;

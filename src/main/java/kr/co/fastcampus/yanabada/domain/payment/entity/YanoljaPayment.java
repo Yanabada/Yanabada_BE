@@ -16,14 +16,13 @@ import java.util.List;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class YanabadaPayment extends BaseEntity {
+public class YanoljaPayment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,14 +49,14 @@ public class YanabadaPayment extends BaseEntity {
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "yanabadaPayment",
+        mappedBy = "yanoljaPayment",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     @OrderBy("transactionTime asc")
-    private final List<YanabadaPaymentHistory> paymentHistories = new ArrayList<>();
+    private final List<YanoljaPaymentHistory> paymentHistories = new ArrayList<>();
 
-    private YanabadaPayment(
+    private YanoljaPayment(
         Member member,
         String accountNumber,
         String simplePassword,
@@ -73,7 +72,7 @@ public class YanabadaPayment extends BaseEntity {
         this.balance = balance;
     }
 
-    public static YanabadaPayment create(
+    public static YanoljaPayment create(
         Member member,
         String accountNumber,
         String simplePassword,
@@ -81,7 +80,7 @@ public class YanabadaPayment extends BaseEntity {
         String bankImage,
         Long balance
     ) {
-        return new YanabadaPayment(
+        return new YanoljaPayment(
             member,
             accountNumber,
             simplePassword,
