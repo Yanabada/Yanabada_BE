@@ -1,12 +1,15 @@
 package kr.co.fastcampus.yanabada.domain.chat.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
+import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
 import kr.co.fastcampus.yanabada.domain.chat.repository.ChatMessageRepository;
 import kr.co.fastcampus.yanabada.domain.chat.repository.ChatRoomRepository;
@@ -72,5 +75,71 @@ public class ChatService {
             );
             return ChatRoomInfoResponse.from(chatRoom);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoomSummaryResponse> getChatRooms(Long memberId) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByMemberId(memberId);
+        List<ChatRoomSummaryResponse> chatRoomSummaryResponses = chatRooms.stream()
+            .filter(chatRoom -> !chatRoom.getMessages().isEmpty())
+            .map(chatRoom -> {
+                List<ChatMessage> messages = chatRoom.getMessages();
+                Member partner;
+                int unreadCount;
+
+                if (Objects.equals(memberId, chatRoom.getSeller().getId())) {
+                    LocalDateTime sellerLastCheckTime = chatRoom.getSellerLastCheckTime();
+                    partner = chatRoom.getBuyer();
+                    unreadCount = calculateUnreadMessage(messages, sellerLastCheckTime);
+                } else {
+                    LocalDateTime buyerLastCheckTime = chatRoom.getBuyerLastCheckTime();
+                    partner = chatRoom.getSeller();
+                    unreadCount = calculateUnreadMessage(messages, buyerLastCheckTime);
+                }
+
+                return createChatRoomSummaryResponse(chatRoom, partner, messages, unreadCount);
+            })
+            .toList();
+        return sortChatRoomSummaryResponse(chatRoomSummaryResponses);
+    }
+
+    private ChatRoomSummaryResponse createChatRoomSummaryResponse(
+        ChatRoom chatRoom,
+        Member partner,
+        List<ChatMessage> messages,
+        int unreadCount
+    ) {
+        return ChatRoomSummaryResponse.create(
+            chatRoom.getCode(),
+            partner,
+            messages.get(messages.size() - 1),
+            chatRoom.getProduct(),
+            unreadCount
+        );
+    }
+
+    private int calculateUnreadMessage(List<ChatMessage> messages, LocalDateTime lastCheckTime) {
+        int unreadCount = 0;
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            ChatMessage message = messages.get(i);
+            if (message.getSendDateTime().isAfter(lastCheckTime)) {
+                unreadCount++;
+            } else {
+                break;
+            }
+        }
+        return unreadCount;
+    }
+
+    private List<ChatRoomSummaryResponse> sortChatRoomSummaryResponse(
+        List<ChatRoomSummaryResponse> responses
+    ) {
+        return responses.stream()
+            .sorted((cr1, cr2) -> {
+                LocalDateTime lastMessageTime1 = cr1.lastSentMessageTime();
+                LocalDateTime lastMessageTime2 = cr2.lastSentMessageTime();
+                return lastMessageTime2.compareTo(lastMessageTime1);
+            })
+            .toList();
     }
 }
