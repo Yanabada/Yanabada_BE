@@ -32,9 +32,11 @@ public class YanoljaPayHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yanolja_pay_id")
     private YanoljaPay yanoljaPay;
+
     public Member getMember() {
         return yanoljaPay != null ? yanoljaPay.getMember() : null;
     }
+
 
     private YanoljaPayHistory(
         YanoljaPay yanoljaPay,
