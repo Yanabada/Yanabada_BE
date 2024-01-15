@@ -8,7 +8,7 @@ public record ChatRoomModifyResponse(
     Long updatedMemberId
 ) {
 
-    public static ChatRoomModifyResponse create(String chatRoomCode, Long updatedMemberId) {
+    public static ChatRoomModifyResponse from(String chatRoomCode, Long updatedMemberId) {
         return ChatRoomModifyResponse.builder()
             .chatRoomCode(chatRoomCode)
             .updatedMemberId(updatedMemberId)

@@ -20,7 +20,7 @@ public record ChatRoomSummaryResponse(
     Integer unreadMessageCount
 ) {
 
-    public static ChatRoomSummaryResponse create(
+    public static ChatRoomSummaryResponse from(
         String chatRoomCode,
         Member partner,
         ChatMessage message,

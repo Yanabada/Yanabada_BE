@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
+import kr.co.fastcampus.yanabada.domain.chat.dto.ReceivedChatMessage;
+import kr.co.fastcampus.yanabada.domain.chat.dto.SendChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
@@ -113,7 +116,7 @@ public class ChatService {
         List<ChatMessage> messages,
         int unreadCount
     ) {
-        return ChatRoomSummaryResponse.create(
+        return ChatRoomSummaryResponse.from(
             chatRoom.getCode(),
             partner,
             messages.get(messages.size() - 1),
@@ -153,7 +156,7 @@ public class ChatService {
         Member member = memberRepository.getMember(memberId);
         checkChatRoomMember(chatRoom, member);
         return chatRoom.getMessages().stream()
-            .map(message -> ChatMessageInfoResponse.create(
+            .map(message -> ChatMessageInfoResponse.from(
                 message.getSender(), message.getContent(), message.getSendDateTime()
             ))
             .toList();
@@ -170,7 +173,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
         Member member = memberRepository.getMember(memberId);
         updateLastCheckTime(chatRoom, member);
-        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+        return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
 
     private void updateLastCheckTime(ChatRoom chatRoom, Member member) {
@@ -196,11 +199,15 @@ public class ChatService {
         } else {
             handleBuyerAction(chatRoom);
         }
-        return ChatRoomModifyResponse.create(chatRoom.getCode(), memberId);
+        return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
 
     private boolean isSeller(Member member, ChatRoom chatRoom) {
         return member.equals(chatRoom.getSeller());
+    }
+
+    private boolean isBuyer(Member member, ChatRoom chatRoom) {
+        return member.equals(chatRoom.getBuyer());
     }
 
     private void handleSellerAction(ChatRoom chatRoom) {
@@ -217,5 +224,36 @@ public class ChatService {
         } else {
             chatRoom.updateHasBuyerLeft(true);
         }
+    }
+
+    @Transactional
+    public SendChatMessage saveChatMessage(ReceivedChatMessage message) {
+        ChatRoom chatRoom = chatRoomRepository.getChatroom(message.chatRoomCode());
+        Member sender = memberRepository.getMember(message.sendId());
+        LocalDateTime sendTime = LocalDateTime.now();
+        checkChatRoomMember(chatRoom, sender);
+        updateMemberPresenceStatus(chatRoom, sender);
+        addMessageToChatRoom(chatRoom, message, sender, sendTime);
+        return createSendChatMessage(chatRoom, sender, message, sendTime);
+    }
+
+    private void addMessageToChatRoom(
+        ChatRoom chatRoom, ReceivedChatMessage message, Member sender, LocalDateTime sendTime
+    ) {
+        chatRoom.addChatMessage(message.toEntity(chatRoom, sender, sendTime));
+    }
+
+    private void updateMemberPresenceStatus(ChatRoom chatRoom, Member sender) {
+        if (isSeller(sender, chatRoom) && chatRoom.getHasSellerLeft()) {
+            chatRoom.updateHasSellerLeft(false);
+        } else if (isBuyer(sender, chatRoom) && chatRoom.getHasBuyerLeft()) {
+            chatRoom.updateHasBuyerLeft(false);
+        }
+    }
+
+    private SendChatMessage createSendChatMessage(
+        ChatRoom chatRoom, Member sender, ReceivedChatMessage message, LocalDateTime sendTime
+    ) {
+        return SendChatMessage.from(chatRoom, sender, message.content(), sendTime);
     }
 }
