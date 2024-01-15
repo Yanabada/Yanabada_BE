@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,9 @@ public class YanoljaPaymentHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yanabada_payment_id")
     private YanoljaPayment yanoljaPayment;
+    public Member getMember() {
+        return yanoljaPayment != null ? yanoljaPayment.getMember() : null;
+    }
 
     private YanoljaPaymentHistory(
         YanoljaPayment yanoljaPayment,

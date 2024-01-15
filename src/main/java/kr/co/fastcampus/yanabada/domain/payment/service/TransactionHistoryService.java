@@ -1,12 +1,12 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TransactionHistoryResponse;
-import org.springframework.stereotype.Service;
-import java.util.List;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPaymentHistory;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPaymentHistoryRepository;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TransactionHistoryService {
@@ -18,7 +18,8 @@ public class TransactionHistoryService {
     }
 
     public List<TransactionHistoryResponse> getTransactionHistory(Long memberId) {
-        List<YanoljaPaymentHistory> histories = yanoljaPaymentHistoryRepository.findByYanoljaPaymentId(memberId);
+        List<YanoljaPaymentHistory> histories =
+            yanoljaPaymentHistoryRepository.findByYanoljaPaymentId(memberId);
         return histories.stream()
             .map(history -> {
                 String name = history.getYanoljaPayment().getBankName();
