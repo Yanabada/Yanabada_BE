@@ -47,11 +47,8 @@ public class YanoljaPay extends BaseEntity {
     @Column(nullable = false)
     private Long balance;
 
-    @OneToMany(
-        fetch = FetchType.LAZY,
-        mappedBy = "yanoljaPay",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "yanoljaPay",
+        cascade = CascadeType.ALL, orphanRemoval = true
     )
     @OrderBy("transactionTime asc")
     private final List<YanoljaPayHistory> paymentHistories = new ArrayList<>();
