@@ -24,7 +24,10 @@ public class YanoljaPayHistory {
     private Long id;
 
     @Column(nullable = false)
-    private Long chargePrice;
+    private Long transactionAmount; // 거래 금액 필드
+
+    @Column(nullable = false)
+    private String transactionType; // 거래 유형 필드 (예: "출금", "충전")
 
     @Column(nullable = false)
     private LocalDateTime transactionTime; // 거래 시간 필드
@@ -40,11 +43,13 @@ public class YanoljaPayHistory {
 
     private YanoljaPayHistory(
         YanoljaPay yanoljaPay,
-        Long chargePrice,
+        Long transactionAmount,
+        String transactionType,
         LocalDateTime transactionTime
     ) {
         this.yanoljaPay = yanoljaPay;
-        this.chargePrice = chargePrice;
+        this.transactionAmount = transactionAmount;
+        this.transactionType = transactionType;
         this.transactionTime = transactionTime;
     }
 
@@ -52,12 +57,14 @@ public class YanoljaPayHistory {
     public static YanoljaPayHistory create(
 
         YanoljaPay yanoljaPay,
-        Long chargePrice,
+        Long transactionAmount,
+        String transactionType,
         LocalDateTime transactionTime
     ) {
         return new YanoljaPayHistory(
             yanoljaPay,
-            chargePrice,
+            transactionAmount,
+            transactionType,
             transactionTime
         );
     }

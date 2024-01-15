@@ -33,6 +33,9 @@ public class YanoljaPay extends BaseEntity {
     private Member member;
 
     @Column(nullable = false, length = 13)
+    private String account;
+
+    @Column(nullable = false, length = 13)
     private String accountNumber;
 
     @Column(nullable = false)
@@ -55,6 +58,7 @@ public class YanoljaPay extends BaseEntity {
 
     private YanoljaPay(
         Member member,
+        String account,
         String accountNumber,
         String simplePassword,
         String bankName,
@@ -62,6 +66,7 @@ public class YanoljaPay extends BaseEntity {
         Long balance
     ) {
         this.member = member;
+        this.account = account;
         this.accountNumber = accountNumber;
         this.simplePassword = simplePassword;
         this.bankName = bankName;
@@ -71,6 +76,7 @@ public class YanoljaPay extends BaseEntity {
 
     public static YanoljaPay create(
         Member member,
+        String account,
         String accountNumber,
         String simplePassword,
         String bankName,
@@ -79,15 +85,12 @@ public class YanoljaPay extends BaseEntity {
     ) {
         return new YanoljaPay(
             member,
+            account,
             accountNumber,
             simplePassword,
             bankName,
             bankImage,
             balance
         );
-    }
-
-    public void updateBalance(Long amount) {
-        this.balance += amount;
     }
 }
