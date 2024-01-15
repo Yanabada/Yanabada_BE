@@ -15,7 +15,8 @@ public class AccountService {
     private final Random random = new Random();
     private String verificationCode;
 
-    public AccountService(YanoljaPaymentRepository yanoljaPaymentRepository, MemberRepository memberRepository) {
+    public AccountService(YanoljaPaymentRepository yanoljaPaymentRepository,
+        MemberRepository memberRepository) {
         this.yanoljaPaymentRepository = yanoljaPaymentRepository;
         this.memberRepository = memberRepository;
     }
