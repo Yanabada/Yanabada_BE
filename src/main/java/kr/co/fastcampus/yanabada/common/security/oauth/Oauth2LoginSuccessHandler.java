@@ -43,17 +43,12 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         DefaultOAuth2User defaultOauth2 = (DefaultOAuth2User) authentication.getPrincipal();
         Map<String, Object> attribute = defaultOauth2.getAttributes();
 
-        log.info("OAuth2LoginSuccessHandler email={}", attribute.get("email"));
-        log.info("OAuth2LoginSuccessHandler name={}", attribute.get("name"));
-        log.info("OAuth2LoginSuccessHandler provider={}", attribute.get("provider"));
-        log.info("OAuth2LoginSuccessHandler isExist={}", attribute.get("isExist"));
-
         boolean isExist = (boolean) attribute.get("isExist");
         String email = (String) attribute.get("email");
         String provider = (String) attribute.get("provider");
 
         if (isExist) {
-           /* 바로 로그인 */
+            /* 바로 로그인 */
             TokenIssueResponse tokenIssue = tokenService.getTokenIssue(email, KAKAO.name());
             if (tokenIssue == null) {
                 tokenIssue = jwtProvider
@@ -65,9 +60,9 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         } else {
             /* 회원 가입 필요 */
             //todo: url 변경 예정, 환경 변수(서버, 로컬) 분리 예정
-            String redirectUrl = "http://localhost:8080/redirect-url" +
-                "?email=" + attribute.get("email") +
-                "&provider=" + attribute.get("provider");
+            String redirectUrl = "http://localhost:8080/redirect-url"
+                + "?email=" + attribute.get("email")
+                + "&provider=" + attribute.get("provider");
             response.sendRedirect(redirectUrl);
         }
 

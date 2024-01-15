@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.common.config;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginFailureHandler;
 import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginSuccessHandler;
 import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
     private final Oauth2UserService oauth2UserService;
     private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
 
     private static final String[] PERMIT_PATHS = {
         "/",
@@ -55,6 +57,7 @@ public class SecurityConfig {
             .userInfoEndpoint(
                 userInfoEndpoint -> userInfoEndpoint.userService(oauth2UserService))
             .successHandler(oauth2LoginSuccessHandler)
+            .failureHandler(oauth2LoginFailureHandler)
         );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

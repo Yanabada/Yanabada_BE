@@ -1,10 +1,9 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
-import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.*;
+import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.KAKAO;
 
 import java.util.HashMap;
 import java.util.Map;
-import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

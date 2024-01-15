@@ -52,9 +52,6 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attributeMap = oauth2Attribute.toMap();
         attributeMap.put("isExist", isExist);
 
-//        //todo: OAuth password 환경 변수 분리 예정 --> API 따로 만들 예정
-//        String oauth2Password = passwordEncoder.encode("oauth-password");
-
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(ROLE_USER.name())),
             attributeMap,
