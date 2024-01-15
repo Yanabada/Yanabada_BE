@@ -126,16 +126,9 @@ public class ChatService {
     }
 
     private int calculateUnreadMessage(List<ChatMessage> messages, LocalDateTime lastCheckTime) {
-        int unreadCount = 0;
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            ChatMessage message = messages.get(i);
-            if (message.getSendDateTime().isAfter(lastCheckTime)) {
-                unreadCount++;
-            } else {
-                break;
-            }
-        }
-        return unreadCount;
+        return (int) messages.stream()
+            .takeWhile(message -> message.getSendDateTime().isAfter(lastCheckTime))
+            .count();
     }
 
     private List<ChatRoomSummaryResponse> sortChatRoomSummaryResponse(
