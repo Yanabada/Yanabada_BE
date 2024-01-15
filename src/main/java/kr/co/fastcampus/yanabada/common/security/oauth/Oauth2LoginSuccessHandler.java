@@ -1,5 +1,10 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
+import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.KAKAO;
+import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
+import static org.springframework.http.HttpStatus.OK;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,8 +13,10 @@ import java.util.Map;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -23,6 +30,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtProvider jwtProvider;
     private final TokenService tokenService;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -41,18 +49,26 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("OAuth2LoginSuccessHandler isExist={}", attribute.get("isExist"));
 
         boolean isExist = (boolean) attribute.get("isExist");
+        String email = (String) attribute.get("email");
+        String provider = (String) attribute.get("provider");
 
         if (isExist) {
            /* 바로 로그인 */
-//            TokenIssueResponse tokenIssue =
+            TokenIssueResponse tokenIssue = tokenService.getTokenIssue(email, KAKAO.name());
+            if (tokenIssue == null) {
+                tokenIssue = jwtProvider
+                    .generateTokenInfo(email, ROLE_USER.name(), provider);
+            }
+            String tokenIssueJson = objectMapper.writeValueAsString(tokenIssue);
+            response.setStatus(OK.value());
+            response.getWriter().write(tokenIssueJson);
         } else {
             /* 회원 가입 필요 */
-            StringBuilder redirectUrl = new StringBuilder();
             //todo: url 변경 예정, 환경 변수(서버, 로컬) 분리 예정
-            redirectUrl.append("http://localhost:8080/redirect-url")
-                .append("?email=").append(attribute.get("email"))
-                .append("&name=").append(attribute.get("name"))
-                .append("&provider=").append(attribute.get("provider"));
+            String redirectUrl = "http://localhost:8080/redirect-url" +
+                "?email=" + attribute.get("email") +
+                "&provider=" + attribute.get("provider");
+            response.sendRedirect(redirectUrl);
         }
 
     }
