@@ -46,8 +46,7 @@ public class ChatService {
 
     private void checkNegotiationPossibility(Product product) {
         if (!product.getCanNegotiate()
-            || product.getStatus() == ProductStatus.CANCELED
-            || product.getStatus() == ProductStatus.BOOKING
+            || product.getStatus() != ProductStatus.ON_SALE
         ) {
             throw new NegotiationNotPossibleException();
         }
