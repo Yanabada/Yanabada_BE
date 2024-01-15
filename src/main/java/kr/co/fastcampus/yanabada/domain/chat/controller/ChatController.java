@@ -11,6 +11,7 @@ import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomModifyResponse
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatController {
 
+    @Value("${chatroom.topic.prefix}")
+    private String chatroomTopicPrefix;
+
     private final ChatService chatService;
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -34,7 +38,8 @@ public class ChatController {
     @MessageMapping("/message")
     public void message(ReceivedChatMessage message) {
         messagingTemplate.convertAndSend(
-            "/sub/chatroom/" + message.chatRoomCode(), chatService.saveChatMessage(message)
+            chatroomTopicPrefix + message.chatRoomCode(),
+            chatService.saveChatMessage(message)
         );
     }
 
