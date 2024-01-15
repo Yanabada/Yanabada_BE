@@ -89,4 +89,8 @@ public class YanoljaPayment extends BaseEntity {
             balance
         );
     }
+
+    public void updateBalance(Long amount) {
+        this.balance += amount;
+    }
 }

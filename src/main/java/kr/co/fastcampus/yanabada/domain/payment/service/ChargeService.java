@@ -26,7 +26,10 @@ public class ChargeService {
         yanoljaPaymentRepository.save(payment);
 
         // 충전 내역 기록
-        recordTransaction(memberId, amount);
+        YanoljaPaymentHistory history = YanoljaPaymentHistory.create(
+            payment, amount, LocalDateTime.now()
+        );
+        yanoljaPaymentHistoryRepository.save(history);
     }
 
     private void recordTransaction(Long memberId, Long amount) {
