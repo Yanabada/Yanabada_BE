@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
+import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
+import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private final JwtProvider jwtProvider;
+    private final TokenService tokenService;
 
     @Override
     @Transactional
@@ -32,7 +38,22 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("OAuth2LoginSuccessHandler email={}", attribute.get("email"));
         log.info("OAuth2LoginSuccessHandler name={}", attribute.get("name"));
         log.info("OAuth2LoginSuccessHandler provider={}", attribute.get("provider"));
+        log.info("OAuth2LoginSuccessHandler isExist={}", attribute.get("isExist"));
 
-        log.info("OAuth2LoginSuccessHandler.onAuthenticationSuccess executed");
+        boolean isExist = (boolean) attribute.get("isExist");
+
+        if (isExist) {
+           /* 바로 로그인 */
+//            TokenIssueResponse tokenIssue =
+        } else {
+            /* 회원 가입 필요 */
+            StringBuilder redirectUrl = new StringBuilder();
+            //todo: url 변경 예정, 환경 변수(서버, 로컬) 분리 예정
+            redirectUrl.append("http://localhost:8080/redirect-url")
+                .append("?email=").append(attribute.get("email"))
+                .append("&name=").append(attribute.get("name"))
+                .append("&provider=").append(attribute.get("provider"));
+        }
+
     }
 }

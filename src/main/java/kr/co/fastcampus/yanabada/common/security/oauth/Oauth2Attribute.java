@@ -1,7 +1,10 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
+import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.*;
+
 import java.util.HashMap;
 import java.util.Map;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
 public class Oauth2Attribute {
-    private Map<String, Object> attributes; // 사용자 속성 정보를 담는 Map
-    private String attributeKey; // 사용자 속성의 키 값
-    private String email; // 이메일 정보
-    private String name; // 이름 정보
+    private Map<String, Object> attributes;
+    private String attributeKey;
+    private String email;
     private String provider;
 
     static Oauth2Attribute of(
@@ -24,7 +26,7 @@ public class Oauth2Attribute {
         String attributeKey,
         Map<String, Object> attributes) {
         if (provider.equals("kakao")) {
-            return ofKakao(provider, "email", attributes);
+            return ofKakao(KAKAO.name(), "email", attributes);
             //todo: 다른 OAuth 구현 시 조건문 추가
         }
         throw new RuntimeException();   //todo: CustomEx
@@ -40,7 +42,6 @@ public class Oauth2Attribute {
 
         return Oauth2Attribute.builder()
             .email((String) kakaoAccount.get("email"))
-            .name((String) kakaoAccount.get("name"))
             .provider(provider)
             .attributes(kakaoAccount)
             .attributeKey(attributeKey)
@@ -52,7 +53,6 @@ public class Oauth2Attribute {
         map.put("id", attributeKey);
         map.put("key", attributeKey);
         map.put("email", email);
-        map.put("name", name);
         map.put("provider", provider);
 
         return map;

@@ -4,6 +4,7 @@ package kr.co.fastcampus.yanabada.common.security.oauth;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import java.util.Collections;
+import java.util.Map;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class Oauth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -45,23 +45,19 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
                 registrationId, userNameAttributeName, oauth2User.getAttributes()
         );
 
-        log.info("email={}", oauth2Attribute.getEmail());
-        log.info("name={}", oauth2Attribute.getName());
+        boolean isExist = memberRepository.existsByEmailAndProviderType(
+            oauth2Attribute.getEmail(),
+            ProviderType.valueOf(oauth2Attribute.getProvider()));
 
-        //todo: OAuth password 환경 변수 분리 예정
-        String oauth2Password = passwordEncoder.encode("oauth-password");
+        Map<String, Object> attributeMap = oauth2Attribute.toMap();
+        attributeMap.put("isExist", isExist);
 
-        Member newMember = Member.builder()
-            .email(oauth2Attribute.getEmail())
-            .memberName(oauth2Attribute.getName())
-            .password(oauth2Password)
-            .roleType(ROLE_USER)
-            .providerType(ProviderType.valueOf(oauth2Attribute.getProvider()))
-            .build();
+//        //todo: OAuth password 환경 변수 분리 예정 --> API 따로 만들 예정
+//        String oauth2Password = passwordEncoder.encode("oauth-password");
 
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(ROLE_USER.name())),
-            oauth2Attribute.toMap(),
+            attributeMap,
             "email"
         );
     }
