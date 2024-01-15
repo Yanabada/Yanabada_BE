@@ -39,9 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up/social")
-    public ResponseBody<Long> OAuthSignUp(
-        @RequestBody OauthSignUpRequest signUpRequest
-    ) {
+    public ResponseBody<Long> oauthSignUp(@RequestBody OauthSignUpRequest signUpRequest) {
         return ResponseBody.ok(authService.oauthSignUp(signUpRequest));
     }
 
