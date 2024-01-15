@@ -12,6 +12,7 @@ import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
+import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -29,6 +30,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailAuthService mailAuthService;
+
+    @Transactional(readOnly = true)
+    public MemberDetailResponse findMember(String email, ProviderType providerType) {
+        return MemberDetailResponse.from(memberRepository.getMember(email, providerType));
+    }
 
     @Transactional
     public void modifyPassword(

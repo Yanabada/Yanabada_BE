@@ -1,5 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.product.entity;
 
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -87,5 +89,29 @@ public class Product {
             isAutoCancel,
             status
         );
+    }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateCanNegotiate(Boolean canNegotiate) {
+        this.canNegotiate = canNegotiate;
+    }
+
+    public void updateSaleEndDate(LocalDate saleEndDate) {
+        this.saleEndDate = saleEndDate;
+    }
+
+    public void updateIsAutoCancel(Boolean isAutoCancel) {
+        this.isAutoCancel = isAutoCancel;
+    }
+
+    public void cancel() {
+        status = CANCELED;
     }
 }

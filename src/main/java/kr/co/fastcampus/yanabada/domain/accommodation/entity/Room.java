@@ -3,6 +3,8 @@ package kr.co.fastcampus.yanabada.domain.accommodation.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +15,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,6 +64,10 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private String image;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoomCancelPolicy cancelPolicy;
+
     @OneToOne(
         fetch = FetchType.LAZY, mappedBy = "room",
         cascade = CascadeType.ALL, orphanRemoval = true
@@ -77,7 +84,8 @@ public class Room extends BaseEntity {
         Integer minHeadCount,
         Integer maxHeadCount,
         Double rating,
-        String image
+        String image,
+        RoomCancelPolicy cancelPolicy
     ) {
         this.accommodation = accommodation;
         this.name = name;
@@ -89,6 +97,7 @@ public class Room extends BaseEntity {
         this.maxHeadCount = maxHeadCount;
         this.rating = rating;
         this.image = image;
+        this.cancelPolicy = cancelPolicy;
     }
 
     public static Room create(
@@ -101,7 +110,8 @@ public class Room extends BaseEntity {
         Integer minHeadCount,
         Integer maxHeadCount,
         Double rating,
-        String image
+        String image,
+        RoomCancelPolicy cancelPolicy
     ) {
         return new Room(
             accommodation,
@@ -113,7 +123,8 @@ public class Room extends BaseEntity {
             minHeadCount,
             maxHeadCount,
             rating,
-            image
+            image,
+            cancelPolicy
         );
     }
 

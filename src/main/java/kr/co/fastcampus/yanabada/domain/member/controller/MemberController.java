@@ -6,6 +6,7 @@ import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/test")
-    public String test(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        log.info("email={}", principalDetails.email());
-        log.info("provider={}", principalDetails.provider());
-        log.info("provider={}", principalDetails.provider().name());
-        return "test";
+    @GetMapping
+    public ResponseBody<MemberDetailResponse> getDetails(
+        @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        return ResponseBody.ok(
+            memberService.findMember(principalDetails.email(), principalDetails.provider())
+        );
     }
 
     @PutMapping("/password")
