@@ -5,9 +5,13 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import java.util.Collections;
 import java.util.Map;
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
+import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -21,7 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
-//    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 //    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
@@ -44,6 +49,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         log.info("email={}", oAuth2Attribute.getEmail());
         log.info("name={}", oAuth2Attribute.getName());
+
+        //todo: OAuth password 환경 변수 분리 예정
+        String oAuth2Password = passwordEncoder.encode("oauth-password");
+
+        Member newMember = Member.builder()
+            .email(oAuth2Attribute.getEmail())
+            .memberName(oAuth2Attribute.getName())
+            .password(oAuth2Password)
+            .roleType(ROLE_USER)
+            .providerType(ProviderType.valueOf(oAuth2Attribute.getProvider()))
+            .build();
 
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(ROLE_USER.name())),
