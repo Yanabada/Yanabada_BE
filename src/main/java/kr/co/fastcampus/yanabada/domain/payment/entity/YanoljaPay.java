@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class YanoljaPayment extends BaseEntity {
+public class YanoljaPay extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,14 +49,14 @@ public class YanoljaPayment extends BaseEntity {
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "yanoljaPayment",
+        mappedBy = "yanoljaPay",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     @OrderBy("transactionTime asc")
-    private final List<YanoljaPaymentHistory> paymentHistories = new ArrayList<>();
+    private final List<YanoljaPayHistory> paymentHistories = new ArrayList<>();
 
-    private YanoljaPayment(
+    private YanoljaPay(
         Member member,
         String accountNumber,
         String simplePassword,
@@ -72,7 +72,7 @@ public class YanoljaPayment extends BaseEntity {
         this.balance = balance;
     }
 
-    public static YanoljaPayment create(
+    public static YanoljaPay create(
         Member member,
         String accountNumber,
         String simplePassword,
@@ -80,7 +80,7 @@ public class YanoljaPayment extends BaseEntity {
         String bankImage,
         Long balance
     ) {
-        return new YanoljaPayment(
+        return new YanoljaPay(
             member,
             accountNumber,
             simplePassword,

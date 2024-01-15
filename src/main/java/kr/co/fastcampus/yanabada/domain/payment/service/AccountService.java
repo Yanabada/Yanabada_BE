@@ -3,21 +3,21 @@ package kr.co.fastcampus.yanabada.domain.payment.service;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
-import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayment;
-import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPaymentRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
 
-    private final YanoljaPaymentRepository yanoljaPaymentRepository;
+    private final YanoljaPayRepository yanoljaPayRepository;
     private final MemberRepository memberRepository;
     private final Random random = new Random();
     private String verificationCode;
 
-    public AccountService(YanoljaPaymentRepository yanoljaPaymentRepository,
+    public AccountService(YanoljaPayRepository yanoljaPayRepository,
         MemberRepository memberRepository) {
-        this.yanoljaPaymentRepository = yanoljaPaymentRepository;
+        this.yanoljaPayRepository = yanoljaPayRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -28,9 +28,9 @@ public class AccountService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
 
-        YanoljaPayment yanoljaPayment = YanoljaPayment.create(
+        YanoljaPay yanoljaPay = YanoljaPay.create(
             member, accountNumber, null, bankName, null, 0L);
-        yanoljaPaymentRepository.save(yanoljaPayment);
+        yanoljaPayRepository.save(yanoljaPay);
     }
 
     public String generateVerificationCode() {

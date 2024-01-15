@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class YanoljaPaymentHistory {
+public class YanoljaPayHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,31 +30,31 @@ public class YanoljaPaymentHistory {
     private LocalDateTime transactionTime; // 거래 시간 필드
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "yanabada_payment_id")
-    private YanoljaPayment yanoljaPayment;
+    @JoinColumn(name = "yanolja_pay_id")
+    private YanoljaPay yanoljaPay;
     public Member getMember() {
-        return yanoljaPayment != null ? yanoljaPayment.getMember() : null;
+        return yanoljaPay != null ? yanoljaPay.getMember() : null;
     }
 
-    private YanoljaPaymentHistory(
-        YanoljaPayment yanoljaPayment,
+    private YanoljaPayHistory(
+        YanoljaPay yanoljaPay,
         Long chargePrice,
         LocalDateTime transactionTime
     ) {
-        this.yanoljaPayment = yanoljaPayment;
+        this.yanoljaPay = yanoljaPay;
         this.chargePrice = chargePrice;
         this.transactionTime = transactionTime;
     }
 
 
-    public static YanoljaPaymentHistory create(
+    public static YanoljaPayHistory create(
 
-        YanoljaPayment yanoljaPayment,
+        YanoljaPay yanoljaPay,
         Long chargePrice,
         LocalDateTime transactionTime
     ) {
-        return new YanoljaPaymentHistory(
-            yanoljaPayment,
+        return new YanoljaPayHistory(
+            yanoljaPay,
             chargePrice,
             transactionTime
         );
