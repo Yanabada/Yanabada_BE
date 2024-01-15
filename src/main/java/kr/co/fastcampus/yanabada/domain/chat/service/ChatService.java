@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
@@ -205,6 +206,10 @@ public class ChatService {
         return member.equals(chatRoom.getSeller());
     }
 
+    private boolean isBuyer(Member member, ChatRoom chatRoom) {
+        return member.equals(chatRoom.getBuyer());
+    }
+
     private void handleSellerAction(ChatRoom chatRoom) {
         if (chatRoom.getHasBuyerLeft()) {
             chatRoomRepository.delete(chatRoom);
@@ -227,6 +232,7 @@ public class ChatService {
         Member sender = memberRepository.getMember(message.sendId());
         LocalDateTime sendTime = LocalDateTime.now();
         checkChatRoomMember(chatRoom, sender);
+        updateMemberPresenceStatus(chatRoom, sender);
         addMessageToChatRoom(chatRoom, message, sender, sendTime);
         return createSendChatMessage(chatRoom, sender, message, sendTime);
     }
@@ -235,6 +241,14 @@ public class ChatService {
         ChatRoom chatRoom, ReceivedChatMessage message, Member sender, LocalDateTime sendTime
     ) {
         chatRoom.addChatMessage(message.toEntity(chatRoom, sender, sendTime));
+    }
+
+    private void updateMemberPresenceStatus(ChatRoom chatRoom, Member sender) {
+        if (isSeller(sender, chatRoom) && chatRoom.getHasSellerLeft()) {
+            chatRoom.updateHasSellerLeft(false);
+        } else if (isBuyer(sender, chatRoom) && chatRoom.getHasBuyerLeft()) {
+            chatRoom.updateHasBuyerLeft(false);
+        }
     }
 
     private SendChatMessage createSendChatMessage(
