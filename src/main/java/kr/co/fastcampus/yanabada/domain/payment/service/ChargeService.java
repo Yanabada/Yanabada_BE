@@ -34,13 +34,10 @@ public class ChargeService {
     }
 
     private void recordTransaction(Long memberId, Long amount) {
-        YanoljaPaymentHistory history = new YanoljaPaymentHistory();
         YanoljaPayment payment = yanoljaPaymentRepository.findByMemberId(memberId)
             .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다."));
 
-        history.setYanabadaPayment(payment);
-        history.setChargePrice(amount);
-        history.setTransactionTime(LocalDateTime.now()); // 현재 시간을 거래 시간으로 설정
+        YanoljaPaymentHistory history = YanoljaPaymentHistory.create(payment, amount, LocalDateTime.now());
         yanoljaPaymentHistoryRepository.save(history);
     }
 }
