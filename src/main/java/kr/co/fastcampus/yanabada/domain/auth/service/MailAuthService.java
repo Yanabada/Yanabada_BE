@@ -21,12 +21,12 @@ public class MailAuthService {
     private String user;
     private static final int AUTH_CODE_LENGTH = 6;
 
-    public EmailAuthCodeResponse sendEmail(EmailAuthCodeRequest emailAuthCodeRequest) {
+    public Integer sendEmail(String email) {
         int authCode = makeRandomCode();
         String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
-        sendToSmtp(user, emailAuthCodeRequest.email(), title, content);
-        return new EmailAuthCodeResponse(authCode);
+        sendToSmtp(user, email, title, content);
+        return authCode;
     }
 
     private String makeContent(int authCode) {

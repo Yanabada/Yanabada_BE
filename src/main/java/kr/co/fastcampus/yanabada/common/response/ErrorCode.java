@@ -24,6 +24,7 @@ public enum ErrorCode {
     TOKEN_NOT_VALIDATED("잘못된 토큰입니다."),
     TOKEN_NOT_EXIST_AT_CACHE("이미 로그아웃 처리된 토큰입니다."),
     EMAIL_SEND_FAILED("이메일 전송에 실패하였습니다."),
+    EMAIL_DUPLICATED("이메일이 중복됩니다."),
 
 
     ;
