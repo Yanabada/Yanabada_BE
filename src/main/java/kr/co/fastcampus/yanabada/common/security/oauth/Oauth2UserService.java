@@ -4,7 +4,6 @@ package kr.co.fastcampus.yanabada.common.security.oauth;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import java.util.Collections;
-import java.util.Map;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -23,16 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OAuth2UserService extends DefaultOAuth2UserService {
+public class Oauth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+        OAuth2User oauth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration()
@@ -43,27 +41,27 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         log.info("registrationId={}", registrationId);
         log.info("userNameAttributeName={}", userNameAttributeName);
 
-        OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(
-                registrationId, userNameAttributeName, oAuth2User.getAttributes()
+        Oauth2Attribute oauth2Attribute = Oauth2Attribute.of(
+                registrationId, userNameAttributeName, oauth2User.getAttributes()
         );
 
-        log.info("email={}", oAuth2Attribute.getEmail());
-        log.info("name={}", oAuth2Attribute.getName());
+        log.info("email={}", oauth2Attribute.getEmail());
+        log.info("name={}", oauth2Attribute.getName());
 
         //todo: OAuth password 환경 변수 분리 예정
-        String oAuth2Password = passwordEncoder.encode("oauth-password");
+        String oauth2Password = passwordEncoder.encode("oauth-password");
 
         Member newMember = Member.builder()
-            .email(oAuth2Attribute.getEmail())
-            .memberName(oAuth2Attribute.getName())
-            .password(oAuth2Password)
+            .email(oauth2Attribute.getEmail())
+            .memberName(oauth2Attribute.getName())
+            .password(oauth2Password)
             .roleType(ROLE_USER)
-            .providerType(ProviderType.valueOf(oAuth2Attribute.getProvider()))
+            .providerType(ProviderType.valueOf(oauth2Attribute.getProvider()))
             .build();
 
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(ROLE_USER.name())),
-            oAuth2Attribute.toMap(),
+            oauth2Attribute.toMap(),
             "email"
         );
     }

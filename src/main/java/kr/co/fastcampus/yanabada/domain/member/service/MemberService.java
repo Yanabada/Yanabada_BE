@@ -6,7 +6,6 @@ import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -68,9 +67,7 @@ public class MemberService {
         ProviderType providerType
     ) {
         Member member = memberRepository.getMember(email, providerType);
-        log.info("email={}", member.getEmail());
         member.updateImageUrl(imgUrlRequest.imageUrl());
-        log.info("imgUrl={}", member.getImageUrl());
     }
 
     @Transactional(readOnly = true)

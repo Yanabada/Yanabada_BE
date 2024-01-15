@@ -4,8 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

@@ -3,8 +3,8 @@ package kr.co.fastcampus.yanabada.common.config;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
-import kr.co.fastcampus.yanabada.common.security.oauth.OAuth2LoginSuccessHandler;
-import kr.co.fastcampus.yanabada.common.security.oauth.OAuth2UserService;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginSuccessHandler;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -28,8 +28,8 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
-    private final OAuth2UserService oAuth2UserService;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final Oauth2UserService oauth2UserService;
+    private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
     private static final String[] PERMIT_PATHS = {
         "/",
@@ -53,8 +53,8 @@ public class SecurityConfig {
 
         http.oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(
-                userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserService)) //userService 에 소셜 로그인 성공 시 진행할 OAuth2UserService 인터페이스의 구현체를 등록
-            .successHandler(oAuth2LoginSuccessHandler)
+                userInfoEndpoint -> userInfoEndpoint.userService(oauth2UserService))
+            .successHandler(oauth2LoginSuccessHandler)
         );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

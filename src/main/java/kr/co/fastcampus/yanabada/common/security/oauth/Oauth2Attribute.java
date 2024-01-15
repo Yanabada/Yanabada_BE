@@ -12,14 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
-public class OAuth2Attribute {
+public class Oauth2Attribute {
     private Map<String, Object> attributes; // 사용자 속성 정보를 담는 Map
     private String attributeKey; // 사용자 속성의 키 값
     private String email; // 이메일 정보
     private String name; // 이름 정보
     private String provider;
 
-    static OAuth2Attribute of(
+    static Oauth2Attribute of(
         String provider,
         String attributeKey,
         Map<String, Object> attributes) {
@@ -30,7 +30,7 @@ public class OAuth2Attribute {
         throw new RuntimeException();   //todo: CustomEx
     }
 
-    private static OAuth2Attribute ofKakao(
+    private static Oauth2Attribute ofKakao(
         String provider,
         String attributeKey,
         Map<String, Object> attributes
@@ -38,7 +38,7 @@ public class OAuth2Attribute {
         Map<String, Object> kakaoAccount
             = (Map<String, Object>) attributes.get("kakao_account");
 
-        return OAuth2Attribute.builder()
+        return Oauth2Attribute.builder()
             .email((String) kakaoAccount.get("email"))
             .name((String) kakaoAccount.get("name"))
             .provider(provider)

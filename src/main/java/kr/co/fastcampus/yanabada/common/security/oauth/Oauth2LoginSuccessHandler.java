@@ -16,18 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
-//    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-//    private final JwtTokenProvider jwtTokenProvider;
-//    private final MemberRepository memberRepository;
+public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     @Transactional
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Authentication authentication
+    ) throws IOException, ServletException {
 
-        DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-        Map<String, Object> attribute = defaultOAuth2User.getAttributes();
+        DefaultOAuth2User defaultOauth2 = (DefaultOAuth2User) authentication.getPrincipal();
+        Map<String, Object> attribute = defaultOauth2.getAttributes();
 
         log.info("OAuth2LoginSuccessHandler email={}", attribute.get("email"));
         log.info("OAuth2LoginSuccessHandler name={}", attribute.get("name"));

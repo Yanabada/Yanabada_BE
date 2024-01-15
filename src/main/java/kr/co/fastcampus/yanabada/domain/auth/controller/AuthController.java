@@ -11,7 +11,6 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
-import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
@@ -31,7 +30,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
-    private final MailAuthService mailAuthService;
 
     @PostMapping("/sign-up")
     public ResponseBody<Long> signUp(@RequestBody SignUpRequest signUpRequest) {
