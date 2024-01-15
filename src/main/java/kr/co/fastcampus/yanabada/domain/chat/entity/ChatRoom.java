@@ -103,4 +103,20 @@ public class ChatRoom extends BaseEntity {
     public void addChatMessage(ChatMessage message) {
         messages.add(message);
     }
+
+    public void updateSellerLastCheckTime(LocalDateTime lastCheckTime) {
+        this.sellerLastCheckTime = lastCheckTime;
+    }
+
+    public void updateBuyerLastCheckTime(LocalDateTime lastCheckTime) {
+        this.buyerLastCheckTime = lastCheckTime;
+    }
+
+    public void updateHasSellerLeft(Boolean hasLeft) {
+        this.hasSellerLeft = hasLeft;
+    }
+
+    public void updateHasBuyerLeft(Boolean hasLeft) {
+        this.hasBuyerLeft = hasLeft;
+    }
 }
