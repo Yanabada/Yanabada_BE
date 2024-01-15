@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.chat.repository;
 
 import java.util.List;
 import java.util.Optional;
+import kr.co.fastcampus.yanabada.common.exception.ChatRoomNotFoundException;
 import kr.co.fastcampus.yanabada.domain.chat.entity.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
         + "OR (cr.seller.id = :memberId AND cr.hasSellerLeft = false)"
     )
     List<ChatRoom> findChatRoomsByMemberId(@Param("memberId") Long memberId);
+
+    Optional<ChatRoom> findByCode(String code);
+
+    default ChatRoom getChatroom(String code) {
+        return findByCode(code).orElseThrow(ChatRoomNotFoundException::new);
+    }
 }
