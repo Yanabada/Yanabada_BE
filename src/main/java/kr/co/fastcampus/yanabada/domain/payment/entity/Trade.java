@@ -64,6 +64,9 @@ public class Trade extends BaseEntity {
     private Integer fee; //수수료
 
     @Column(nullable = false)
+    private Integer point; // 구매자가 사용한 포인트
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
@@ -85,6 +88,7 @@ public class Trade extends BaseEntity {
         Integer price,
         Integer sellingPrice,
         Integer fee,
+        Integer point,
         PaymentType paymentType,
         String code,
         TradeStatus status
@@ -99,6 +103,7 @@ public class Trade extends BaseEntity {
         this.price = price;
         this.sellingPrice = sellingPrice;
         this.fee = fee;
+        this.point = point;
         this.paymentType = paymentType;
         this.code = code;
         this.status = status;
@@ -115,6 +120,7 @@ public class Trade extends BaseEntity {
         Integer price,
         Integer sellingPrice,
         Integer fee,
+        Integer point,
         PaymentType paymentType,
         String code,
         TradeStatus status
@@ -130,6 +136,7 @@ public class Trade extends BaseEntity {
             price,
             sellingPrice,
             fee,
+            point,
             paymentType,
             code,
             status
