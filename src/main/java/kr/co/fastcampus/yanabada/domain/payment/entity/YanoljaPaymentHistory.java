@@ -46,6 +46,7 @@ public class YanoljaPaymentHistory {
         this.transactionTime = transactionTime;
     }
 
+
     public static YanoljaPaymentHistory create(
 
         YanoljaPayment yanoljaPayment,

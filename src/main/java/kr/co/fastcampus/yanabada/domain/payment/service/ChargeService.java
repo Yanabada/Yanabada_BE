@@ -37,7 +37,9 @@ public class ChargeService {
         YanoljaPayment payment = yanoljaPaymentRepository.findByMemberId(memberId)
             .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다."));
 
-        YanoljaPaymentHistory history = YanoljaPaymentHistory.create(payment, amount, LocalDateTime.now());
+        YanoljaPaymentHistory history = YanoljaPaymentHistory.create(
+            payment, amount, LocalDateTime.now()
+        );
         yanoljaPaymentHistoryRepository.save(history);
     }
 }
