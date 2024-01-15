@@ -27,7 +27,7 @@ public class MemberController {
     @GetMapping("/test")
     public String test(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("email={}", principalDetails.email());
-        log.info("providerType={}", principalDetails.provider());
+        log.info("provider={}", principalDetails.provider());
         log.info("provider={}", principalDetails.provider().name());
         return "test";
     }

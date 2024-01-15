@@ -8,6 +8,7 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -46,6 +47,25 @@ public class AuthService {
                 .roleType(ROLE_USER)
                 .providerType(EMAIL)
                 .build();
+
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
+    }
+
+    @Transactional
+    public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
+
+        String encodedPassword = passwordEncoder.encode("oauth-password");
+        //todo: 패스워드 환경변수 분리
+        Member member = Member.builder()
+            .email(signUpRequest.email())
+            .memberName(signUpRequest.memberName())
+            .nickName(signUpRequest.nickName())
+            .password(encodedPassword)
+            .phoneNumber(signUpRequest.phoneNumber())
+            .roleType(ROLE_USER)
+            .providerType(signUpRequest.provider())
+            .build();
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();

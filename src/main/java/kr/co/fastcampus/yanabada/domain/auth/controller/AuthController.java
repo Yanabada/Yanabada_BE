@@ -8,6 +8,7 @@ import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -34,6 +36,13 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseBody<Long> signUp(@RequestBody SignUpRequest signUpRequest) {
         return ResponseBody.ok(authService.signUp(signUpRequest));
+    }
+
+    @PostMapping("/sign-up/social")
+    public ResponseBody<Long> OAuthSignUp(
+        @RequestBody OauthSignUpRequest signUpRequest
+    ) {
+        return ResponseBody.ok(authService.oauthSignUp(signUpRequest));
     }
 
     @PostMapping("/login")
