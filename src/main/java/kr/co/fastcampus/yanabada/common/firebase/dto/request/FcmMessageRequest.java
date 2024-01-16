@@ -27,7 +27,7 @@ public record FcmMessageRequest(
     @Builder
     public record Data(
         String senderName,
-        String senderId,    //todo: senderId Long타입으로 바꿔보기
+        String senderId,
         String message
     ) {
     }
