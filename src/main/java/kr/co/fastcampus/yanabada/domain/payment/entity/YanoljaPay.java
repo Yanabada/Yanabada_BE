@@ -47,7 +47,7 @@ public class YanoljaPay extends BaseEntity {
     @Column(length = 500)
     private String contents;
 
-    @Column
+    @Column(nullable = false)
     private Long balance;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "yanoljaPay",
