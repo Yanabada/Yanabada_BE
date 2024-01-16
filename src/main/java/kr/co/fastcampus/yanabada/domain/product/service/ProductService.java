@@ -4,6 +4,7 @@ import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatu
 
 import io.micrometer.common.util.StringUtils;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -20,12 +21,15 @@ import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
+import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductHistoryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductIdResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductInfoResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductSummaryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
+import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +61,7 @@ public class ProductService {
         validateProductSaveRequest(request, order);
 
         return ProductIdResponse.from(
-            productRepository.save(request.toEntity(order))
+            productRepository.save(request.toEntity(order, LocalDateTime.now()))
         );
     }
 
@@ -167,5 +171,11 @@ public class ProductService {
         if (product.getStatus() != ON_SALE) {
             throw new InvalidStatusProductUpdateException();
         }
+    }
+
+    public ProductHistoryPageResponse getOwnProduct(
+        Long memberId, ProductStatus status, Pageable pageable
+    ) {
+        return null;
     }
 }
