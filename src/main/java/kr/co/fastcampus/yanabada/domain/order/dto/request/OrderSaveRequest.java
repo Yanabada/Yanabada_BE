@@ -1,6 +1,8 @@
 package kr.co.fastcampus.yanabada.domain.order.dto.request;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import kr.co.fastcampus.yanabada.common.utils.OrderCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -24,7 +26,7 @@ public record OrderSaveRequest(
     Integer childCount
 ) {
 
-    public Order toEntity(Room room, Member member) {
+    public Order toEntity(Room room, Member member, LocalDateTime registeredDate) {
         return Order.create(
             room,
             member,
@@ -36,6 +38,7 @@ public record OrderSaveRequest(
             reservationPersonPhoneNumber,
             userPersonName,
             userPersonPhoneNumber,
+            registeredDate,
             paymentType,
             OrderCodeGenerator.generate()
         );

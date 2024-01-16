@@ -15,6 +15,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
@@ -68,6 +70,9 @@ public class Order extends BaseEntity {
     private String userPersonPhoneNumber;
 
     @Column(nullable = false)
+    private LocalDateTime registeredDate;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
@@ -85,6 +90,7 @@ public class Order extends BaseEntity {
         String reservationPersonPhoneNumber,
         String userPersonName,
         String userPersonPhoneNumber,
+        LocalDateTime registeredDate,
         PaymentType paymentType,
         String code
     ) {
@@ -98,6 +104,7 @@ public class Order extends BaseEntity {
         this.reservationPersonPhoneNumber = reservationPersonPhoneNumber;
         this.userPersonName = userPersonName;
         this.userPersonPhoneNumber = userPersonPhoneNumber;
+        this.registeredDate = registeredDate;
         this.paymentType = paymentType;
         this.code = code;
     }
@@ -113,6 +120,7 @@ public class Order extends BaseEntity {
         String reservationPersonPhoneNumber,
         String userPersonName,
         String userPersonPhoneNumber,
+        LocalDateTime registeredDate,
         PaymentType paymentType,
         String code
     ) {
@@ -127,6 +135,7 @@ public class Order extends BaseEntity {
             reservationPersonPhoneNumber,
             userPersonName,
             userPersonPhoneNumber,
+            registeredDate,
             paymentType,
             code
         );
