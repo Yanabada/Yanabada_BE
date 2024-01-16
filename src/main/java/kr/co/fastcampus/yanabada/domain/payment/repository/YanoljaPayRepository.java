@@ -6,6 +6,6 @@ import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface YanoljaPayRepository extends JpaRepository<YanoljaPay, Long> {
-    Optional<YanoljaPay> findByMemberId(Member member);
+    Optional<YanoljaPay> findByMember(Member member);
 }
 
