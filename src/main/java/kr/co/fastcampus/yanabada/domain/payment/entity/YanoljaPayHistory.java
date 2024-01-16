@@ -2,6 +2,8 @@ package kr.co.fastcampus.yanabada.domain.payment.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +29,9 @@ public class YanoljaPayHistory {
     @Column(nullable = false)
     private Long transactionAmount; // 거래 금액 필드
 
+    @Enumerated(EnumType.STRING) // Enum 타입으로 선언
     @Column(nullable = false)
-    private String transactionType; // 거래 유형 필드 (예: "출금", "충전")
+    private TransactionType transactionType;  // 거래 유형 필드 (예: "출금", "충전")
 
     @Column(nullable = false)
     private LocalDateTime transactionTime; // 거래 시간 필드
@@ -49,7 +53,7 @@ public class YanoljaPayHistory {
     ) {
         this.yanoljaPay = yanoljaPay;
         this.transactionAmount = transactionAmount;
-        this.transactionType = transactionType;
+        this.transactionType = TransactionType.valueOf(transactionType);
         this.transactionTime = transactionTime;
     }
 
