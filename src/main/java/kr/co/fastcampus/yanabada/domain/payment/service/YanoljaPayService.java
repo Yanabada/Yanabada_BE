@@ -18,24 +18,14 @@ public class YanoljaPayService {
         this.yanoljaPayRepository = yanoljaPayRepository;
     }
 
-    public YanoljaPayHomeResponse getHomeScreenData(Long memberId) {
+    public YanoljaPayHomeResponse getYanoljaPayData(Long memberId) {
         YanoljaPay yanoljaPay = yanoljaPayRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new MemberNotFoundException());
+            .orElseThrow(MemberNotFoundException::new);
 
         List<PaymentHistoryResponse> paymentHistoryResponses =
             yanoljaPay.getPaymentHistories().stream()
-            .map(history -> {
-                YanoljaPay payInfo = history.getYanoljaPay();
-                return new PaymentHistoryResponse(
-                    "상품명", // todo: 상품명 정보가 필요할 경우, 별도의 처리가 필요.
-                    history.getTransactionType().getDescription(),
-                    payInfo.getBankName(),
-                    payInfo.getBankImage(),
-                    payInfo.getAccountNumber(),
-                    history.getTransactionAmount(),
-                    history.getTransactionTime()
-                );
-            }).collect(Collectors.toList());
+            .map(PaymentHistoryResponse::from)
+                .collect(Collectors.toList());
 
         return new YanoljaPayHomeResponse(yanoljaPay.getBalance(), paymentHistoryResponses);
     }

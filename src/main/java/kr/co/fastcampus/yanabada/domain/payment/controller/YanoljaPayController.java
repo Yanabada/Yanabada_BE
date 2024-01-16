@@ -16,9 +16,9 @@ public class YanoljaPayController {
 
     private final YanoljaPayService yanoljaPayService;
 
-    @GetMapping("/yanoljapay/{memberId}")
-    public ResponseEntity<YanoljaPayHomeResponse> getYanoljaPayScreen(@PathVariable Long memberId) {
-        YanoljaPayHomeResponse response = yanoljaPayService.getHomeScreenData(memberId);
+    @GetMapping("/{memberId}")
+    public ResponseEntity<YanoljaPayHomeResponse> getYanoljaPay(@PathVariable Long memberId) {
+        YanoljaPayHomeResponse response = yanoljaPayService.getYanoljaPayData(memberId);
         return ResponseEntity.ok(response);
     }
 }
