@@ -1,7 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.order.dto.request;
 
 import java.time.LocalDate;
-import kr.co.fastcampus.yanabada.common.utils.OrderCodeGenerator;
+import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
@@ -37,7 +37,7 @@ public record OrderSaveRequest(
             userPersonName,
             userPersonPhoneNumber,
             paymentType,
-            OrderCodeGenerator.generate()
+            EntityCodeGenerator.generate()
         );
     }
 }
