@@ -3,8 +3,8 @@ package kr.co.fastcampus.yanabada.domain.payment.dto.request;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.common.utils.FeeCalculator;
-import kr.co.fastcampus.yanabada.common.utils.TradeCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
@@ -52,7 +52,7 @@ public record TradeSaveRequest(
             FeeCalculator.calculate(product.getPrice()),
             point,
             paymentType,
-            TradeCodeGenerator.generate(),
+            EntityCodeGenerator.generate(),
             TradeStatus.WAITING,
             LocalDateTime.now()
         );

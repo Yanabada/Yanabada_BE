@@ -5,7 +5,7 @@ import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
-import kr.co.fastcampus.yanabada.common.utils.OrderCodeGenerator;
+import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
@@ -153,7 +153,7 @@ public class TradeService {
             trade.getUserPersonName(),
             trade.getUserPersonPhoneNumber(),
             trade.getPaymentType(),
-            OrderCodeGenerator.generate()
+            EntityCodeGenerator.generate()
         );
     }
 }
