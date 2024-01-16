@@ -32,28 +32,28 @@ public class YanoljaPay extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(nullable = false, length = 13)
+    @Column(length = 13)
     private String account;
 
-    @Column(nullable = false, length = 13)
+    @Column(length = 13)
     private String accountNumber;
 
-    @Column(nullable = false)
+    @Column
     private String simplePassword;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String bankName;
 
-    @Column(nullable = false, length = 200)
+    @Column(length = 200)
     private String bankImage;
 
-    @Column(nullable = false)
+    @Column
     private Long balance;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "yanoljaPay",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
-    @OrderBy("transactionTime asc")
+    @OrderBy("transactionTime desc")
     private final List<YanoljaPayHistory> paymentHistories = new ArrayList<>();
 
     private YanoljaPay(
