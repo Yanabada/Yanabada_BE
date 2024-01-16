@@ -7,7 +7,8 @@ import lombok.Builder;
 
 @Builder
 public record ProductHistoryInfoResponse(
-    Long id,
+    Long productId,
+    Long tradeId,
     String image,
     String accommodationName,
     String roomName,
@@ -16,9 +17,10 @@ public record ProductHistoryInfoResponse(
     ProductStatus status
 ) {
 
-    public static ProductHistoryInfoResponse from(Product product) {
+    public static ProductHistoryInfoResponse from(Long tradeId, Product product) {
         return ProductHistoryInfoResponse.builder()
-            .id(product.getId())
+            .productId(product.getId())
+            .tradeId(tradeId)
             .image(product.getOrder().getRoom().getAccommodation().getImage())
             .accommodationName(product.getOrder().getRoom().getAccommodation().getName())
             .roomName(product.getOrder().getRoom().getName())
