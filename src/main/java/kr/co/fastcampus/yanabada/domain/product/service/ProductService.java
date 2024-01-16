@@ -205,9 +205,9 @@ public class ProductService {
         if (!Objects.equals(member, product.getOrder().getMember())) {
             throw new AccessForbiddenException();
         }
-        if (product.getStatus() == CANCELED ||
-            product.getStatus() == TIMEOUT ||
-            product.getStatus() == SOLD_OUT) {
+        if (product.getStatus() == CANCELED
+            || product.getStatus() == TIMEOUT
+            || product.getStatus() == SOLD_OUT) {
             throw new IllegalProductStatusException();
         }
     }
