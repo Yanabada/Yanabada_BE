@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.product.service;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.TIMEOUT;
 
 import io.micrometer.common.util.StringUtils;
 import java.time.LocalDate;
@@ -11,7 +12,6 @@ import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.InvalidStatusProductUpdateException;
-import kr.co.fastcampus.yanabada.common.exception.OrderNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.OrderNotSellableException;
 import kr.co.fastcampus.yanabada.common.exception.SaleEndDateRangeException;
 import kr.co.fastcampus.yanabada.common.exception.SellingPriceRangeException;
@@ -55,8 +55,7 @@ public class ProductService {
         ProductSaveRequest request
     ) {
         Member member = memberRepository.getMember(memberId);
-        Order order = orderRepository.findById(request.orderId())
-            .orElseThrow(OrderNotFoundException::new);
+        Order order = orderRepository.getOrder(request.orderId());
 
         if (!Objects.equals(member, order.getMember())) {
             throw new AccessForbiddenException();
@@ -138,7 +137,7 @@ public class ProductService {
     }
 
     @Scheduled(cron = CRON_SCHEDULING)
-    public void cancelProductsSaleEndDateExpired() {
+    public void expireProducts() {
         List<Product> products = productRepository.getBySaleEndDateExpired();
         products.forEach(
             product -> {
@@ -147,7 +146,7 @@ public class ProductService {
                     product.getOrder().cancel();
                 }
                 cancelTradeRelatedToProduct(product);
-                product.cancel();
+                product.expire();
             }
         );
     }
@@ -206,7 +205,9 @@ public class ProductService {
         if (!Objects.equals(member, product.getOrder().getMember())) {
             throw new AccessForbiddenException();
         }
-        if (product.getStatus() == CANCELED || product.getStatus() == SOLD_OUT) {
+        if (product.getStatus() == CANCELED
+            || product.getStatus() == TIMEOUT
+            || product.getStatus() == SOLD_OUT) {
             throw new IllegalProductStatusException();
         }
     }
