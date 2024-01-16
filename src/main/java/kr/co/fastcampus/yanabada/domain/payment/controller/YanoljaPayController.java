@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.payment.controller;
 
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHomeResponse;
 import kr.co.fastcampus.yanabada.domain.payment.service.YanoljaPayService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class YanoljaPayController {
     private final YanoljaPayService yanoljaPayService;
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<YanoljaPayHomeResponse> getYanoljaPay(@PathVariable Long memberId) {
-        YanoljaPayHomeResponse response = yanoljaPayService.getYanoljaPayData(memberId);
+    public ResponseEntity<YanoljaPayHomeResponse> getYanoljaPay(@PathVariable Member member) {
+        YanoljaPayHomeResponse response = yanoljaPayService.getYanoljaPayData(member);
         return ResponseEntity.ok(response);
     }
 }

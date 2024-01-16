@@ -3,6 +3,8 @@ package kr.co.fastcampus.yanabada.domain.payment.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.PaymentHistoryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHomeResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
@@ -18,15 +20,10 @@ public class YanoljaPayService {
         this.yanoljaPayRepository = yanoljaPayRepository;
     }
 
-    public YanoljaPayHomeResponse getYanoljaPayData(Long memberId) {
-        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMemberId(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+    public YanoljaPayHomeResponse getYanoljaPayData(Member member) {
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMemberId(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
 
-        List<PaymentHistoryResponse> paymentHistoryResponses =
-            yanoljaPay.getPaymentHistories().stream()
-            .map(PaymentHistoryResponse::from)
-                .collect(Collectors.toList());
-
-        return new YanoljaPayHomeResponse(yanoljaPay.getBalance(), paymentHistoryResponses);
+        return YanoljaPayHomeResponse.from(yanoljaPay);
     }
 }
