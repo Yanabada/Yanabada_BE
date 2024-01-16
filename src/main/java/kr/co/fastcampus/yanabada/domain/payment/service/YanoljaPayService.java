@@ -21,11 +21,7 @@ public class YanoljaPayService {
     public YanoljaPayHomeResponse getYanoljaPayDataByMemberId(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
-        if (member != null) {
-            return getYanoljaPayData(member);
-        } else {
-            throw new YanoljaPayNotFoundException();
-        }
+        return getYanoljaPayData(member);
     }
 
     public YanoljaPayHomeResponse getYanoljaPayData(Member member) {

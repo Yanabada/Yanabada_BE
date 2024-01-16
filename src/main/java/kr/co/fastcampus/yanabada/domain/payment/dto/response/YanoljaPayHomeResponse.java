@@ -3,7 +3,9 @@ package kr.co.fastcampus.yanabada.domain.payment.dto.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import lombok.Builder;
 
+@Builder
 public record YanoljaPayHomeResponse(
     Long balance,
     List<PaymentHistoryResponse> paymentHistories
