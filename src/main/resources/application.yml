@@ -49,3 +49,7 @@ email:
   user: tjdtn0219@ajou.ac.kr
   password: wvuh cnxb oizl gnjv
 
+firebase:
+  project-id: yanabada-b13ee
+  key-path: yanabada-firebase-key.json
+
