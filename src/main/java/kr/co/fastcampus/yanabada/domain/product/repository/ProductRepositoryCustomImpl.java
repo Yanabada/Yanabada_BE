@@ -13,7 +13,6 @@ import static kr.co.fastcampus.yanabada.domain.order.entity.QOrder.order;
 import static kr.co.fastcampus.yanabada.domain.product.dto.request.enums.ProductSearchOrderCondition.RECENT;
 import static kr.co.fastcampus.yanabada.domain.product.entity.QProduct.product;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
-import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
 
@@ -78,6 +77,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .isEmpty();
     }
 
+    @Override
     public List<Product> getBySaleEndDateExpired() {
         return queryFactory.selectFrom(product)
             .where(
@@ -108,7 +108,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .leftJoin(room.roomOption, roomOption).fetchJoin()
             .leftJoin(accommodation.accommodationOption, accommodationOption).fetchJoin()
             .where(
-                notEqualStatusCanceled(),
+                isStatusOnSaleOrBookingOrSoldOut(),
                 containKeyword(request.keyword()),
                 equalSchedule(request.checkInDate(), request.checkOutDate()),
                 greaterOrEqualCapacity(request.adult(), request.child()),
@@ -123,8 +123,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             );
     }
 
-    private BooleanExpression notEqualStatusCanceled() {
-        return product.status.ne(CANCELED);
+    private BooleanExpression isStatusOnSaleOrBookingOrSoldOut() {
+        return product.status.in(ON_SALE, BOOKING, SOLD_OUT);
     }
 
     private BooleanExpression containKeyword(String keyword) {
