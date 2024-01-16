@@ -5,7 +5,6 @@ import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
-import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductHistoryInfoResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductHistoryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductIdResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductInfoResponse;
@@ -14,6 +13,7 @@ import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -70,6 +70,14 @@ public class ProductController {
         return ResponseBody.ok(
             productService.updateProduct(1L, productId, request)
         );
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseBody<Void> deleteProduct(
+        @PathVariable("productId") Long productId
+    ) {
+        productService.cancelProduct(1L, productId);
+        return ResponseBody.ok();
     }
 
     @GetMapping("/own")

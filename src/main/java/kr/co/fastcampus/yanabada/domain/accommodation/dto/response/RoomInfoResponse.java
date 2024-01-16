@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
@@ -10,7 +11,9 @@ public record RoomInfoResponse(
     Long id,
     String name,
     Integer price,
+    @JsonFormat(pattern = "HH:mm")
     LocalTime checkInTime,
+    @JsonFormat(pattern = "HH:mm")
     LocalTime checkOutTime,
     String description,
     Integer minHeadCount,
