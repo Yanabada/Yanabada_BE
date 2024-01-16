@@ -131,7 +131,7 @@ public class Product {
         status = ON_SALE;
     }
 
-    public void timeout() {
+    public void expire() {
         status = TIMEOUT;
     }
 }
