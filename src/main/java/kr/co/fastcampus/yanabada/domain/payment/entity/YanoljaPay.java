@@ -33,9 +33,6 @@ public class YanoljaPay extends BaseEntity {
     private Member member;
 
     @Column(length = 13)
-    private String account;
-
-    @Column(length = 13)
     private String accountNumber;
 
     @Column
