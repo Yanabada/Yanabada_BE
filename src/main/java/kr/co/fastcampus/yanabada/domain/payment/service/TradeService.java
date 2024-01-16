@@ -7,6 +7,7 @@ import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
+import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -109,9 +110,10 @@ public class TradeService {
         Member member = memberRepository.getMember(memberId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
-        if (!Objects.equals(member, trade.getSeller())
-            || trade.getHasSellerDeleted()
-            || trade.getStatus() == WAITING) {
+        if (trade.getHasSellerDeleted()) {
+            throw new TradeNotFoundException();
+        }
+        if (!Objects.equals(member, trade.getSeller()) || trade.getStatus() == WAITING) {
             throw new AccessForbiddenException();
         }
 
@@ -123,9 +125,10 @@ public class TradeService {
         Member member = memberRepository.getMember(memberId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
-        if (!Objects.equals(member, trade.getBuyer())
-            || trade.getHasBuyerDeleted()
-            || trade.getStatus() == WAITING) {
+        if (trade.getHasBuyerDeleted()) {
+            throw new TradeNotFoundException();
+        }
+        if (!Objects.equals(member, trade.getBuyer()) || trade.getStatus() == WAITING) {
             throw new AccessForbiddenException();
         }
 
