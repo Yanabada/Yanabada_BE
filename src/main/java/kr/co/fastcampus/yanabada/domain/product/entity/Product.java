@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import lombok.AccessLevel;
@@ -50,6 +51,9 @@ public class Product {
     private Boolean isAutoCancel;
 
     @Column(nullable = false)
+    private LocalDateTime registeredDate;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
@@ -60,6 +64,7 @@ public class Product {
         Boolean canNegotiate,
         LocalDate saleEndDate,
         Boolean isAutoCancel,
+        LocalDateTime registeredDate,
         ProductStatus status
     ) {
         this.order = order;
@@ -68,6 +73,7 @@ public class Product {
         this.canNegotiate = canNegotiate;
         this.saleEndDate = saleEndDate;
         this.isAutoCancel = isAutoCancel;
+        this.registeredDate = registeredDate;
         this.status = status;
     }
 
@@ -78,6 +84,7 @@ public class Product {
         Boolean canNegotiate,
         LocalDate saleEndDate,
         Boolean isAutoCancel,
+        LocalDateTime registeredDate,
         ProductStatus status
     ) {
         return new Product(
@@ -87,6 +94,7 @@ public class Product {
             canNegotiate,
             saleEndDate,
             isAutoCancel,
+            registeredDate,
             status
         );
     }
