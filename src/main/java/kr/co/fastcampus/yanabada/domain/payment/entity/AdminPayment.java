@@ -35,8 +35,8 @@ public class AdminPayment extends BaseEntity {
         balance += depositAmount;
     }
 
-    public void withdrawal (int withdrawalAmount ) {
-        balance += withdrawalAmount ;
+    public void withdrawal(int withdrawalAmount) {
+        balance += withdrawalAmount;
     }
 
     public void incrementAccumulatedUsers(int userCount) {
