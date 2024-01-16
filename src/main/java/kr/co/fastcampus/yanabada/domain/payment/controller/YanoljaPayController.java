@@ -26,7 +26,8 @@ public class YanoljaPayController {
     public ResponseEntity<ResponseBody<YanoljaPayHomeResponse>> getYanoljaPay(
         @PathVariable Long memberId) {
         try {
-            YanoljaPayHomeResponse response = yanoljaPayService.getYanoljaPayDataByMemberId(memberId);
+            YanoljaPayHomeResponse response = yanoljaPayService
+                .getYanoljaPayDataByMemberId(memberId);
             return ResponseEntity.ok(ResponseBody.ok(response));
         } catch (YanoljaPayNotFoundException e) {
             return ResponseEntity
