@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.common.firebase.dto.request;
 
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.ChatNotificationSendRequest;
 import lombok.Builder;
 
 @Builder

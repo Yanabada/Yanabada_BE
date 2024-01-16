@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.common.firebase.service;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
@@ -46,9 +47,13 @@ public class FcmService {
         Member sender,
         Member receiver,
         Notification notification
-    ) throws IOException {
-        FcmMessageRequest fcmMessage = makeFcmMessage(sender, receiver, notification);
-        sendMessageToFcmServer(objectMapper.writeValueAsString(fcmMessage));
+    ) {
+        try {
+            FcmMessageRequest fcmMessage = makeFcmMessage(sender, receiver, notification);
+            sendMessageToFcmServer(objectMapper.writeValueAsString(fcmMessage));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JsonParsingError");     //todo
+        }
     }
 
     private void sendMessageToFcmServer(String message) {
