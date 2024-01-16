@@ -82,8 +82,8 @@ public class ProductController {
 
     @GetMapping("/own")
     public ResponseBody<ProductHistoryPageResponse> getOwnProduct(
-        @RequestParam("status") ProductStatus status,
-        @PageableDefault(size = 20, sort = "registeredDate", direction = Sort.Direction.DESC)
+        @RequestParam(name = "status", required = false) ProductStatus status,
+        @PageableDefault(sort = "registeredDate", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
         Long memberId = 1L;
