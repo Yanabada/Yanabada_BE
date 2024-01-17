@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -40,12 +39,12 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up/social")
-    public ResponseBody<Long> oauthSignUp(@RequestBody OauthSignUpRequest signUpRequest) {
+    public ResponseBody<Long> oauthSignUp(@RequestBody @Valid OauthSignUpRequest signUpRequest) {
         return ResponseBody.ok(authService.oauthSignUp(signUpRequest));
     }
 
     @PostMapping("/login")
-    public ResponseBody<TokenIssueResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseBody<TokenIssueResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
