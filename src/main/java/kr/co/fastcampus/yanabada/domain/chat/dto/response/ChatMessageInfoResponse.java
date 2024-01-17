@@ -7,6 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record ChatMessageInfoResponse(
+    Long senderId,
     String senderImage,
     String senderNickname,
     String content,
@@ -18,6 +19,7 @@ public record ChatMessageInfoResponse(
         Member sender, String content, LocalDateTime sendDateTime
     ) {
         return ChatMessageInfoResponse.builder()
+            .senderId(sender.getId())
             .senderImage(sender.getImageUrl())
             .senderNickname(sender.getNickName())
             .content(content)
