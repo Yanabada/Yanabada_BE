@@ -30,3 +30,6 @@ email:
   user: tjdtn0219@ajou.ac.kr
   password: wvuh cnxb oizl gnjv
 
+chatroom:
+  topic:
+    prefix: "/sub/chatroom/"
