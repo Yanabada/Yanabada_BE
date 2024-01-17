@@ -1,5 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.payment.entity;
 
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.CANCELED;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.COMPLETED;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
@@ -77,6 +82,15 @@ public class Trade extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TradeStatus status;
 
+    @Column(nullable = false)
+    private LocalDateTime registeredDate;
+
+    @Column(nullable = false)
+    private Boolean hasSellerDeleted;
+
+    @Column(nullable = false)
+    private Boolean hasBuyerDeleted;
+
     private Trade(
         Product product,
         Member seller,
@@ -91,11 +105,14 @@ public class Trade extends BaseEntity {
         Integer point,
         PaymentType paymentType,
         String code,
-        TradeStatus status
+        TradeStatus status,
+        LocalDateTime registeredDate,
+        Boolean hasSellerDeleted,
+        Boolean hasBuyerDeleted
     ) {
         this.product = product;
-        this.buyer = buyer;
         this.seller = seller;
+        this.buyer = buyer;
         this.reservationPersonName = reservationPersonName;
         this.reservationPersonPhoneNumber = reservationPersonPhoneNumber;
         this.userPersonName = userPersonName;
@@ -107,6 +124,9 @@ public class Trade extends BaseEntity {
         this.paymentType = paymentType;
         this.code = code;
         this.status = status;
+        this.registeredDate = registeredDate;
+        this.hasSellerDeleted = hasSellerDeleted;
+        this.hasBuyerDeleted = hasBuyerDeleted;
     }
 
     public static Trade create(
@@ -123,12 +143,13 @@ public class Trade extends BaseEntity {
         Integer point,
         PaymentType paymentType,
         String code,
-        TradeStatus status
+        TradeStatus status,
+        LocalDateTime registeredDate
     ) {
         return new Trade(
             product,
-            buyer,
             seller,
+            buyer,
             reservationPersonName,
             reservationPersonPhoneNumber,
             userPersonName,
@@ -139,7 +160,30 @@ public class Trade extends BaseEntity {
             point,
             paymentType,
             code,
-            status
+            status,
+            registeredDate,
+            false,
+            false
         );
+    }
+
+    public void complete() {
+        status = COMPLETED;
+    }
+
+    public void reject() {
+        status = REJECTED;
+    }
+
+    public void cancel() {
+        status = CANCELED;
+    }
+
+    public void deleteBySeller() {
+        hasSellerDeleted = true;
+    }
+
+    public void deleteByBuyer() {
+        hasBuyerDeleted = true;
     }
 }

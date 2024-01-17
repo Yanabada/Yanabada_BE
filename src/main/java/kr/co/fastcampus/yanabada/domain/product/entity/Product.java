@@ -1,6 +1,10 @@
 package kr.co.fastcampus.yanabada.domain.product.entity;
 
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.TIMEOUT;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,5 +117,21 @@ public class Product {
 
     public void cancel() {
         status = CANCELED;
+    }
+
+    public void book() {
+        status = BOOKING;
+    }
+
+    public void soldOut() {
+        status = SOLD_OUT;
+    }
+
+    public void onSale() {
+        status = ON_SALE;
+    }
+
+    public void expire() {
+        status = TIMEOUT;
     }
 }
