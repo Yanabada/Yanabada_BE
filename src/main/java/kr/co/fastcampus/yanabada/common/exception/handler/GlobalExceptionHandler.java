@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TokenExpiredException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseBody<TokenExpiredResponse> tokenExpiredException(
         TokenExpiredException e
     ) {
