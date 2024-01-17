@@ -13,8 +13,5 @@ public interface YanoljaPayRepository extends JpaRepository<YanoljaPay, Long> {
 
     Optional<YanoljaPay> findByMember(Member member);
 
-    @Modifying
-    @Query("UPDATE YanoljaPay y SET y.simplePassword = :password WHERE y.member = :member")
-    void updateSimplePassword(@Param("member") Member member, @Param("password") String password);
 }
 
