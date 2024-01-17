@@ -7,7 +7,6 @@ import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
 
 import java.util.Objects;
-
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
@@ -29,6 +28,7 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradePageRe
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
@@ -222,6 +222,7 @@ public class TradeService {
         );
     }
 
+    @Transactional(readOnly = true)
     public ApprovalTradePageResponse getApprovalTrades(
         Long memberId, TradeStatus status, Pageable pageable
     ) {
@@ -229,12 +230,11 @@ public class TradeService {
         if (Objects.equals(status, CANCELED)) {
             throw new UnavailableStatusQueryException();
         }
-        Page<Trade> trades = tradeRepository.findByMemberRoleAndStatus(
-            member, SELLER, status, pageable
-        );
+        Page<Trade> trades = getTrades(member, SELLER, status, pageable);
         return ApprovalTradePageResponse.from(trades.map(ApprovalTradeSummaryResponse::from));
     }
 
+    @Transactional(readOnly = true)
     public PurchaseTradePageResponse getPurchaseTrades(
         Long memberId, TradeStatus status, Pageable pageable
     ) {
@@ -242,10 +242,16 @@ public class TradeService {
         if (Objects.equals(status, REJECTED)) {
             throw new UnavailableStatusQueryException();
         }
-        Page<Trade> trades = tradeRepository.findByMemberRoleAndStatus(
-            member, BUYER, status, pageable
-        );
+        Page<Trade> trades = getTrades(member, BUYER, status, pageable);
         return PurchaseTradePageResponse.from(trades.map(PurchaseTradeSummaryResponse::from));
+    }
+
+    private Page<Trade> getTrades(
+        Member member, TradeRole role, TradeStatus status, Pageable pageable
+    ) {
+        return tradeRepository.findByMemberRoleAndStatus(
+            member, role, status, pageable
+        );
     }
 
 }
