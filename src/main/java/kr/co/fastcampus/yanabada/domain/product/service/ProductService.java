@@ -252,7 +252,7 @@ public class ProductService {
     }
 
     private void checkProductStatus(ProductStatus status) {
-        if (status.equals(CANCELED)) {
+        if (Objects.equals(status, CANCELED)) {
             throw new UnavailableStatusQueryException();
         }
     }
