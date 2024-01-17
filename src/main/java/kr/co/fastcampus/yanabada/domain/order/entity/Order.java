@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.order.entity;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.TRADED;
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.USED;
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.CANCELED;
 
@@ -138,5 +139,9 @@ public class Order extends BaseEntity {
 
     public void cancel() {
         status = CANCELED;
+    }
+
+    public void trade() {
+        status = TRADED;
     }
 }
