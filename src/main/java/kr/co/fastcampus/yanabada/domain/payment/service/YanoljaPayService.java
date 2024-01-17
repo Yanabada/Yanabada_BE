@@ -5,7 +5,7 @@ import kr.co.fastcampus.yanabada.common.exception.PasswordConfirmationException;
 import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
-import kr.co.fastcampus.yanabada.domain.payment.dto.request.PayPasswordRequest;
+import kr.co.fastcampus.yanabada.domain.payment.dto.request.PayPasswordSaveRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHomeResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
@@ -35,14 +35,15 @@ public class YanoljaPayService {
     }
 
     @Transactional
-    public void setPayPassword(Long memberId, PayPasswordRequest payPasswordRequest) {
-        if (!payPasswordRequest.isPasswordMatch()) {
+    public void setPayPassword(Long memberId, PayPasswordSaveRequest payPasswordSaveRequest) {
+        if (!payPasswordSaveRequest.isPasswordMatch()) {
             throw new PasswordConfirmationException();
         }
 
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.getMember(memberId);
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
 
-        yanoljaPayRepository.updateSimplePassword(member, payPasswordRequest.password());
+        yanoljaPay.savePassword(payPasswordSaveRequest.password());
     }
 }

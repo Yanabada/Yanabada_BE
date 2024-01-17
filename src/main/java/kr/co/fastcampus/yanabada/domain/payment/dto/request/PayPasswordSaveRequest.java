@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
-public record PayPasswordRequest(
+public record PayPasswordSaveRequest(
     @NotBlank(message = "패스워드는 공백일 수 없습니다.")
     @Pattern(regexp = "\\d{6}", message = "패스워드는 6글자이어야 합니다.")
     String password,

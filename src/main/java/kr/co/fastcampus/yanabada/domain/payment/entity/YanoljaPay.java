@@ -93,4 +93,8 @@ public class YanoljaPay extends BaseEntity {
             balance
         );
     }
+
+    public void savePassword(String password) {
+        this.simplePassword = password;
+    }
 }
