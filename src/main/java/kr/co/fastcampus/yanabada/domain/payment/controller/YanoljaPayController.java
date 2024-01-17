@@ -31,7 +31,7 @@ public class YanoljaPayController {
         return ResponseBody.ok(yanoljaPayService.getYanoljaPay(memberId));
     }
 
-    @PostMapping("/payPassword/{memberId}")
+    @PostMapping("/pay-password/{memberId}")
     public ResponseBody<ResponseEntity<?>> setPayPassword(
         @PathVariable("memberId") Long memberId,
         @RequestBody @Valid PayPasswordRequest payPasswordRequest
