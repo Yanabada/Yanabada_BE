@@ -1,11 +1,14 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
+import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -13,9 +16,10 @@ import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
@@ -102,6 +106,54 @@ public class TradeService {
         //TODO: Seller에게 알림(Optional)
     }
 
+    @Transactional(readOnly = true)
+    public ApprovalTradeInfoResponse getApprovalTrade(Long memberId, Long tradeId) {
+        Member member = memberRepository.getMember(memberId);
+        Trade trade = tradeRepository.getTrade(tradeId);
+
+        if (trade.getHasSellerDeleted()) {
+            throw new TradeNotFoundException();
+        }
+        if (!Objects.equals(member, trade.getSeller()) || trade.getStatus() == WAITING) {
+            throw new AccessForbiddenException();
+        }
+
+        return ApprovalTradeInfoResponse.from(trade);
+    }
+
+    @Transactional(readOnly = true)
+    public PurchaseTradeInfoResponse getPurchaseTrade(Long memberId, Long tradeId) {
+        Member member = memberRepository.getMember(memberId);
+        Trade trade = tradeRepository.getTrade(tradeId);
+
+        if (trade.getHasBuyerDeleted()) {
+            throw new TradeNotFoundException();
+        }
+        if (!Objects.equals(member, trade.getBuyer()) || trade.getStatus() == WAITING) {
+            throw new AccessForbiddenException();
+        }
+
+        return PurchaseTradeInfoResponse.from(trade);
+    }
+
+    @Transactional
+    public void deleteTrade(Long memberId, Long tradeId) {
+        Member member = memberRepository.getMember(memberId);
+        Trade trade = tradeRepository.getTrade(tradeId);
+
+        if (Objects.equals(member, trade.getSeller())) {
+            trade.deleteBySeller();
+        } else if (Objects.equals(member, trade.getBuyer())) {
+            trade.deleteByBuyer();
+        } else {
+            throw new AccessForbiddenException();
+        }
+
+        if (trade.getHasSellerDeleted() && trade.getHasBuyerDeleted()) {
+            tradeRepository.delete(trade);
+        }
+    }
+
     private void validateTradeSaveRequest(Product product, Member seller, Member buyer) {
         if (product.getStatus() != ProductStatus.ON_SALE) {
             throw new IllegalProductStatusException();
@@ -115,7 +167,7 @@ public class TradeService {
         if (!Objects.equals(seller, trade.getSeller())) {
             throw new AccessForbiddenException();
         }
-        if (trade.getStatus() != TradeStatus.WAITING) {
+        if (trade.getStatus() != WAITING) {
             throw new IllegalTradeStatusException();
         }
     }
@@ -124,7 +176,7 @@ public class TradeService {
         if (!Objects.equals(seller, trade.getSeller())) {
             throw new AccessForbiddenException();
         }
-        if (trade.getStatus() != TradeStatus.WAITING) {
+        if (trade.getStatus() != WAITING) {
             throw new IllegalTradeStatusException();
         }
     }
@@ -133,7 +185,7 @@ public class TradeService {
         if (!Objects.equals(buyer, trade.getBuyer())) {
             throw new AccessForbiddenException();
         }
-        if (trade.getStatus() != TradeStatus.WAITING) {
+        if (trade.getStatus() != WAITING) {
             throw new IllegalTradeStatusException();
         }
     }
