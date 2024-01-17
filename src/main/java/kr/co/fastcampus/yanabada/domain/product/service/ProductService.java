@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
@@ -17,6 +18,7 @@ import kr.co.fastcampus.yanabada.common.exception.OrderNotSellableException;
 import kr.co.fastcampus.yanabada.common.exception.SaleEndDateRangeException;
 import kr.co.fastcampus.yanabada.common.exception.SellingPriceRangeException;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
@@ -225,15 +227,16 @@ public class ProductService {
         Long memberId, ProductStatus status, Pageable pageable
     ) {
         Member member = memberRepository.getMember(memberId);
+        checkProductStatus(status);
         Page<Product> products = productRepository.findProductsByMemberAndStatus(
             member, status, pageable
         );
 
         Page<ProductHistoryInfoResponse> responses = products.map(product -> {
             Long tradeId = null;
-            if (ProductStatus.SOLD_OUT.equals(product.getStatus())) {
+            if (product.getStatus().equals(SOLD_OUT)) {
                 tradeId = findTradeIdByProductAndStatus(product, TradeStatus.COMPLETED);
-            } else if (ProductStatus.BOOKING.equals(product.getStatus())) {
+            } else if (product.getStatus().equals(BOOKING)) {
                 tradeId = findTradeIdByProductAndStatus(product, TradeStatus.WAITING);
             }
             return ProductHistoryInfoResponse.from(tradeId, product);
@@ -246,5 +249,11 @@ public class ProductService {
         Trade trade = tradeRepository.findByProductAndStatus(product, tradeStatus)
             .orElseThrow(TradeNotFoundException::new);
         return trade.getId();
+    }
+
+    private void checkProductStatus(ProductStatus status) {
+        if(status.equals(CANCELED)) {
+            throw new UnavailableStatusQueryException();
+        }
     }
 }
