@@ -19,22 +19,7 @@ public class YanoljaPayController {
     @GetMapping("/{memberId}")
     public ResponseBody<YanoljaPayHomeResponse> getYanoljaPay(
         @PathVariable Long memberId) {
-        return ResponseBody.ok(yanoljaPayService.getYanoljaPayDataByMemberId(memberId));
+        return ResponseBody.ok(yanoljaPayService.getYanoljaPayData(memberId));
     }
 }
-
-//@RestController
-//@RequestMapping("/yanoljapay")
-//@RequiredArgsConstructor
-//public class YanoljaPayController {
-//
-//    private final YanoljaPayService yanoljaPayService;
-//    private final MemberRepository memberRepository;
-//
-//    @GetMapping("/{memberId}")
-//    public ResponseEntity<YanoljaPayHomeResponse> getYanoljaPay(@PathVariable Long memberId) {
-//        YanoljaPayHomeResponse response = yanoljaPayService.getYanoljaPayData(memberId);
-//        return ResponseEntity.ok(response);
-//    }
-//}
 

@@ -7,7 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record PaymentHistoryResponse(
-    String productName,
+    String contents,
     String transactionType,
     String bankName,
     String bankImage,
@@ -18,14 +18,14 @@ public record PaymentHistoryResponse(
 
     public static PaymentHistoryResponse from(YanoljaPayHistory history) {
         YanoljaPay payInfo = history.getYanoljaPay();
-        return new PaymentHistoryResponse(
-            payInfo.getContents(),
-            history.getTransactionType().getDescription(),
-            payInfo.getBankName(),
-            payInfo.getBankImage(),
-            payInfo.getAccountNumber(),
-            history.getTransactionAmount(),
-            history.getTransactionTime()
-        );
+        return PaymentHistoryResponse.builder()
+            .contents(payInfo.getContents())
+            .transactionType(history.getTransactionType().getDescription())
+            .bankName(payInfo.getBankName())
+            .bankImage(payInfo.getBankImage())
+            .accountNumber(payInfo.getAccountNumber())
+            .transactionAmount(history.getTransactionAmount())
+            .transactionTime(history.getTransactionTime())
+            .build();
     }
 }

@@ -18,7 +18,7 @@ public class YanoljaPayService {
     private final MemberRepository memberRepository;
 
 
-    public YanoljaPayHomeResponse getYanoljaPayDataByMemberId(Long memberId) {
+    public YanoljaPayHomeResponse getYanoljaPayData(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
         return getYanoljaPayData(member);
@@ -31,18 +31,3 @@ public class YanoljaPayService {
         return YanoljaPayHomeResponse.from(yanoljaPay);
     }
 }
-
-//@Service
-//@RequiredArgsConstructor
-//public class YanoljaPayService {
-//
-//    private final YanoljaPayRepository yanoljaPayRepository;
-//
-//
-//    public YanoljaPayHomeResponse getYanoljaPayData(Member member) {
-//        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
-//            .orElseThrow(YanoljaPayNotFoundException::new);
-//
-//        return YanoljaPayHomeResponse.from(yanoljaPay);
-//    }
-//}
