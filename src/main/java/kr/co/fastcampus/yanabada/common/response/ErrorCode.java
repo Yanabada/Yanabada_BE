@@ -31,6 +31,7 @@ public enum ErrorCode {
     CANNOT_NEGOTIATE_OWN_PRODUCT("자신이 등록한 상품을 네고할 순 없습니다."),
     CHAT_ROOM_NOT_FOUND_EXCEPTION("존재하지 않은 채팅방입니다."),
     INCORRECT_CHAT_ROOM_MEMBER("채팅방 멤버가 올바르지 않습니다."),
+    PASSWORD_CONFIRMATION_DOES_NOT_MATCH("입력한 비밀번호가 서로 일치하지 않습니다."),
 
     EMAIL_SEND_FAILED("이메일 전송에 실패하였습니다."),
 
