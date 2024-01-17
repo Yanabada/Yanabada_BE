@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.member.dto.response;
 
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.Builder;
 
 @Builder
@@ -10,7 +11,8 @@ public record MemberDetailResponse(
     String nickname,
     String phoneNumber,
     String imageUrl,
-    Integer point
+    Integer point,
+    ProviderType provider
 ) {
     public static MemberDetailResponse from(Member member) {
         return MemberDetailResponse.builder()
@@ -20,6 +22,7 @@ public record MemberDetailResponse(
             .phoneNumber(member.getPhoneNumber())
             .imageUrl(member.getImageUrl())
             .point(member.getPoint())
+            .provider(member.getProviderType())
             .build();
     }
 }
