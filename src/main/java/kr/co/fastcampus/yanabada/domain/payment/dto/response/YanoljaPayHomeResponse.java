@@ -17,6 +17,9 @@ public record YanoljaPayHomeResponse(
                 .map(PaymentHistoryResponse::from)
                 .collect(Collectors.toList());
 
-        return new YanoljaPayHomeResponse(yanoljaPay.getBalance(), paymentHistoryResponses);
+        return YanoljaPayHomeResponse.builder()
+            .balance(yanoljaPay.getBalance())
+            .paymentHistories(paymentHistoryResponses)
+            .build();
     }
 }
