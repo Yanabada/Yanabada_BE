@@ -8,7 +8,7 @@ import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,14 +17,14 @@ public class YanoljaPayService {
     private final YanoljaPayRepository yanoljaPayRepository;
     private final MemberRepository memberRepository;
 
-
+    @Transactional
     public YanoljaPayHomeResponse getYanoljaPay(Long memberId) {
         Member member = memberRepository.getMember(memberId);
 
         return getYanoljaPay(member);
     }
 
-    public YanoljaPayHomeResponse getYanoljaPay(Member member) {
+    private YanoljaPayHomeResponse getYanoljaPay(Member member) {
         YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
             .orElseThrow(YanoljaPayNotFoundException::new);
 
