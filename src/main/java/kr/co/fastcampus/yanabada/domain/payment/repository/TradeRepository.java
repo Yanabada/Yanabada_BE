@@ -4,7 +4,6 @@ import java.util.List;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import org.springframework.data.domain.Page;
