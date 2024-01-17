@@ -57,7 +57,7 @@ public class ChatRoom extends BaseEntity {
         fetch = FetchType.LAZY, mappedBy = "chatRoom",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
-    @OrderBy("createdDate asc")
+    @OrderBy("sendDateTime desc")
     private final List<ChatMessage> messages = new ArrayList<>();
 
     private ChatRoom(

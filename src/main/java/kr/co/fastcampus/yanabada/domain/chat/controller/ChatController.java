@@ -5,12 +5,16 @@ import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.chat.dto.ReceivedChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
-import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessagePageResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomModifyResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatController {
 
+    @Value("${chatroom.topic.prefix}")
+    private String chatroomTopicPrefix;
+
     private final ChatService chatService;
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -34,7 +41,8 @@ public class ChatController {
     @MessageMapping("/message")
     public void message(ReceivedChatMessage message) {
         messagingTemplate.convertAndSend(
-            "/sub/chatroom/" + message.chatRoomCode(), chatService.saveChatMessage(message)
+            chatroomTopicPrefix + message.chatRoomCode(),
+            chatService.saveChatMessage(message)
         );
     }
 
@@ -53,11 +61,13 @@ public class ChatController {
     }
 
     @GetMapping("/{chatRoomCode}")
-    public ResponseBody<List<ChatMessageInfoResponse>> getChatRoom(
-        @PathVariable("chatRoomCode") String chatRoomCode
+    public ResponseBody<ChatMessagePageResponse> getChatRoom(
+        @PathVariable("chatRoomCode") String chatRoomCode,
+        @PageableDefault(size = 20, sort = "sendDateTime", direction = Sort.Direction.DESC)
+        Pageable pageable
     ) {
         Long memberId = 1L;
-        return ResponseBody.ok(chatService.getChatRoomMessages(memberId, chatRoomCode));
+        return ResponseBody.ok(chatService.getChatRoomMessages(memberId, chatRoomCode, pageable));
     }
 
     @PutMapping

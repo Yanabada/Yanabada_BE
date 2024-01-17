@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import kr.co.fastcampus.yanabada.common.exception.CannotNegotiateOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectChatRoomMember;
 import kr.co.fastcampus.yanabada.common.exception.NegotiationNotPossibleException;
@@ -13,6 +12,7 @@ import kr.co.fastcampus.yanabada.domain.chat.dto.SendChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessageInfoResponse;
+import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatMessagePageResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomInfoResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomModifyResponse;
 import kr.co.fastcampus.yanabada.domain.chat.dto.response.ChatRoomSummaryResponse;
@@ -26,6 +26,8 @@ import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,16 +128,9 @@ public class ChatService {
     }
 
     private int calculateUnreadMessage(List<ChatMessage> messages, LocalDateTime lastCheckTime) {
-        int unreadCount = 0;
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            ChatMessage message = messages.get(i);
-            if (message.getSendDateTime().isAfter(lastCheckTime)) {
-                unreadCount++;
-            } else {
-                break;
-            }
-        }
-        return unreadCount;
+        return (int) messages.stream()
+            .takeWhile(message -> message.getSendDateTime().isAfter(lastCheckTime))
+            .count();
     }
 
     private List<ChatRoomSummaryResponse> sortChatRoomSummaryResponse(
@@ -151,21 +146,31 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageInfoResponse> getChatRoomMessages(Long memberId, String chatRoomCode) {
+    public ChatMessagePageResponse getChatRoomMessages(
+        Long memberId, String chatRoomCode, Pageable pageable
+    ) {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(chatRoomCode);
         Member member = memberRepository.getMember(memberId);
         checkChatRoomMember(chatRoom, member);
-        return chatRoom.getMessages().stream()
-            .map(message -> ChatMessageInfoResponse.from(
-                message.getSender(), message.getContent(), message.getSendDateTime()
-            ))
-            .toList();
+        Page<ChatMessage> messages = chatMessageRepository.findByChatRoom(chatRoom, pageable);
+
+        return ChatMessagePageResponse.from(
+            chatRoomCode, convertChatMessagesToInfoResponses(messages)
+        );
     }
 
     private void checkChatRoomMember(ChatRoom chatRoom, Member member) {
         if (!member.equals(chatRoom.getSeller()) && !member.equals(chatRoom.getBuyer())) {
             throw new IncorrectChatRoomMember();
         }
+    }
+
+    private Page<ChatMessageInfoResponse> convertChatMessagesToInfoResponses(
+        Page<ChatMessage> messages
+    ) {
+        return messages.map(message -> ChatMessageInfoResponse.from(
+            message.getSender(), message.getContent(), message.getSendDateTime()
+        ));
     }
 
     @Transactional
@@ -193,11 +198,11 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(request.chatRoomCode());
         Member member = memberRepository.getMember(memberId);
         checkChatRoomMember(chatRoom, member);
-
+        LocalDateTime lastCheckTime = LocalDateTime.now();
         if (isSeller(member, chatRoom)) {
-            handleSellerAction(chatRoom);
+            handleSellerAction(chatRoom, lastCheckTime);
         } else {
-            handleBuyerAction(chatRoom);
+            handleBuyerAction(chatRoom, lastCheckTime);
         }
         return ChatRoomModifyResponse.from(chatRoom.getCode(), memberId);
     }
@@ -210,7 +215,8 @@ public class ChatService {
         return member.equals(chatRoom.getBuyer());
     }
 
-    private void handleSellerAction(ChatRoom chatRoom) {
+    private void handleSellerAction(ChatRoom chatRoom, LocalDateTime lastCheckTime) {
+        chatRoom.updateSellerLastCheckTime(lastCheckTime);
         if (chatRoom.getHasBuyerLeft()) {
             chatRoomRepository.delete(chatRoom);
         } else {
@@ -218,7 +224,8 @@ public class ChatService {
         }
     }
 
-    private void handleBuyerAction(ChatRoom chatRoom) {
+    private void handleBuyerAction(ChatRoom chatRoom, LocalDateTime lastCheckTime) {
+        chatRoom.updateBuyerLastCheckTime(lastCheckTime);
         if (chatRoom.getHasSellerLeft()) {
             chatRoomRepository.delete(chatRoom);
         } else {
