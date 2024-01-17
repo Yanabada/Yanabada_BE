@@ -1,13 +1,19 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.BUYER;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.SELLER;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.CANCELED;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
 
 import java.util.Objects;
+
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -16,14 +22,21 @@ import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradePageResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradePageResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeSummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -208,4 +221,31 @@ public class TradeService {
             EntityCodeGenerator.generate()
         );
     }
+
+    public ApprovalTradePageResponse getApprovalTrades(
+        Long memberId, TradeStatus status, Pageable pageable
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        if (Objects.equals(status, CANCELED)) {
+            throw new UnavailableStatusQueryException();
+        }
+        Page<Trade> trades = tradeRepository.findByMemberRoleAndStatus(
+            member, SELLER, status, pageable
+        );
+        return ApprovalTradePageResponse.from(trades.map(ApprovalTradeSummaryResponse::from));
+    }
+
+    public PurchaseTradePageResponse getPurchaseTrades(
+        Long memberId, TradeStatus status, Pageable pageable
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        if (Objects.equals(status, REJECTED)) {
+            throw new UnavailableStatusQueryException();
+        }
+        Page<Trade> trades = tradeRepository.findByMemberRoleAndStatus(
+            member, BUYER, status, pageable
+        );
+        return PurchaseTradePageResponse.from(trades.map(PurchaseTradeSummaryResponse::from));
+    }
+
 }
