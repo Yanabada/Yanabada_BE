@@ -85,6 +85,12 @@ public class Trade extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime registeredDate;
 
+    @Column(nullable = false)
+    private Boolean hasSellerDeleted;
+
+    @Column(nullable = false)
+    private Boolean hasBuyerDeleted;
+
     private Trade(
         Product product,
         Member seller,
@@ -100,7 +106,9 @@ public class Trade extends BaseEntity {
         PaymentType paymentType,
         String code,
         TradeStatus status,
-        LocalDateTime registeredDate
+        LocalDateTime registeredDate,
+        Boolean hasSellerDeleted,
+        Boolean hasBuyerDeleted
     ) {
         this.product = product;
         this.seller = seller;
@@ -117,6 +125,8 @@ public class Trade extends BaseEntity {
         this.code = code;
         this.status = status;
         this.registeredDate = registeredDate;
+        this.hasSellerDeleted = hasSellerDeleted;
+        this.hasBuyerDeleted = hasBuyerDeleted;
     }
 
     public static Trade create(
@@ -151,7 +161,9 @@ public class Trade extends BaseEntity {
             paymentType,
             code,
             status,
-            registeredDate
+            registeredDate,
+            false,
+            false
         );
     }
 
@@ -165,5 +177,13 @@ public class Trade extends BaseEntity {
 
     public void cancel() {
         status = CANCELED;
+    }
+
+    public void deleteBySeller() {
+        hasSellerDeleted = true;
+    }
+
+    public void deleteByBuyer() {
+        hasBuyerDeleted = true;
     }
 }
