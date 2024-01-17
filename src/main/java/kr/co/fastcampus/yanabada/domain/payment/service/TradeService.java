@@ -250,7 +250,7 @@ public class TradeService {
         Member member, TradeRole role, TradeStatus status, Pageable pageable
     ) {
         return tradeRepository.findByMemberRoleAndStatus(
-            member, role, status, pageable
+            member, role.name(), status, pageable
         );
     }
 

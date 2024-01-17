@@ -27,7 +27,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
         + "AND (:status IS NULL OR t.status = :status)")
     Page<Trade> findByMemberRoleAndStatus(
         @Param("member") Member member,
-        @Param("role") TradeRole role,
+        @Param("role") String role,
         @Param("status")TradeStatus status,
         Pageable pageable
     );
