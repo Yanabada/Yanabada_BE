@@ -2,10 +2,14 @@ package kr.co.fastcampus.yanabada.domain.payment.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +54,32 @@ public class TradeController {
         @PathVariable("tradeId") Long tradeId
     ) {
         tradeService.cancelTrade(2L, tradeId);
+        return ResponseBody.ok();
+    }
+
+    @GetMapping("/{tradeId}/approvals")
+    public ResponseBody<ApprovalTradeInfoResponse> getApprovalTrade(
+        @PathVariable("tradeId") Long tradeId
+    ) {
+        return ResponseBody.ok(
+            tradeService.getApprovalTrade(1L, tradeId)
+        );
+    }
+
+    @GetMapping("/{tradeId}/purchases")
+    public ResponseBody<PurchaseTradeInfoResponse> getPurchaseTrade(
+        @PathVariable("tradeId") Long tradeId
+    ) {
+        return ResponseBody.ok(
+            tradeService.getPurchaseTrade(2L, tradeId)
+        );
+    }
+
+    @DeleteMapping("/{tradeId}")
+    public ResponseBody<Void> deleteTrade(
+        @PathVariable("tradeId") Long tradeId
+    ) {
+        tradeService.deleteTrade(1L, tradeId);
         return ResponseBody.ok();
     }
 }

@@ -27,6 +27,7 @@ public record ProductInfoResponse(
     Integer price,
     Integer purchasePrice,
     Integer salesPercentage,
+    String orderCode,
     AccommodationInfoResponse accommodationInfo,
     RoomInfoResponse roomInfo
 ) {
@@ -52,6 +53,7 @@ public record ProductInfoResponse(
             .salesPercentage(
                 SalesPercentageCalculator.calculate(order.getPrice(), product.getPrice())
             )
+            .orderCode(order.getCode())
             .accommodationInfo(AccommodationInfoResponse.from(accommodation))
             .roomInfo(RoomInfoResponse.from(room))
             .build();
