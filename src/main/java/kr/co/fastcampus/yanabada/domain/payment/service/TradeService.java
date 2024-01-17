@@ -147,6 +147,10 @@ public class TradeService {
         } else {
             throw new AccessForbiddenException();
         }
+
+        if (trade.getHasSellerDeleted() && trade.getHasBuyerDeleted()) {
+            tradeRepository.delete(trade);
+        }
     }
 
     private void validateTradeSaveRequest(Product product, Member seller, Member buyer) {
