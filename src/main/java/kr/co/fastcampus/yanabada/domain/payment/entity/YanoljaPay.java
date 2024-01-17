@@ -44,7 +44,10 @@ public class YanoljaPay extends BaseEntity {
     @Column(length = 200)
     private String bankImage;
 
-    @Column
+    @Column(length = 500)
+    private String contents;
+
+    @Column(nullable = false)
     private Long balance;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "yanoljaPay",
@@ -59,6 +62,7 @@ public class YanoljaPay extends BaseEntity {
         String simplePassword,
         String bankName,
         String bankImage,
+        String contents,
         Long balance
     ) {
         this.member = member;
@@ -66,6 +70,7 @@ public class YanoljaPay extends BaseEntity {
         this.simplePassword = simplePassword;
         this.bankName = bankName;
         this.bankImage = bankImage;
+        this.contents = contents;
         this.balance = balance;
     }
 
@@ -75,6 +80,7 @@ public class YanoljaPay extends BaseEntity {
         String simplePassword,
         String bankName,
         String bankImage,
+        String contents,
         Long balance
     ) {
         return new YanoljaPay(
@@ -83,6 +89,7 @@ public class YanoljaPay extends BaseEntity {
             simplePassword,
             bankName,
             bankImage,
+            contents,
             balance
         );
     }
