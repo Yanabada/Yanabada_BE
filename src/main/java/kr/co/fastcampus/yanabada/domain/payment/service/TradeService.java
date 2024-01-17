@@ -2,9 +2,9 @@ package kr.co.fastcampus.yanabada.domain.payment.service;
 
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.BUYER;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.SELLER;
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
 
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
