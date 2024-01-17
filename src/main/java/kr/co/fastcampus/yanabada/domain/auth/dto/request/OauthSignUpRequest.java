@@ -1,6 +1,5 @@
 package kr.co.fastcampus.yanabada.domain.auth.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
