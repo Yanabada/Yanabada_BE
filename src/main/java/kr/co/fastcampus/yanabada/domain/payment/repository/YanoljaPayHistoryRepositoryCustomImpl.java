@@ -38,7 +38,7 @@ public class YanoljaPayHistoryRepositoryCustomImpl implements YanoljaPayHistoryR
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
-        int totalCount = getTotalCount(query);
+        int totalCount = getTotalCount(createQuery(yanoljaPay, request));
 
         return new PageImpl<>(histories, pageable, totalCount);
     }
