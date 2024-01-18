@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,7 @@ public class Member extends BaseEntity {
         mappedBy = "member",
         cascade = CascadeType.ALL
     )
-    private List<FcmToken> fcmTokens;
+    private List<FcmToken> fcmTokens = new ArrayList<>();
 
     public void updatePassword(String password) {
         this.password = password;
@@ -58,6 +59,10 @@ public class Member extends BaseEntity {
 
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void addFcmToken(FcmToken fcmToken) {
+        fcmTokens.add(fcmToken);
     }
 
 }

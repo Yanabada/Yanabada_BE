@@ -6,6 +6,7 @@ import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenRegisterRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -13,6 +14,7 @@ import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
+import kr.co.fastcampus.yanabada.domain.member.entity.FcmToken;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -94,6 +96,18 @@ public class MemberService {
     ) {
         boolean isExist = memberRepository.existsByNickName(nickNameRequest.nickName());
         return new DuplCheckResponse(isExist);
+    }
+
+    @Transactional
+    public void addFcmToken(
+        Long memberId, FcmTokenRegisterRequest fcmTokenRequest
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        FcmToken newFcmToken = FcmToken.builder()
+            .member(member)
+            .fcmToken(fcmTokenRequest.fcmToken())
+            .build();
+        member.addFcmToken(newFcmToken);
     }
 
 }
