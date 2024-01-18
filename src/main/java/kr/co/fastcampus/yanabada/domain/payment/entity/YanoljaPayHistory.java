@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,6 +25,10 @@ public class YanoljaPayHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ContentsType contentsType;
 
     @Column(nullable = false)
     private String contents;
@@ -44,12 +49,14 @@ public class YanoljaPayHistory {
 
     private YanoljaPayHistory(
         YanoljaPay yanoljaPay,
+        ContentsType contentsType,
         String contents,
         Long transactionAmount,
         TransactionType transactionType,
         LocalDateTime transactionTime
     ) {
         this.yanoljaPay = yanoljaPay;
+        this.contentsType = contentsType;
         this.contents = contents;
         this.transactionAmount = transactionAmount;
         this.transactionType = transactionType;
@@ -58,6 +65,7 @@ public class YanoljaPayHistory {
 
     public static YanoljaPayHistory create(
         YanoljaPay yanoljaPay,
+        ContentsType contentsType,
         String contents,
         Long transactionAmount,
         TransactionType transactionType,
@@ -65,6 +73,7 @@ public class YanoljaPayHistory {
     ) {
         return new YanoljaPayHistory(
             yanoljaPay,
+            contentsType,
             contents,
             transactionAmount,
             transactionType,
