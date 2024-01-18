@@ -3,7 +3,6 @@ package kr.co.fastcampus.yanabada.domain.auth.controller;
 import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
 
 import jakarta.validation.Valid;
-import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -11,6 +10,7 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<TokenIssueResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseBody<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
