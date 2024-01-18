@@ -1,6 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType.YANOLJA_PAY;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.PURCHASE;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.REFUND;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.SALE;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.WITHDRAW;
@@ -260,7 +263,8 @@ public class TradeService {
         yanoljaPayHistoryRepository.save(
             YanoljaPayHistory.create(
                 yanoljaPay,
-                "'" + accommodation.getName() + "'" + " 상품 구매",
+                PURCHASE,
+                accommodation.getName(),
                 bill,
                 WITHDRAW,
                 LocalDateTime.now()
@@ -277,7 +281,8 @@ public class TradeService {
         yanoljaPayHistoryRepository.save(
             YanoljaPayHistory.create(
                 yanoljaPay,
-                "'" + accommodation.getName() + "'" + " 상품 판매",
+                SALE,
+                accommodation.getName(),
                 bill,
                 DEPOSIT,
                 LocalDateTime.now()
@@ -302,7 +307,8 @@ public class TradeService {
         yanoljaPayHistoryRepository.save(
             YanoljaPayHistory.create(
                 yanoljaPay,
-                "'" + accommodation.getName() + "'" + " 결제 취소",
+                REFUND,
+                accommodation.getName(),
                 bill,
                 DEPOSIT,
                 LocalDateTime.now()

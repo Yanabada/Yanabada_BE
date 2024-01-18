@@ -1,6 +1,5 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.CHARGE;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DISBURSEMENT;
 
 import java.time.LocalDateTime;
@@ -22,6 +21,8 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayInfoRespo
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPaySummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
@@ -98,13 +99,12 @@ public class YanoljaPayService {
             yanoljaPayHistoryRepository.save(
                 YanoljaPayHistory.create(
                     yanoljaPay,
-                    "야놀자 페이 충전("
-                        + yanoljaPay.getBankName()
+                    ContentsType.CHARGE,
+                    yanoljaPay.getBankName()
                         + " "
-                        + AccountNumberSplitter.split(yanoljaPay.getAccountNumber())
-                        + ")",
+                        + AccountNumberSplitter.split(yanoljaPay.getAccountNumber()),
                     request.amount(),
-                    CHARGE,
+                    TransactionType.CHARGE,
                     LocalDateTime.now()
                 )
             )
@@ -133,11 +133,10 @@ public class YanoljaPayService {
             yanoljaPayHistoryRepository.save(
                 YanoljaPayHistory.create(
                     yanoljaPay,
-                    "야놀자 페이 인출("
-                        + yanoljaPay.getBankName()
+                    ContentsType.DISBURSEMENT,
+                    yanoljaPay.getBankName()
                         + " "
-                        + AccountNumberSplitter.split(yanoljaPay.getAccountNumber())
-                        + ")",
+                        + AccountNumberSplitter.split(yanoljaPay.getAccountNumber()),
                     request.amount(),
                     DISBURSEMENT,
                     LocalDateTime.now()

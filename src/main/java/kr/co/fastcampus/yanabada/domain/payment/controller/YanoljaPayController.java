@@ -58,7 +58,7 @@ public class YanoljaPayController {
         @RequestBody @Valid YanoljaPayAmountRequest request
     ) {
         return ResponseBody.ok(
-            yanoljaPayService.disburseYanoljaPay(1L, request)
+            yanoljaPayService.disburseYanoljaPay(2L, request)
         );
     }
 

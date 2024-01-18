@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType.YANOLJA_PAY;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.REFUND;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
@@ -244,7 +245,8 @@ public class ProductService {
         yanoljaPayHistoryRepository.save(
             YanoljaPayHistory.create(
                 yanoljaPay,
-                "'" + accommodation.getName() + "'" + " 결제 취소",
+                REFUND,
+                accommodation.getName(),
                 bill,
                 DEPOSIT,
                 LocalDateTime.now()

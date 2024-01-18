@@ -57,7 +57,7 @@ public class TradeController {
         return ResponseBody.ok();
     }
 
-    @GetMapping("/{tradeId}/approvals")
+    @GetMapping("/approvals/{tradeId}")
     public ResponseBody<ApprovalTradeInfoResponse> getApprovalTrade(
         @PathVariable("tradeId") Long tradeId
     ) {
@@ -66,7 +66,7 @@ public class TradeController {
         );
     }
 
-    @GetMapping("/{tradeId}/purchases")
+    @GetMapping("/purchases/{tradeId}")
     public ResponseBody<PurchaseTradeInfoResponse> getPurchaseTrade(
         @PathVariable("tradeId") Long tradeId
     ) {
