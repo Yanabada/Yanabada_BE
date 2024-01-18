@@ -3,7 +3,7 @@ package kr.co.fastcampus.yanabada.domain.member.controller;
 import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenRegisterRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
@@ -82,11 +82,11 @@ public class MemberController {
     }
 
     @PostMapping("/fcm-token/registration")
-    public ResponseBody<Void> registerFcmToken(
+    public ResponseBody<Void> updateFcmToken(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid FcmTokenRegisterRequest fcmTokenRequest
+        @RequestBody @Valid FcmTokenUpdateRequest fcmTokenRequest
     ) {
-        memberService.addFcmToken(
+        memberService.updateFcmToken(
             principalDetails.id(), fcmTokenRequest
         );
         return ResponseBody.ok();

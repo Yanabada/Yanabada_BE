@@ -37,11 +37,14 @@ public class FcmService {
     @Value("${firebase.key-path}")
     String keyPath;
     @Value("${firebase.fcm-request-url.prefix}")
-    String FCM_REQUEST_URL_PREFIX;
+    String fcmRequestUrlPrefix;
     @Value("${firebase.fcm-request-url.postfix}")
-    String FCM_REQUEST_URL_POSTFIX;
+    String fcmRequestUrlPostfix;
     String fcmToken
-        = "dHouRIbpZSUeFWw9vVNN7p:APA91bECfpMv9ES-Q8-6MrpBHmgiiQAkNAUfIGE5BiS0rvcUXkcI3U6PkDx_pwQ6N1o6gkTCv5qpx1oTCiJbPqMEsnHqbj3FWM6OTLpFjSkA2e5PrMSAkdjxybbnZ-NDHSxzSHOZIwcR";
+        = "dHouRIbpZSUeFWw9vVNN7p:APA91bECfpMv9ES-Q8-"
+        + "6MrpBHmgiiQAkNAUfIGE5BiS0rvcUXkcI3U6PkDx_pwQ6N1"
+        + "o6gkTCv5qpx1oTCiJbPqMEsnHqbj3FWM6OTLpFjSkA2e5Pr"
+        + "MSAkdjxybbnZ-NDHSxzSHOZIwcR";
 
     public void sendToMessage(
         Member sender,
@@ -62,10 +65,10 @@ public class FcmService {
         RequestBody requestBody
             = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
 
-        final String API_URL = FCM_REQUEST_URL_PREFIX + projectId + FCM_REQUEST_URL_POSTFIX;
+        final String requestUrl = fcmRequestUrlPrefix + projectId + fcmRequestUrlPostfix;
 
         Request request = new Request.Builder()
-            .url(API_URL)
+            .url(requestUrl)
             .post(requestBody)
             .addHeader(AUTHORIZATION, "Bearer " + getAccessToken())
             .addHeader(CONTENT_TYPE, "application/json; UTF-8")
@@ -75,8 +78,6 @@ public class FcmService {
             Response response = client.newCall(request).execute();
             log.info("response.statusCode={}", response.code());
             log.info("RESPONSE={}", response.body().string());
-
-//            System.out.println("RESPONSE : " + response.body().string());
 
             if (response.code() != 200) {
                 throw new RuntimeException("FCM 통신 오류");

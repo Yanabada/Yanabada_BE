@@ -3,11 +3,10 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenRegisterRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -99,8 +98,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void addFcmToken(
-        Long memberId, FcmTokenRegisterRequest fcmTokenRequest
+    public void updateFcmToken(
+        Long memberId, FcmTokenUpdateRequest fcmTokenRequest
     ) {
         Member member = memberRepository.getMember(memberId);
         member.updateFcmToken(fcmTokenRequest.fcmToken());
