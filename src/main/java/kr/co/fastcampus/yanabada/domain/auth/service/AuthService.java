@@ -12,6 +12,7 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +86,18 @@ public class AuthService {
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
+        }
+        return LoginResponse.from(tokenIssue, member);
+    }
+
+    @Transactional
+    public LoginResponse loginOauth(LoginRequest loginRequest, ProviderType providerType) {
+        Member member = memberRepository.getMember(loginRequest.email(), providerType);
+        TokenIssueResponse tokenIssue
+            = tokenService.getTokenIssue(loginRequest.email(), providerType.name());
+        if (tokenIssue == null) {
+            tokenIssue = jwtProvider
+                .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
         return LoginResponse.from(tokenIssue, member);
     }

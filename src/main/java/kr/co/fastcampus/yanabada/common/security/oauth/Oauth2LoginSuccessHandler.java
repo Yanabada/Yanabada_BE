@@ -13,6 +13,9 @@ import java.util.Map;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
+import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtProvider jwtProvider;
     private final TokenService tokenService;
+    private final AuthService authService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -38,7 +42,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         HttpServletRequest request,
         HttpServletResponse response,
         Authentication authentication
-    ) throws IOException, ServletException {
+    ) throws IOException {
 
         DefaultOAuth2User defaultOauth2 = (DefaultOAuth2User) authentication.getPrincipal();
         Map<String, Object> attribute = defaultOauth2.getAttributes();
@@ -49,14 +53,14 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         if (isExist) {
             /* 바로 로그인 */
-            TokenIssueResponse tokenIssue = tokenService.getTokenIssue(email, KAKAO.name());
-            if (tokenIssue == null) {
-                tokenIssue = jwtProvider
-                    .generateTokenInfo(email, ROLE_USER.name(), provider);
-            }
-            String tokenIssueJson = objectMapper.writeValueAsString(tokenIssue);
+            String oauthPassword = "oauth-password";    //todo: 환경 변수 분리
+            LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
+            LoginResponse loginResponse
+                = authService.loginOauth(loginRequest, ProviderType.valueOf(provider));
+
+            String loginResponseJson = objectMapper.writeValueAsString(loginResponse);
             response.setStatus(OK.value());
-            response.getWriter().write(tokenIssueJson);
+            response.getWriter().write(loginResponseJson);
         } else {
             /* 회원 가입 필요 */
             //todo: url 변경 예정, 환경 변수(서버, 로컬) 분리 예정

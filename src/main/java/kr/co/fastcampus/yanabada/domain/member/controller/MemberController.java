@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.member.controller;
 
+import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
@@ -37,7 +38,7 @@ public class MemberController {
     @PutMapping("/password")
     public ResponseBody<Void> modifyPassword(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody PasswordModifyRequest passwordRequest
+        @RequestBody @Valid PasswordModifyRequest passwordRequest
     ) {
         memberService.modifyPassword(
             passwordRequest, principalDetails.email(), principalDetails.provider()
@@ -48,7 +49,7 @@ public class MemberController {
     @PutMapping("/nickname")
     public ResponseBody<Void> modifyNickName(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody NickNameModifyRequest nickNameRequest
+        @RequestBody @Valid NickNameModifyRequest nickNameRequest
     ) {
         memberService.modifyNickName(
             nickNameRequest, principalDetails.email(), principalDetails.provider()
@@ -59,7 +60,7 @@ public class MemberController {
     @PutMapping("/phone-number")
     public ResponseBody<Void> modifyPhoneNumber(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody PhoneNumberModifyRequest phoneNumberRequest
+        @RequestBody @Valid PhoneNumberModifyRequest phoneNumberRequest
     ) {
         memberService.modifyPhoneNumber(
             phoneNumberRequest, principalDetails.email(), principalDetails.provider()
@@ -70,7 +71,7 @@ public class MemberController {
     @PutMapping("/image")
     public ResponseBody<Void> modifyImage(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ImgUrlModifyRequest imgUrlRequest
+        @RequestBody @Valid ImgUrlModifyRequest imgUrlRequest
     ) {
         memberService.modifyImageUrl(
             imgUrlRequest, principalDetails.email(), principalDetails.provider()

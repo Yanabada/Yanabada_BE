@@ -1,7 +1,7 @@
 package kr.co.fastcampus.yanabada.common.jwt.filter;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         HttpServletRequest request,
         HttpServletResponse response,
         FilterChain filterChain
-    ) throws ServletException, IOException {
+    ) throws IOException {
         /* ControllerAdvice와 같은 ExHandler 역할 수행 */
 
         try {
@@ -39,7 +39,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         } catch (TokenExpiredException | TokenNotExistAtCacheException e) {
             ResponseBody<TokenExpiredResponse> responseBody
                 = ResponseBody.fail(e.getMessage(), new TokenExpiredResponse(true));
-            completeResponse(response, e, responseBody, FORBIDDEN.value());
+            completeResponse(response, e, responseBody, UNAUTHORIZED.value());
         } catch (Exception e) {
             ResponseBody<Void> responseBody
                 = ResponseBody.fail(e.getMessage());
