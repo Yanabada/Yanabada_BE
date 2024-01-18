@@ -45,7 +45,6 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
         Member member = Member.builder()
                 .email(signUpRequest.email())
-                .memberName(signUpRequest.memberName())
                 .nickName(signUpRequest.nickName())
                 .password(encodedPassword)
                 .phoneNumber(signUpRequest.phoneNumber())
@@ -64,7 +63,6 @@ public class AuthService {
         //todo: 패스워드 환경변수 분리
         Member member = Member.builder()
             .email(signUpRequest.email())
-            .memberName(signUpRequest.memberName())
             .nickName(signUpRequest.nickName())
             .password(encodedPassword)
             .phoneNumber(signUpRequest.phoneNumber())

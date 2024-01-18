@@ -16,8 +16,6 @@ public record SignUpRequest(
         message = "패스워드는 영문+숫자+특수문자 8~20 자리이어야 합니다."
     )
     String password,
-    @NotEmpty(message = "사용자 이름이 비어있을 수 없습니다")
-    String memberName,
     @NotEmpty(message = "닉네임이 비어있을 수 없습니다")
     String nickName,
     @NotEmpty(message = "휴대 전화 번호가 비어있을 수 없습니다")

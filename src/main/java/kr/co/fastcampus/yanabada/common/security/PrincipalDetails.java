@@ -13,14 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 public record PrincipalDetails(
         String email,
         String password,
-        String memberName,
         ProviderType provider
 ) implements UserDetails {
 
     public static PrincipalDetails of(Member member) {
         return new PrincipalDetails(member.getEmail(),
                 member.getPassword(),
-                member.getMemberName(),
                 member.getProviderType()
         );
     }
