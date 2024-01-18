@@ -17,8 +17,6 @@ public record OauthSignUpRequest(
     @NotEmpty(message = "휴대 전화 번호가 비어있을 수 없습니다")
     String phoneNumber,
     @NonNull
-    ProviderType provider,
-    String deviceKey
-
+    ProviderType provider
 ) {
 }

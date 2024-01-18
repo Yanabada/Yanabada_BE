@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseBody<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
