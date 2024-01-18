@@ -12,6 +12,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND("존재하지 않는 회원입니다."),
     ORDER_NOT_FOUND("존재하지 않는 예약입니다."),
     PRODUCT_NOT_FOUND("존재하지 않는 상품입니다."),
+    TRADE_NOT_FOUND("존재하지 않는 거래입니다."),
+    PAY_NOT_FOUND("야놀자 페이를 찾을 수 없습니다."),
     ACCESS_FORBIDDEN("권한이 없습니다."),
     ORDER_NOT_SELLABLE("판매할 수 없는 예약입니다."),
     INVALID_SELLING_PRICE_RANGE("판매가는 구매가보다 클 수 없습니다."),
@@ -33,7 +35,9 @@ public enum ErrorCode {
     EMAIL_SEND_FAILED("이메일 전송에 실패하였습니다."),
     EMAIL_DUPLICATED("이메일이 중복됩니다."),
 
-
+    ILLEGAL_PRODUCT_STATUS("해당 기능을 수행할 수 없는 상품 상태입니다."),
+    CANNOT_TRADE_OWN_PRODUCT("자신이 등록한 상품을 거래할 수 없습니다."),
+    ILLEGAL_TRADE_STATUS("해당 기능을 수행할 수 없는 거래 상태입니다."),
     ;
 
     private final String message;

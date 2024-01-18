@@ -1,14 +1,17 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.TIMEOUT;
 
 import io.micrometer.common.util.StringUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
+import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.InvalidStatusProductUpdateException;
-import kr.co.fastcampus.yanabada.common.exception.OrderNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.OrderNotSellableException;
 import kr.co.fastcampus.yanabada.common.exception.SaleEndDateRangeException;
 import kr.co.fastcampus.yanabada.common.exception.SellingPriceRangeException;
@@ -17,6 +20,8 @@ import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
@@ -42,14 +47,15 @@ public class ProductService {
 
     private final OrderRepository orderRepository;
 
+    private final TradeRepository tradeRepository;
+
     @Transactional
     public ProductIdResponse saveProduct(
         Long memberId,
         ProductSaveRequest request
     ) {
         Member member = memberRepository.getMember(memberId);
-        Order order = orderRepository.findById(request.orderId())
-            .orElseThrow(OrderNotFoundException::new);
+        Order order = orderRepository.getOrder(request.orderId());
 
         if (!Objects.equals(member, order.getMember())) {
             throw new AccessForbiddenException();
@@ -116,18 +122,44 @@ public class ProductService {
         return ProductIdResponse.from(product);
     }
 
+    @Transactional
+    public void cancelProduct(
+        Long memberId,
+        Long productId
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        Product product = productRepository.getProduct(productId);
+
+        validateProductCancelRequest(member, product);
+
+        cancelTradeRelatedToProduct(product);
+        product.cancel();
+    }
+
     @Scheduled(cron = CRON_SCHEDULING)
-    public void cancelProductsSaleEndDateExpired() {
+    public void expireProducts() {
         List<Product> products = productRepository.getBySaleEndDateExpired();
         products.forEach(
             product -> {
-                product.cancel();
                 if (product.getIsAutoCancel()) {
+                    //TODO: 예약 취소되면서 예약자에게 환불
                     product.getOrder().cancel();
                 }
-                //TODO: 상품 취소되면서 Trade 도 같이 reject 돼야함
+                cancelTradeRelatedToProduct(product);
+                product.expire();
             }
         );
+    }
+
+    private void cancelTradeRelatedToProduct(Product product) {
+        tradeRepository.findByProduct(product)
+            .forEach(trade -> {
+                if (trade.getStatus() == TradeStatus.WAITING) {
+                    //TODO: Buyer에게 환불 진행
+                    trade.reject();
+                    //TODO: Buyer에게 알림 (Optional)
+                }
+            });
     }
 
     private void validateProductSaveRequest(
@@ -166,6 +198,17 @@ public class ProductService {
     private void validateUpdatableProduct(Product product) {
         if (product.getStatus() != ON_SALE) {
             throw new InvalidStatusProductUpdateException();
+        }
+    }
+
+    private void validateProductCancelRequest(Member member, Product product) {
+        if (!Objects.equals(member, product.getOrder().getMember())) {
+            throw new AccessForbiddenException();
+        }
+        if (product.getStatus() == CANCELED
+            || product.getStatus() == TIMEOUT
+            || product.getStatus() == SOLD_OUT) {
+            throw new IllegalProductStatusException();
         }
     }
 }
