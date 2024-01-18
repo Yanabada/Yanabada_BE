@@ -81,7 +81,7 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
-    @PostMapping("/fcm-token/registration")
+    @PutMapping("/fcm-token")
     public ResponseBody<Void> updateFcmToken(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody @Valid FcmTokenUpdateRequest fcmTokenRequest

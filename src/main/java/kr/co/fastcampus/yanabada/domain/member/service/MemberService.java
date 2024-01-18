@@ -78,7 +78,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public EmailAuthResponse isExistEmail(
+    public EmailAuthResponse verifyEmail(
         EmailAuthRequest emailRequest
     ) {
         boolean isExist = memberRepository

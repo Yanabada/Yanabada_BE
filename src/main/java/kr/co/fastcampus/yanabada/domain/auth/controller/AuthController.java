@@ -76,7 +76,7 @@ public class AuthController {
     public ResponseBody<EmailAuthResponse> verifyEmail(
         @RequestBody EmailAuthRequest emailAuthRequest
     ) {
-        return ResponseBody.ok(memberService.isExistEmail(emailAuthRequest));
+        return ResponseBody.ok(memberService.verifyEmail(emailAuthRequest));
     }
 
     @PostMapping("/verification/phone")
