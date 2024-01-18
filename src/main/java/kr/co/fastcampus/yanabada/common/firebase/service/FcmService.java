@@ -76,8 +76,8 @@ public class FcmService {
 
         try {
             Response response = client.newCall(request).execute();
-            log.info("response.statusCode={}", response.code());
-            log.info("RESPONSE={}", response.body().string());
+            log.info("response.statusCode={}", response.code());    //todo: 삭제
+            log.info("RESPONSE={}", response.body().string());      //todo: 삭제
 
             if (response.code() != 200) {
                 throw new RuntimeException("FCM 통신 오류");
