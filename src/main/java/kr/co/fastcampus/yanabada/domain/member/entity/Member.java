@@ -38,12 +38,7 @@ public class Member extends BaseEntity {
     private RoleType roleType;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
-    @OneToMany(
-        fetch = FetchType.LAZY,
-        mappedBy = "member",
-        cascade = CascadeType.ALL
-    )
-    private List<FcmToken> fcmTokens = new ArrayList<>();
+    private String fcmToken;
 
     public void updatePassword(String password) {
         this.password = password;
@@ -61,8 +56,8 @@ public class Member extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void addFcmToken(FcmToken fcmToken) {
-        fcmTokens.add(fcmToken);
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
 }

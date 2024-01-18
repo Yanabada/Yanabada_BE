@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
+import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
@@ -14,7 +15,6 @@ import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
-import kr.co.fastcampus.yanabada.domain.member.entity.FcmToken;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -103,11 +103,7 @@ public class MemberService {
         Long memberId, FcmTokenRegisterRequest fcmTokenRequest
     ) {
         Member member = memberRepository.getMember(memberId);
-        FcmToken newFcmToken = FcmToken.builder()
-            .member(member)
-            .fcmToken(fcmTokenRequest.fcmToken())
-            .build();
-        member.addFcmToken(newFcmToken);
+        member.updateFcmToken(fcmTokenRequest.fcmToken());
     }
 
 }
