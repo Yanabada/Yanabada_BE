@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
-import kr.co.fastcampus.yanabada.common.utils.FeeCalculator;
+import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
@@ -32,7 +32,9 @@ public record TradeSaveRequest(
     Integer point,
 
     @NotNull
-    PaymentType paymentType
+    PaymentType paymentType,
+
+    String simplePassword
 ) {
     public Trade toEntity(
         Product product,
@@ -49,7 +51,7 @@ public record TradeSaveRequest(
             userPersonPhoneNumber,
             product.getOrder().getPrice(),
             product.getPrice(),
-            FeeCalculator.calculate(product.getPrice()),
+            PayFeeCalculator.calculate(product.getPrice(), paymentType),
             point,
             paymentType,
             EntityCodeGenerator.generate(),
