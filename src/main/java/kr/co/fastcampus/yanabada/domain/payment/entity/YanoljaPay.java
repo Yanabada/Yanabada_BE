@@ -10,10 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
+import kr.co.fastcampus.yanabada.common.exception.NotEnoughYanoljaPayBalanceException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,20 +32,14 @@ public class YanoljaPay extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(length = 13)
+    @Column
     private String accountNumber;
 
     @Column
     private String simplePassword;
 
-    @Column(length = 100)
+    @Column
     private String bankName;
-
-    @Column(length = 200)
-    private String bankImage;
-
-    @Column(length = 500)
-    private String contents;
 
     @Column(nullable = false)
     private Long balance;
@@ -53,24 +47,19 @@ public class YanoljaPay extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "yanoljaPay",
         cascade = CascadeType.ALL, orphanRemoval = true
     )
-    @OrderBy("transactionTime desc")
-    private final List<YanoljaPayHistory> paymentHistories = new ArrayList<>();
+    private final List<YanoljaPayHistory> histories = new ArrayList<>();
 
     private YanoljaPay(
         Member member,
         String accountNumber,
         String simplePassword,
         String bankName,
-        String bankImage,
-        String contents,
         Long balance
     ) {
         this.member = member;
         this.accountNumber = accountNumber;
         this.simplePassword = simplePassword;
         this.bankName = bankName;
-        this.bankImage = bankImage;
-        this.contents = contents;
         this.balance = balance;
     }
 
@@ -79,8 +68,6 @@ public class YanoljaPay extends BaseEntity {
         String accountNumber,
         String simplePassword,
         String bankName,
-        String bankImage,
-        String contents,
         Long balance
     ) {
         return new YanoljaPay(
@@ -88,9 +75,41 @@ public class YanoljaPay extends BaseEntity {
             accountNumber,
             simplePassword,
             bankName,
-            bankImage,
-            contents,
             balance
         );
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public void setSimplePassword(String simplePassword) {
+        this.simplePassword = simplePassword;
+    }
+
+    public void deposit(long amount) {
+        balance += amount;
+    }
+
+    public void withdraw(long amount) {
+        if (balance < amount) {
+            throw new NotEnoughYanoljaPayBalanceException();
+        }
+        balance -= amount;
+    }
+
+    public void charge(long amount) {
+        balance += amount;
+    }
+
+    public void disburse(long amount) {
+        if (balance < amount) {
+            throw new NotEnoughYanoljaPayBalanceException();
+        }
+        balance -= amount;
     }
 }
