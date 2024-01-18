@@ -11,6 +11,7 @@ import lombok.Builder;
 @Builder
 public record PurchaseTradeSummaryResponse(
     Long tradeId,
+    Long productId,
     String accommodationName,
     String accommodationImage,
     String sellerNickname,
@@ -25,6 +26,7 @@ public record PurchaseTradeSummaryResponse(
     public static PurchaseTradeSummaryResponse from(Trade trade) {
         return PurchaseTradeSummaryResponse.builder()
             .tradeId(trade.getId())
+            .productId(trade.getProduct().getId())
             .accommodationName(
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
