@@ -1,25 +1,39 @@
 package kr.co.fastcampus.yanabada.domain.payment.service;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType.YANOLJA_PAY;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.WITHDRAW;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
+import kr.co.fastcampus.yanabada.common.exception.IncorrectYanoljaPayPasswordException;
+import kr.co.fastcampus.yanabada.common.exception.NotEnoughPointException;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
+import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
+import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
@@ -35,6 +49,8 @@ public class TradeService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final YanoljaPayRepository yanoljaPayRepository;
+    private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
 
     @Transactional
     public TradeIdResponse saveTrade(
@@ -45,9 +61,12 @@ public class TradeService {
         Member seller = product.getOrder().getMember();
         Member buyer = memberRepository.getMember(buyerId);
 
-        validateTradeSaveRequest(product, seller, buyer);
+        validateTradeSaveRequest(product, seller, buyer, request.point());
 
-        //TODO: Buyer 결제
+        long bill = product.getPrice()
+            + PayFeeCalculator.calculate(product.getPrice(), request.paymentType())
+            - request.point();
+        payBill(buyer, bill, request, product);
 
         product.book();
 
@@ -65,14 +84,15 @@ public class TradeService {
 
         validateTradeApproveRequest(seller, trade);
 
-        //TODO: Buyer 결제
+        long bill = trade.getSellingPrice();
+        receiveBill(seller, bill, trade.getProduct());
 
         trade.complete();
         trade.getProduct().soldOut();
         trade.getProduct().getOrder().trade();
         orderRepository.save(createOrderFromTrade(trade));
 
-        //TODO: Seller에게 알림
+        //TODO: Buyer에게 알림
     }
 
     @Transactional
@@ -82,7 +102,8 @@ public class TradeService {
 
         validateTradeRejectRequest(seller, trade);
 
-        //TODO: Buyer에게 환불 진행
+        long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
+        refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
 
         trade.reject();
         trade.getProduct().onSale();
@@ -97,7 +118,8 @@ public class TradeService {
 
         validateTradeCancelRequest(buyer, trade);
 
-        //TODO: Buyer에게 환불
+        long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
+        refundBill(buyer, bill, trade.getPaymentType(), trade.getProduct());
 
         trade.cancel();
         trade.getProduct().onSale();
@@ -113,7 +135,7 @@ public class TradeService {
         if (trade.getHasSellerDeleted()) {
             throw new TradeNotFoundException();
         }
-        if (!Objects.equals(member, trade.getSeller()) || trade.getStatus() == WAITING) {
+        if (!Objects.equals(member, trade.getSeller())) {
             throw new AccessForbiddenException();
         }
 
@@ -128,7 +150,7 @@ public class TradeService {
         if (trade.getHasBuyerDeleted()) {
             throw new TradeNotFoundException();
         }
-        if (!Objects.equals(member, trade.getBuyer()) || trade.getStatus() == WAITING) {
+        if (!Objects.equals(member, trade.getBuyer())) {
             throw new AccessForbiddenException();
         }
 
@@ -153,12 +175,20 @@ public class TradeService {
         }
     }
 
-    private void validateTradeSaveRequest(Product product, Member seller, Member buyer) {
+    private void validateTradeSaveRequest(
+        Product product,
+        Member seller,
+        Member buyer,
+        Integer point
+    ) {
         if (product.getStatus() != ProductStatus.ON_SALE) {
             throw new IllegalProductStatusException();
         }
         if (Objects.equals(seller, buyer)) {
             throw new CannotTradeOwnProductException();
+        }
+        if (buyer.getPoint() < point) {
+            throw new NotEnoughPointException();
         }
     }
 
@@ -206,6 +236,77 @@ public class TradeService {
             trade.getUserPersonPhoneNumber(),
             trade.getPaymentType(),
             EntityCodeGenerator.generate()
+        );
+    }
+
+    private void payBill(Member member, long bill, TradeSaveRequest request, Product product) {
+        if (request.paymentType() != YANOLJA_PAY) {
+            return;
+        }
+
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
+
+        if (yanoljaPay.getAccountNumber() == null) {
+            throw new YanoljaPayNotFoundException();
+        }
+
+        if (!Objects.equals(request.simplePassword(), yanoljaPay.getSimplePassword())) {
+            throw new IncorrectYanoljaPayPasswordException();
+        }
+
+        Accommodation accommodation = product.getOrder().getRoom().getAccommodation();
+        yanoljaPay.withdraw(bill);
+        yanoljaPayHistoryRepository.save(
+            YanoljaPayHistory.create(
+                yanoljaPay,
+                "'" + accommodation.getName() + "'" + " 상품 구매",
+                bill,
+                WITHDRAW,
+                LocalDateTime.now()
+            )
+        );
+    }
+
+    private void receiveBill(Member member, long bill, Product product) {
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
+        Accommodation accommodation = product.getOrder().getRoom().getAccommodation();
+
+        yanoljaPay.deposit(bill);
+        yanoljaPayHistoryRepository.save(
+            YanoljaPayHistory.create(
+                yanoljaPay,
+                "'" + accommodation.getName() + "'" + " 상품 판매",
+                bill,
+                DEPOSIT,
+                LocalDateTime.now()
+            )
+        );
+    }
+
+    private void refundBill(Member member, long bill, PaymentType paymentType, Product product) {
+        if (paymentType != YANOLJA_PAY) {
+            return;
+        }
+
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
+
+        if (yanoljaPay.getAccountNumber() == null) {
+            throw new YanoljaPayNotFoundException();
+        }
+
+        Accommodation accommodation = product.getOrder().getRoom().getAccommodation();
+        yanoljaPay.deposit(bill);
+        yanoljaPayHistoryRepository.save(
+            YanoljaPayHistory.create(
+                yanoljaPay,
+                "'" + accommodation.getName() + "'" + " 결제 취소",
+                bill,
+                DEPOSIT,
+                LocalDateTime.now()
+            )
         );
     }
 }
