@@ -2,7 +2,8 @@ package kr.co.fastcampus.yanabada.domain.notification.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
-import kr.co.fastcampus.yanabada.domain.notification.dto.request.ChatNotificationSendRequest;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.ChatNotifyRequest;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.SaleApprovalNotifyRequest;
 import kr.co.fastcampus.yanabada.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,21 @@ public class NotificationController {
     @PostMapping("/chat")
     public ResponseBody<Void> sendChatNotification(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ChatNotificationSendRequest chatNotificationReq
+        @RequestBody ChatNotifyRequest chatNotifyRequest
     ) {
-        notificationService.sendChatNotification(principalDetails.id(), chatNotificationReq);
+        notificationService.sendChatNotification(principalDetails.id(), chatNotifyRequest);
+
+        return ResponseBody.ok();
+    }
+
+    @PostMapping("/sale-approval")
+    public ResponseBody<Void> sendSaleApprovalNotification(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody SaleApprovalNotifyRequest saleApprovalNotifyRequest
+    ) {
+        notificationService.sendSaleApprovalNotification(
+            principalDetails.id(), saleApprovalNotifyRequest
+        );
 
         return ResponseBody.ok();
     }

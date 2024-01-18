@@ -1,11 +1,12 @@
 package kr.co.fastcampus.yanabada.domain.notification.service;
 
-import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest;
+import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Notification;
 import kr.co.fastcampus.yanabada.common.firebase.service.FcmService;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
-import kr.co.fastcampus.yanabada.domain.notification.dto.request.ChatNotificationSendRequest;
-import kr.co.fastcampus.yanabada.domain.notification.repository.NotificationBoxRepository;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.ChatNotifyRequest;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.SaleApprovalNotifyRequest;
+import kr.co.fastcampus.yanabada.domain.notification.repository.NotificationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,23 +18,38 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private final FcmService fcmService;
-    private final NotificationBoxRepository notificationBoxRepository;
+    private final NotificationHistoryRepository notificationHistoryRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
     public void sendChatNotification(
         Long senderId,
-        ChatNotificationSendRequest chatNotificationReq
+        ChatNotifyRequest chatNotificationReq
     ) {
         Member sender = memberRepository.getMember(senderId);
         Member receiver = memberRepository.getMember(chatNotificationReq.receiverId());
 
-        FcmMessageRequest.Notification fcmNotification
-            = FcmMessageRequest.Notification.builder()
+        Notification notification = Notification.builder()
             .title("채팅 알림")
             .body(sender.getNickName() + " : " + chatNotificationReq.content())
             .build();
 
-        fcmService.sendToMessage(sender, receiver, fcmNotification);
+        fcmService.sendToMessage(sender, receiver, notification);
+    }
+
+    @Transactional
+    public void sendSaleApprovalNotification(
+        Long senderId,
+        SaleApprovalNotifyRequest saleApprovalNotifyRequest
+    ) {
+        Member sender = memberRepository.getMember(senderId);
+        Member receiver = memberRepository.getMember(saleApprovalNotifyRequest.receiverId());
+
+        Notification notification = Notification.builder()
+            .title("판매 승인 요청 알림")
+            .body(sender.getNickName() + "님으로부터 판매 승인 요청이 있습니다.")
+            .build();
+
+        fcmService.sendToMessage(sender, receiver, notification);
     }
 }
