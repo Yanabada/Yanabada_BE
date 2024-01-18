@@ -2,7 +2,10 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
-import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
+import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
+import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -26,6 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailAuthService mailAuthService;
 
     @Transactional(readOnly = true)
     public MemberDetailResponse findMember(String email, ProviderType providerType) {
@@ -69,18 +73,19 @@ public class MemberService {
         ProviderType providerType
     ) {
         Member member = memberRepository.getMember(email, providerType);
-        log.info("email={}", member.getEmail());
         member.updateImageUrl(imgUrlRequest.imageUrl());
-        log.info("imgUrl={}", member.getImageUrl());
     }
 
     @Transactional(readOnly = true)
-    public DuplCheckResponse isExistEmail(
-        EmailDuplCheckRequest emailRequest
+    public EmailAuthCodeResponse isExistEmail(
+        EmailAuthCodeRequest emailRequest
     ) {
         boolean isExist = memberRepository
             .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
-        return new DuplCheckResponse(isExist);
+        if (isExist) {
+            throw new EmailDuplicatedException();
+        }
+        return new EmailAuthCodeResponse(mailAuthService.sendEmail(emailRequest.email()));
     }
 
     @Transactional(readOnly = true)
