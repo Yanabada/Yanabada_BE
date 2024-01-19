@@ -10,7 +10,7 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryIn
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistorySummaryPageResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPaySummaryResponse;
-import kr.co.fastcampus.yanabada.domain.payment.service.YanoljaPayService;
+import kr.co.fastcampus.yanabada.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,25 +22,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/payments")
 @RequiredArgsConstructor
-public class YanoljaPayController {
+public class PaymentController {
 
-    private final YanoljaPayService yanoljaPayService;
+    private final PaymentService paymentService;
 
     @GetMapping("/summary")
     public ResponseBody<YanoljaPaySummaryResponse> getYanoljaPaySummary() {
-        return ResponseBody.ok(yanoljaPayService.getYanoljaPaySummary(2L));
+        return ResponseBody.ok(paymentService.getYanoljaPaySummary(2L));
     }
 
     @GetMapping
     public ResponseBody<YanoljaPayInfoResponse> getYanoljaPay() {
-        return ResponseBody.ok(yanoljaPayService.getYanoljaPay(2L));
+        return ResponseBody.ok(paymentService.getYanoljaPay(2L));
     }
 
     @PostMapping
     public ResponseBody<Void> saveYanoljaPay(
         @RequestBody @Valid YanoljaPaySaveRequest request
     ) {
-        yanoljaPayService.saveYanoljaPay(2L, request);
+        paymentService.saveYanoljaPay(2L, request);
         return ResponseBody.ok();
     }
 
@@ -49,7 +49,7 @@ public class YanoljaPayController {
         @RequestBody @Valid YanoljaPayAmountRequest request
     ) {
         return ResponseBody.ok(
-            yanoljaPayService.chargeYanoljaPay(2L, request)
+            paymentService.chargeYanoljaPay(2L, request)
         );
     }
 
@@ -58,7 +58,7 @@ public class YanoljaPayController {
         @RequestBody @Valid YanoljaPayAmountRequest request
     ) {
         return ResponseBody.ok(
-            yanoljaPayService.disburseYanoljaPay(2L, request)
+            paymentService.disburseYanoljaPay(2L, request)
         );
     }
 
@@ -67,7 +67,7 @@ public class YanoljaPayController {
         YanoljaPayHistorySearchRequest request
     ) {
         return ResponseBody.ok(
-            yanoljaPayService.getYanoljaPayHistoriesBySearchRequest(
+            paymentService.getYanoljaPayHistoriesBySearchRequest(
                 2L,
                 request
             )
@@ -79,7 +79,7 @@ public class YanoljaPayController {
         @PathVariable("historyId") Long historyId
     ) {
         return ResponseBody.ok(
-            yanoljaPayService.getYanoljaPayHistory(
+            paymentService.getYanoljaPayHistory(
                 2L,
                 historyId
             )
