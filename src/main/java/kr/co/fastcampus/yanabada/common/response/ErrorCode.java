@@ -15,6 +15,7 @@ public enum ErrorCode {
     TRADE_NOT_FOUND("존재하지 않는 거래입니다."),
     YANOLJAPAY_NOT_FOUND("야놀자 페이를 찾을 수 없습니다."),
     YANOLJAPAY_HISTORY_NOT_FOUND("야놀자 페이 내역을 찾을 수 없습니다."),
+    ADMIN_PAYMENT_NOT_FOUND("어드민 페이를 찾을 수 없습니다."),
     ACCESS_FORBIDDEN("권한이 없습니다."),
     ORDER_NOT_SELLABLE("판매할 수 없는 예약입니다."),
     INVALID_SELLING_PRICE_RANGE("판매가는 구매가보다 클 수 없습니다."),
