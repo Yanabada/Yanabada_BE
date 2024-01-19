@@ -14,6 +14,7 @@ import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPayAmountRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPayHistorySearchRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPaySaveRequest;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.AdminPaymentInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistorySummaryPageResponse;
@@ -23,8 +24,10 @@ import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType;
+import kr.co.fastcampus.yanabada.domain.payment.repository.AdminPaymentRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
+import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +38,9 @@ public class PaymentService {
 
     private final YanoljaPayRepository yanoljaPayRepository;
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
+    private final AdminPaymentRepository adminPaymentRepository;
     private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
     public YanoljaPaySummaryResponse getYanoljaPaySummary(Long memberId) {
@@ -180,6 +185,14 @@ public class PaymentService {
             yanoljaPayHistoryRepository.getHistoriesByYanoljaPayAndSearchRequest(
                 yanoljaPay, request
             )
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public AdminPaymentInfoResponse getAdminPayment() {
+        return AdminPaymentInfoResponse.from(
+            productRepository.countProducts(),
+            adminPaymentRepository.getAdminPayment()
         );
     }
 }
