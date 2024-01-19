@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
-import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         HttpServletRequest request,
         HttpServletResponse response,
         FilterChain filterChain
-    ) throws ServletException, IOException {
+    ) throws IOException {
         /* ControllerAdvice와 같은 ExHandler 역할 수행 */
 
         try {

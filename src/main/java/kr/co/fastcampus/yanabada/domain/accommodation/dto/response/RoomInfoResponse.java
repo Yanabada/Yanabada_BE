@@ -15,7 +15,6 @@ public record RoomInfoResponse(
     LocalTime checkInTime,
     @JsonFormat(pattern = "HH:mm")
     LocalTime checkOutTime,
-    String description,
     Integer minHeadCount,
     Integer maxHeadCount,
     Double rating,
@@ -31,7 +30,6 @@ public record RoomInfoResponse(
             .price(room.getPrice())
             .checkInTime(room.getCheckInTime())
             .checkOutTime(room.getCheckOutTime())
-            .description(room.getDescription())
             .minHeadCount(room.getMinHeadCount())
             .maxHeadCount(room.getMaxHeadCount())
             .rating(room.getRating())
