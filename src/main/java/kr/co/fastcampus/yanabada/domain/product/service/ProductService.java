@@ -1,5 +1,8 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType.YANOLJA_PAY;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.REFUND;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
@@ -17,16 +20,23 @@ import kr.co.fastcampus.yanabada.common.exception.InvalidStatusProductUpdateExce
 import kr.co.fastcampus.yanabada.common.exception.OrderNotSellableException;
 import kr.co.fastcampus.yanabada.common.exception.SaleEndDateRangeException;
 import kr.co.fastcampus.yanabada.common.exception.SellingPriceRangeException;
+import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
+import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
@@ -58,6 +68,10 @@ public class ProductService {
     private final OrderRepository orderRepository;
 
     private final TradeRepository tradeRepository;
+
+    private final YanoljaPayRepository yanoljaPayRepository;
+
+    private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
 
     @Transactional
     public ProductIdResponse saveProduct(
@@ -147,12 +161,12 @@ public class ProductService {
     }
 
     @Scheduled(cron = CRON_SCHEDULING)
+    @Transactional
     public void expireProducts() {
         List<Product> products = productRepository.getBySaleEndDateExpired();
         products.forEach(
             product -> {
                 if (product.getIsAutoCancel()) {
-                    //TODO: 예약 취소되면서 예약자에게 환불
                     product.getOrder().cancel();
                 }
                 cancelTradeRelatedToProduct(product);
@@ -165,7 +179,8 @@ public class ProductService {
         tradeRepository.findByProduct(product)
             .forEach(trade -> {
                 if (trade.getStatus() == TradeStatus.WAITING) {
-                    //TODO: Buyer에게 환불 진행
+                    long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
+                    refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
                     trade.reject();
                     //TODO: Buyer에게 알림 (Optional)
                 }
@@ -220,6 +235,32 @@ public class ProductService {
             || product.getStatus() == SOLD_OUT) {
             throw new IllegalProductStatusException();
         }
+    }
+
+    private void refundBill(Member member, long bill, PaymentType paymentType, Product product) {
+        if (paymentType != YANOLJA_PAY) {
+            return;
+        }
+
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
+
+        if (yanoljaPay.getAccountNumber() == null) {
+            throw new YanoljaPayNotFoundException();
+        }
+
+        Accommodation accommodation = product.getOrder().getRoom().getAccommodation();
+        yanoljaPay.deposit(bill);
+        yanoljaPayHistoryRepository.save(
+            YanoljaPayHistory.create(
+                yanoljaPay,
+                REFUND,
+                accommodation.getName(),
+                bill,
+                DEPOSIT,
+                LocalDateTime.now()
+            )
+        );
     }
 
     @Transactional(readOnly = true)

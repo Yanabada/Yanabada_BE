@@ -62,7 +62,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
-        int totalCount = getTotalCount(query);
+        int totalCount = getTotalCount(createQuery(request));
 
         return new PageImpl<>(products, pageable, totalCount);
     }
