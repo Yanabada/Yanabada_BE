@@ -241,7 +241,7 @@ public class ProductService {
             }
             return ProductHistoryInfoResponse.from(tradeId, product);
         });
-
+        //알림추가
         return ProductHistoryPageResponse.from(responses);
     }
 
