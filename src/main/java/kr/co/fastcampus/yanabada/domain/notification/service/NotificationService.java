@@ -1,23 +1,23 @@
 package kr.co.fastcampus.yanabada.domain.notification.service;
 
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.CHAT;
-import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_APPROVAL_CANCEL;
-import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_APPROVAL_REJECTED;
-import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_APPROVAL_REQUEST;
-import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_APPROVAL_SUCCESS;
+import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_APPROVAL;
+import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_CANCELED;
+import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REJECTED;
+import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REQUEST;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_INFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_POSTFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_MESSAGE_TITLE;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CANCELED_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CANCELED_CONTENT_PREFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CANCELED_TITLE;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_REJECTED_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_REJECTED_TITLE;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_REQUEST_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_REQUEST_TITLE;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_SUCCESS_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_SUCCESS_TITLE;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CONTENT_POSTFIX;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_TITLE;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_CANCELED_CONTENT_POSTFIX;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_CANCELED_CONTENT_PREFIX;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_CANCELED_TITLE;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REJECTED_CONTENT_POSTFIX;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REJECTED_TITLE;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REQUEST_CONTENT_POSTFIX;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REQUEST_TITLE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
@@ -80,107 +80,110 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendTradeApprovalRequest(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeRequest(TradeNotificationDto tradeApprovalDto) {
         Notification notification = Notification.builder()
-            .title(TRADE_APPROVAL_REQUEST_TITLE)
+            .title(TRADE_REQUEST_TITLE)
             .body(
                 getShortPhrase(tradeApprovalDto.accommodationName())
-                    + TRADE_APPROVAL_REQUEST_CONTENT_POSTFIX
+                    + TRADE_REQUEST_CONTENT_POSTFIX
             )
             .build();
 
-        Data data = Data.builder().notificationType(TRADE_APPROVAL_REQUEST.name()).build();
+        Data data = Data.builder().notificationType(TRADE_REQUEST.name()).build();
 
         fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
             .receiver(tradeApprovalDto.receiver())
-            .notificationType(TRADE_APPROVAL_REQUEST)
+            .notificationType(TRADE_REQUEST)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL_REQUEST.name().toLowerCase() + ".png")
+            .image(TRADE_REQUEST.name().toLowerCase() + ".png")
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
     }
 
     @Transactional
-    public void sendTradeApprovalCancel(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeCanceled(TradeNotificationDto tradeApprovalDto) {
         Notification notification = Notification.builder()
-            .title(TRADE_APPROVAL_CANCELED_TITLE)
+            .title(TRADE_CANCELED_TITLE)
             .body(
-                TRADE_APPROVAL_CANCELED_CONTENT_PREFIX
+                TRADE_CANCELED_CONTENT_PREFIX
                     + getShortPhrase(tradeApprovalDto.accommodationName())
-                    + TRADE_APPROVAL_CANCELED_CONTENT_POSTFIX
+                    + TRADE_CANCELED_CONTENT_POSTFIX
             )
             .build();
 
-        Data data = Data.builder().notificationType(TRADE_APPROVAL_CANCEL.name()).build();
+        Data data = Data.builder().notificationType(TRADE_CANCELED.name()).build();
 
         fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
             .receiver(tradeApprovalDto.receiver())
-            .notificationType(TRADE_APPROVAL_CANCEL)
+            .notificationType(TRADE_CANCELED)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL_CANCEL.name().toLowerCase() + ".png") //todo: png 상수처리?
+            .image(TRADE_CANCELED.name().toLowerCase() + ".png") //todo: png 상수처리?
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
     }
 
     @Transactional
-    public void sendTradeApprovalSuccess(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeApproval(TradeNotificationDto tradeApprovalDto) {
         Notification notification = Notification.builder()
-            .title(TRADE_APPROVAL_SUCCESS_TITLE)
+            .title(TRADE_APPROVAL_TITLE)
             .body(
                 getShortPhrase(tradeApprovalDto.accommodationName())
-                    + TRADE_APPROVAL_SUCCESS_CONTENT_POSTFIX
+                    + TRADE_APPROVAL_CONTENT_POSTFIX
             )
             .build();
 
-        Data data = Data.builder().notificationType(TRADE_APPROVAL_SUCCESS.name()).build();
+        Data data = Data.builder().notificationType(TRADE_APPROVAL.name()).build();
 
         fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
             .receiver(tradeApprovalDto.receiver())
-            .notificationType(TRADE_APPROVAL_SUCCESS)
+            .notificationType(TRADE_APPROVAL)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL_SUCCESS.name().toLowerCase() + ".png")
+            .image(TRADE_APPROVAL.name().toLowerCase() + ".png")
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
     }
 
     @Transactional
-    public void sendTradeApprovalReject(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeRejected(TradeNotificationDto tradeApprovalDto) {
         Notification notification = Notification.builder()
-            .title(TRADE_APPROVAL_REJECTED_TITLE)
+            .title(TRADE_REJECTED_TITLE)
             .body(
                 getShortPhrase(tradeApprovalDto.accommodationName())
-                    + TRADE_APPROVAL_REJECTED_CONTENT_POSTFIX
+                    + TRADE_REJECTED_CONTENT_POSTFIX
             )
             .build();
 
-        Data data = Data.builder().notificationType(TRADE_APPROVAL_REJECTED.name()).build();
+        Data data = Data.builder().notificationType(TRADE_REJECTED.name()).build();
 
         fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
             .receiver(tradeApprovalDto.receiver())
-            .notificationType(TRADE_APPROVAL_REJECTED)
+            .notificationType(TRADE_REJECTED)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL_REJECTED.name().toLowerCase() + ".png")
+            .image(TRADE_REJECTED.name().toLowerCase() + ".png")
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
     }
 
     private String getShortPhrase(String name) {
-        return "'" + name.substring(0, 8) + (name.length() > 8 ? "..'" : "'");
+        if (name.length() <= 7) {
+            return name;
+        }
+        return name.substring(0, 7) + "...";
     }
 }
