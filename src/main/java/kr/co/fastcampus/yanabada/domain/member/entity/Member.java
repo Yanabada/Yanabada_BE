@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
+import kr.co.fastcampus.yanabada.common.exception.NotEnoughPointException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,4 +53,14 @@ public class Member extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
+    public void subtractPoint(int point) {
+        if (this.point < point) {
+            throw new NotEnoughPointException();
+        }
+        this.point -= point;
+    }
+
+    public void addPoint(int point) {
+        this.point += point;
+    }
 }
