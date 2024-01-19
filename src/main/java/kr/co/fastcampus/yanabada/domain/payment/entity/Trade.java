@@ -109,6 +109,7 @@ public class Trade extends BaseEntity {
         LocalDateTime registeredDate,
         Boolean hasSellerDeleted,
         Boolean hasBuyerDeleted
+
     ) {
         this.product = product;
         this.seller = seller;

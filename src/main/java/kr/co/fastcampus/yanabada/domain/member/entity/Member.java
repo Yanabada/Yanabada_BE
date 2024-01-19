@@ -23,7 +23,6 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String memberName;
     private String nickName;
     private String password;
     private String phoneNumber;
@@ -34,7 +33,7 @@ public class Member extends BaseEntity {
     private RoleType roleType;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
-    private String deviceKey;
+    private String fcmToken;
 
     public void updatePassword(String password) {
         this.password = password;
@@ -50,6 +49,10 @@ public class Member extends BaseEntity {
 
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
 }

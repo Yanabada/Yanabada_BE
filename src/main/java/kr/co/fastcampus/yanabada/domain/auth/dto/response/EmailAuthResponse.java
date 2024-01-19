@@ -1,6 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.auth.dto.response;
 
-public record EmailAuthCodeResponse(
+public record EmailAuthResponse(
     Integer code
 ) {
 }
