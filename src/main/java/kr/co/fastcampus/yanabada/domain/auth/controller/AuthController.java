@@ -6,11 +6,11 @@ import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseBody<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         return ResponseBody.ok(authService.login(loginRequest));
     }
 
@@ -72,14 +72,14 @@ public class AuthController {
         return ResponseBody.ok(memberService.isExistNickName(nickNameRequest));
     }
 
-    @PostMapping("/verification/code/email")
-    public ResponseBody<EmailAuthCodeResponse> verifyEmail(
-        @RequestBody EmailAuthCodeRequest emailAuthCodeRequest
+    @PostMapping("/verification/email")
+    public ResponseBody<EmailAuthResponse> verifyEmail(
+        @RequestBody EmailAuthRequest emailAuthRequest
     ) {
-        return ResponseBody.ok(memberService.isExistEmail(emailAuthCodeRequest));
+        return ResponseBody.ok(memberService.verifyEmail(emailAuthRequest));
     }
 
-    @PostMapping("/verification/code/phone")
+    @PostMapping("/verification/phone")
     public void verifyPhoneNumber() {
     }
 

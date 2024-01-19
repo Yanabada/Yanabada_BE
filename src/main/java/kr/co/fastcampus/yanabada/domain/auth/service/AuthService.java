@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -38,13 +39,12 @@ public class AuthService {
     @Transactional
     public Long signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
-            throw new RuntimeException("이미 존재하는 이메일");  //todo custom + 닉네임도 중복 체크
+            throw new EmailDuplicatedException();
         }
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
         Member member = Member.builder()
                 .email(signUpRequest.email())
-                .memberName(signUpRequest.memberName())
                 .nickName(signUpRequest.nickName())
                 .password(encodedPassword)
                 .phoneNumber(signUpRequest.phoneNumber())
@@ -63,7 +63,6 @@ public class AuthService {
         //todo: 패스워드 환경변수 분리
         Member member = Member.builder()
             .email(signUpRequest.email())
-            .memberName(signUpRequest.memberName())
             .nickName(signUpRequest.nickName())
             .password(encodedPassword)
             .phoneNumber(signUpRequest.phoneNumber())
