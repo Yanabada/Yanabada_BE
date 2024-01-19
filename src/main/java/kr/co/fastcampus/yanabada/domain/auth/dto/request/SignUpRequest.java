@@ -19,8 +19,6 @@ public record SignUpRequest(
     @NotEmpty(message = "닉네임이 비어있을 수 없습니다")
     String nickName,
     @NotEmpty(message = "휴대 전화 번호가 비어있을 수 없습니다")
-    String phoneNumber,
-    String deviceKey
-
+    String phoneNumber
 ) {
 }

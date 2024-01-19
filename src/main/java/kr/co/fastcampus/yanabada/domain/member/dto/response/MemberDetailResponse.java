@@ -8,7 +8,7 @@ import lombok.Builder;
 public record MemberDetailResponse(
     Long id,
     String email,
-    String nickname,
+    String nickName,
     String phoneNumber,
     String imageUrl,
     Integer point,
@@ -18,7 +18,7 @@ public record MemberDetailResponse(
         return MemberDetailResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
-            .nickname(member.getNickName())
+            .nickName(member.getNickName())
             .phoneNumber(member.getPhoneNumber())
             .imageUrl(member.getImageUrl())
             .point(member.getPoint())

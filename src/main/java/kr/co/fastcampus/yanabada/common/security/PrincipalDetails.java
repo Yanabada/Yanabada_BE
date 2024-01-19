@@ -11,15 +11,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public record PrincipalDetails(
+        Long id,
         String email,
         String password,
         ProviderType provider
 ) implements UserDetails {
 
     public static PrincipalDetails of(Member member) {
-        return new PrincipalDetails(member.getEmail(),
-                member.getPassword(),
-                member.getProviderType()
+        return new PrincipalDetails(
+            member.getId(),
+            member.getEmail(),
+            member.getPassword(),
+            member.getProviderType()
         );
     }
 

@@ -52,3 +52,11 @@ email:
 chatroom:
   topic:
     prefix: "/sub/chatroom/"
+
+firebase:
+  project-id: yanabada-b13ee
+  key-path: yanabada-firebase-key.json
+  fcm-request-url:
+    prefix: https://fcm.googleapis.com/v1/projects/
+    postfix: /messages:send
+

@@ -3,9 +3,10 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -77,15 +78,15 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public EmailAuthCodeResponse isExistEmail(
-        EmailAuthCodeRequest emailRequest
+    public EmailAuthResponse verifyEmail(
+        EmailAuthRequest emailRequest
     ) {
         boolean isExist = memberRepository
             .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
         if (isExist) {
             throw new EmailDuplicatedException();
         }
-        return new EmailAuthCodeResponse(mailAuthService.sendEmail(emailRequest.email()));
+        return new EmailAuthResponse(mailAuthService.sendEmail(emailRequest.email()));
     }
 
     @Transactional(readOnly = true)
@@ -94,6 +95,14 @@ public class MemberService {
     ) {
         boolean isExist = memberRepository.existsByNickName(nickNameRequest.nickName());
         return new DuplCheckResponse(isExist);
+    }
+
+    @Transactional
+    public void updateFcmToken(
+        Long memberId, FcmTokenUpdateRequest fcmTokenRequest
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        member.updateFcmToken(fcmTokenRequest.fcmToken());
     }
 
 }
