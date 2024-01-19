@@ -6,6 +6,7 @@ import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException;
@@ -217,6 +218,7 @@ public class TradeService {
             trade.getReservationPersonPhoneNumber(),
             trade.getUserPersonName(),
             trade.getUserPersonPhoneNumber(),
+            LocalDateTime.now(),
             trade.getPaymentType(),
             EntityCodeGenerator.generate()
         );

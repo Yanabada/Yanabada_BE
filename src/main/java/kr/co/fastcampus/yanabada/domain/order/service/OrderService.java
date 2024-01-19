@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.order.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -34,7 +35,7 @@ public class OrderService {
     public void saveOrder(OrderSaveRequest request) {
         Room room = roomRepository.getRoom(request.roomId());
         Member member = memberRepository.getMember(request.memberId());
-        Order order = orderRepository.save(request.toEntity(room, member));
+        Order order = orderRepository.save(request.toEntity(room, member, LocalDateTime.now()));
     }
 
     @Transactional(readOnly = true)

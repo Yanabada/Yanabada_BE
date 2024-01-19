@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
+import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
@@ -98,7 +99,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseBody<Void> badCredentialsException(
         BadCredentialsException e
     ) {
@@ -107,7 +108,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TokenExpiredException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseBody<TokenExpiredResponse> tokenExpiredException(
         TokenExpiredException e
     ) {
@@ -124,6 +125,15 @@ public class GlobalExceptionHandler {
         EmailSendFailedException e
     ) {
         log.error("[EmailSendFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(EmailDuplicatedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseBody<Void> emailDuplicatedException(
+        EmailDuplicatedException e
+    ) {
+        log.error("[EmailDuplicatedException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
 

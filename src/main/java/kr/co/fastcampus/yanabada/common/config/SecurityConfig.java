@@ -3,6 +3,9 @@ package kr.co.fastcampus.yanabada.common.config;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginFailureHandler;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginSuccessHandler;
+import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -26,6 +29,9 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final Oauth2UserService oauth2UserService;
+    private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
 
     private static final String[] PERMIT_PATHS = {
         "/",
@@ -47,7 +53,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
         );
 
-        //todo: oauth 설정 예정
+        http.oauth2Login(oauth2 -> oauth2
+            .userInfoEndpoint(
+                userInfoEndpoint -> userInfoEndpoint.userService(oauth2UserService))
+            .successHandler(oauth2LoginSuccessHandler)
+            .failureHandler(oauth2LoginFailureHandler)
+        );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
