@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
+import kr.co.fastcampus.yanabada.common.exception.FcmAccessTokenGetFailedException;
+import kr.co.fastcampus.yanabada.common.exception.FcmMessageSendFailedException;
+import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
+import kr.co.fastcampus.yanabada.common.exception.OkHttp3RequestFailedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -134,6 +138,42 @@ public class GlobalExceptionHandler {
         EmailDuplicatedException e
     ) {
         log.error("[EmailDuplicatedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(JsonProcessFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> jsonProcessFailedException(
+        JsonProcessFailedException e
+    ) {
+        log.error("[JsonProcessFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(OkHttp3RequestFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> okHttp3RequestFailedException(
+        OkHttp3RequestFailedException e
+    ) {
+        log.error("[OkHttp3RequestFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(FcmMessageSendFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> fcmMessageSendFailedException(
+        FcmMessageSendFailedException e
+    ) {
+        log.error("[FcmMessageSendFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(FcmAccessTokenGetFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> fcmAccessTokenGetFailedException(
+        FcmAccessTokenGetFailedException e
+    ) {
+        log.error("[FcmAccessTokenGetFailedException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
 

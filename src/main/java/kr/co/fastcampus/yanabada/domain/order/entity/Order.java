@@ -1,8 +1,8 @@
 package kr.co.fastcampus.yanabada.domain.order.entity;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.TRADED;
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.USED;
-import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.CANCELED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
