@@ -35,6 +35,7 @@ public enum ErrorCode {
     INCORRECT_CHAT_ROOM_MEMBER("채팅방 멤버가 올바르지 않습니다."),
 
     EMAIL_SEND_FAILED("이메일 전송에 실패하였습니다."),
+    EMAIL_DUPLICATED("이메일이 중복됩니다."),
 
     ILLEGAL_PRODUCT_STATUS("해당 기능을 수행할 수 없는 상품 상태입니다."),
     CANNOT_TRADE_OWN_PRODUCT("자신이 등록한 상품을 거래할 수 없습니다."),

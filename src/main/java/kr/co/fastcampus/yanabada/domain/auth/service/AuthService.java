@@ -8,8 +8,11 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,17 +57,49 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenIssueResponse login(LoginRequest loginRequest) {
+    public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
+
+        String encodedPassword = passwordEncoder.encode("oauth-password");
+        //todo: 패스워드 환경변수 분리
+        Member member = Member.builder()
+            .email(signUpRequest.email())
+            .memberName(signUpRequest.memberName())
+            .nickName(signUpRequest.nickName())
+            .password(encodedPassword)
+            .phoneNumber(signUpRequest.phoneNumber())
+            .roleType(ROLE_USER)
+            .providerType(signUpRequest.provider())
+            .build();
+
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
+    }
+
+    @Transactional
+    public LoginResponse login(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+        Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
         TokenIssueResponse tokenIssue
             = tokenService.getTokenIssue(loginRequest.email(), EMAIL.name());
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
-        return tokenIssue;
+        return LoginResponse.from(tokenIssue, member);
+    }
+
+    @Transactional
+    public LoginResponse loginOauth(LoginRequest loginRequest, ProviderType providerType) {
+        Member member = memberRepository.getMember(loginRequest.email(), providerType);
+        TokenIssueResponse tokenIssue
+            = tokenService.getTokenIssue(loginRequest.email(), providerType.name());
+        if (tokenIssue == null) {
+            tokenIssue = jwtProvider
+                .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
+        }
+        return LoginResponse.from(tokenIssue, member);
     }
 
     @Transactional
