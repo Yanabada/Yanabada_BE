@@ -38,6 +38,7 @@ public enum ErrorCode {
     ILLEGAL_PRODUCT_STATUS("해당 기능을 수행할 수 없는 상품 상태입니다."),
     CANNOT_TRADE_OWN_PRODUCT("자신이 등록한 상품을 거래할 수 없습니다."),
     ILLEGAL_TRADE_STATUS("해당 기능을 수행할 수 없는 거래 상태입니다."),
+    UNAVAILABLE_STATUS_QUERY("찾을 수 없는 STATUS 쿼리파라미터입니다."),
     ;
 
     private final String message;
