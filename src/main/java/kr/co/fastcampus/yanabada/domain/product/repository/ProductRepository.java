@@ -10,4 +10,6 @@ public interface ProductRepository
     default Product getProduct(Long id) {
         return findById(id).orElseThrow(ProductNotFoundException::new);
     }
+
+    long countProducts();
 }
