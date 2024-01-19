@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AdminPaymentRepository extends JpaRepository<AdminPayment, Long> {
 
+    long ADMIN_PAYMENT_ID = 1L;
+
     default AdminPayment getAdminPayment() {
-        return findById(1L).orElseThrow(AdminPaymentNotFoundException::new);
+        return findById(ADMIN_PAYMENT_ID).orElseThrow(AdminPaymentNotFoundException::new);
     }
 }
