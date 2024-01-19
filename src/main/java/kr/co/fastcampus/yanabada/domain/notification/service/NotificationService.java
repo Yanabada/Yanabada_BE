@@ -42,7 +42,7 @@ public class NotificationService {
 
         Data data = Data.builder().notificationType(CHAT.name()).build();
 
-        fcmService.sendToMessage(sender, receiver, notification, data);
+        fcmService.sendToMessage(receiver, notification, data);
     }
 
     @Transactional
@@ -60,6 +60,6 @@ public class NotificationService {
 
         Data data = Data.builder().notificationType(TRADE_APPROVAL.name()).build();
 
-        fcmService.sendToMessage(sender, receiver, notification, data);
+        fcmService.sendToMessage(receiver, notification, data);
     }
 }

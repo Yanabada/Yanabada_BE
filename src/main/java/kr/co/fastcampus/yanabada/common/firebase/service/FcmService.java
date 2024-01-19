@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.util.List;
+import kr.co.fastcampus.yanabada.common.exception.FcmAccessTokenGetFailedException;
+import kr.co.fastcampus.yanabada.common.exception.FcmMessageSendFailedException;
+import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
+import kr.co.fastcampus.yanabada.common.exception.OkHttp3RequestFailedException;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Message;
@@ -42,16 +46,15 @@ public class FcmService {
     String fcmRequestUrlPostfix;
 
     public void sendToMessage(
-        Member sender,
         Member receiver,
         Notification notification,
         Data data
     ) {
         try {
-            FcmMessageRequest fcmMessage = makeFcmMessage(sender, receiver, notification, data);
+            FcmMessageRequest fcmMessage = makeFcmMessage(receiver, notification, data);
             sendMessageToFcmServer(objectMapper.writeValueAsString(fcmMessage));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("JsonParsingError");     //todo
+            throw new JsonProcessFailedException();
         }
     }
 
@@ -72,27 +75,22 @@ public class FcmService {
 
         try {
             Response response = client.newCall(request).execute();
-            log.info("response.statusCode={}", response.code());    //todo: 삭제
-            log.info("RESPONSE={}", response.body().string());      //todo: 삭제
 
             if (response.code() != 200) {
-                throw new RuntimeException("FCM 통신 오류");
+                log.error(response.toString());
+                throw new FcmMessageSendFailedException();
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("통신 오류");
+            throw new OkHttp3RequestFailedException();
         }
     }
 
     private FcmMessageRequest makeFcmMessage(
-        Member sender,
         Member receiver,
         Notification notification,
         Data data
     ) {
-        String title = "hihihi";
-        String body = "안녕하세요.";
-
         Message message = Message
             .builder()
             .notification(notification)
@@ -114,10 +112,9 @@ public class FcmService {
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
             googleCredentials.refreshIfExpired();
-            log.info("getAccessToken={}", googleCredentials.getAccessToken().getTokenValue());
             return googleCredentials.getAccessToken().getTokenValue();
         } catch (IOException e) {
-            throw new RuntimeException("AccessToken Error");    //todo: 커스텀 Ex
+            throw new FcmAccessTokenGetFailedException();
         }
     }
 }
