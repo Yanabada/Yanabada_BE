@@ -1,5 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.product.service;
 
+import static kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType.YANOLJA_PAY;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.REFUND;
+import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
+import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.BOOKING;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.CANCELED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.ON_SALE;
 import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus.SOLD_OUT;
@@ -7,6 +11,7 @@ import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatu
 
 import io.micrometer.common.util.StringUtils;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -15,22 +20,37 @@ import kr.co.fastcampus.yanabada.common.exception.InvalidStatusProductUpdateExce
 import kr.co.fastcampus.yanabada.common.exception.OrderNotSellableException;
 import kr.co.fastcampus.yanabada.common.exception.SaleEndDateRangeException;
 import kr.co.fastcampus.yanabada.common.exception.SellingPriceRangeException;
+import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
+import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
+import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
+import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
+import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductHistoryInfoResponse;
+import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductHistoryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductIdResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductInfoResponse;
 import kr.co.fastcampus.yanabada.domain.product.dto.response.ProductSummaryPageResponse;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
+import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +69,10 @@ public class ProductService {
 
     private final TradeRepository tradeRepository;
 
+    private final YanoljaPayRepository yanoljaPayRepository;
+
+    private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
+
     @Transactional
     public ProductIdResponse saveProduct(
         Long memberId,
@@ -63,7 +87,7 @@ public class ProductService {
         validateProductSaveRequest(request, order);
 
         return ProductIdResponse.from(
-            productRepository.save(request.toEntity(order))
+            productRepository.save(request.toEntity(order, LocalDateTime.now()))
         );
     }
 
@@ -137,12 +161,12 @@ public class ProductService {
     }
 
     @Scheduled(cron = CRON_SCHEDULING)
+    @Transactional
     public void expireProducts() {
         List<Product> products = productRepository.getBySaleEndDateExpired();
         products.forEach(
             product -> {
                 if (product.getIsAutoCancel()) {
-                    //TODO: 예약 취소되면서 예약자에게 환불
                     product.getOrder().cancel();
                 }
                 cancelTradeRelatedToProduct(product);
@@ -155,7 +179,8 @@ public class ProductService {
         tradeRepository.findByProduct(product)
             .forEach(trade -> {
                 if (trade.getStatus() == TradeStatus.WAITING) {
-                    //TODO: Buyer에게 환불 진행
+                    long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
+                    refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
                     trade.reject();
                     //TODO: Buyer에게 알림 (Optional)
                 }
@@ -209,6 +234,67 @@ public class ProductService {
             || product.getStatus() == TIMEOUT
             || product.getStatus() == SOLD_OUT) {
             throw new IllegalProductStatusException();
+        }
+    }
+
+    private void refundBill(Member member, long bill, PaymentType paymentType, Product product) {
+        if (paymentType != YANOLJA_PAY) {
+            return;
+        }
+
+        YanoljaPay yanoljaPay = yanoljaPayRepository.findByMember(member)
+            .orElseThrow(YanoljaPayNotFoundException::new);
+
+        if (yanoljaPay.getAccountNumber() == null) {
+            throw new YanoljaPayNotFoundException();
+        }
+
+        Accommodation accommodation = product.getOrder().getRoom().getAccommodation();
+        yanoljaPay.deposit(bill);
+        yanoljaPayHistoryRepository.save(
+            YanoljaPayHistory.create(
+                yanoljaPay,
+                REFUND,
+                accommodation.getName(),
+                bill,
+                DEPOSIT,
+                LocalDateTime.now()
+            )
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ProductHistoryPageResponse getOwnProduct(
+        Long memberId, ProductStatus status, Pageable pageable
+    ) {
+        Member member = memberRepository.getMember(memberId);
+        checkProductStatus(status);
+        Page<Product> products = productRepository.findProductsByMemberAndStatus(
+            member, status, pageable
+        );
+
+        Page<ProductHistoryInfoResponse> responses = products.map(product -> {
+            Long tradeId = null;
+            if (product.getStatus().equals(SOLD_OUT)) {
+                tradeId = findTradeIdByProductAndStatus(product, TradeStatus.COMPLETED);
+            } else if (product.getStatus().equals(BOOKING)) {
+                tradeId = findTradeIdByProductAndStatus(product, TradeStatus.WAITING);
+            }
+            return ProductHistoryInfoResponse.from(tradeId, product);
+        });
+
+        return ProductHistoryPageResponse.from(responses);
+    }
+
+    private Long findTradeIdByProductAndStatus(Product product, TradeStatus tradeStatus) {
+        Trade trade = tradeRepository.findByProductAndStatus(product, tradeStatus)
+            .orElseThrow(TradeNotFoundException::new);
+        return trade.getId();
+    }
+
+    private void checkProductStatus(ProductStatus status) {
+        if (Objects.equals(status, CANCELED)) {
+            throw new UnavailableStatusQueryException();
         }
     }
 }
