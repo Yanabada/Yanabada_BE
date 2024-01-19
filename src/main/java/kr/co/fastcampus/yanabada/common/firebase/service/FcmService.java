@@ -40,19 +40,15 @@ public class FcmService {
     String fcmRequestUrlPrefix;
     @Value("${firebase.fcm-request-url.postfix}")
     String fcmRequestUrlPostfix;
-    String fcmToken
-        = "dHouRIbpZSUeFWw9vVNN7p:APA91bECfpMv9ES-Q8-"
-        + "6MrpBHmgiiQAkNAUfIGE5BiS0rvcUXkcI3U6PkDx_pwQ6N1"
-        + "o6gkTCv5qpx1oTCiJbPqMEsnHqbj3FWM6OTLpFjSkA2e5Pr"
-        + "MSAkdjxybbnZ-NDHSxzSHOZIwcR";
 
     public void sendToMessage(
         Member sender,
         Member receiver,
-        Notification notification
+        Notification notification,
+        Data data
     ) {
         try {
-            FcmMessageRequest fcmMessage = makeFcmMessage(sender, receiver, notification);
+            FcmMessageRequest fcmMessage = makeFcmMessage(sender, receiver, notification, data);
             sendMessageToFcmServer(objectMapper.writeValueAsString(fcmMessage));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JsonParsingError");     //todo
@@ -91,22 +87,17 @@ public class FcmService {
     private FcmMessageRequest makeFcmMessage(
         Member sender,
         Member receiver,
-        Notification notification
+        Notification notification,
+        Data data
     ) {
         String title = "hihihi";
         String body = "안녕하세요.";
-
-        Data data = Data.builder()
-            .senderName(sender.getNickName())
-            .senderId(sender.getId().toString())
-            .message("message message")
-            .build();
 
         Message message = Message
             .builder()
             .notification(notification)
             .data(data)
-            .token(fcmToken)
+            .token(memberRepository.getMember(receiver.getId()).getFcmToken())
             .build();
 
         return FcmMessageRequest

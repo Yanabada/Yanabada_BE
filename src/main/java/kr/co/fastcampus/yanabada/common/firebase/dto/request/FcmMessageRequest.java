@@ -26,9 +26,7 @@ public record FcmMessageRequest(
 
     @Builder
     public record Data(
-        String senderName,
-        String senderId,
-        String message
+        String notificationType
     ) {
     }
 
