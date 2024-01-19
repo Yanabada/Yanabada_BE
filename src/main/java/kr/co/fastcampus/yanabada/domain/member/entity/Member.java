@@ -23,7 +23,6 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String memberName;
     private String nickName;
     private String password;
     private String phoneNumber;
