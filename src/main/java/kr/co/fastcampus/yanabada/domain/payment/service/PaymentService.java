@@ -191,7 +191,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public AdminPaymentInfoResponse getAdminPayment() {
         return AdminPaymentInfoResponse.from(
-            productRepository.countProducts(),
+            productRepository.count(),
             adminPaymentRepository.getAdminPayment()
         );
     }

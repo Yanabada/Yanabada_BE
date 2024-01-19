@@ -11,5 +11,5 @@ public interface ProductRepository
         return findById(id).orElseThrow(ProductNotFoundException::new);
     }
 
-    long countProducts();
+    long count();
 }
