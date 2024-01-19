@@ -6,4 +6,5 @@ public enum ProductSearchCategory {
     PENSION,
     GUESTHOUSE,
     POOL_VILLA,
+    CAMPING
 }

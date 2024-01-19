@@ -50,9 +50,6 @@ public class Room extends BaseEntity {
     private LocalTime checkOutTime;
 
     @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
     private Integer minHeadCount;
 
     @Column(nullable = false)
@@ -80,7 +77,6 @@ public class Room extends BaseEntity {
         Integer price,
         LocalTime checkInTime,
         LocalTime checkOutTime,
-        String description,
         Integer minHeadCount,
         Integer maxHeadCount,
         Double rating,
@@ -92,7 +88,6 @@ public class Room extends BaseEntity {
         this.price = price;
         this.checkInTime = checkInTime;
         this.checkOutTime = checkOutTime;
-        this.description = description;
         this.minHeadCount = minHeadCount;
         this.maxHeadCount = maxHeadCount;
         this.rating = rating;
@@ -106,7 +101,6 @@ public class Room extends BaseEntity {
         Integer price,
         LocalTime checkInTime,
         LocalTime checkOutTime,
-        String description,
         Integer minHeadCount,
         Integer maxHeadCount,
         Double rating,
@@ -119,7 +113,6 @@ public class Room extends BaseEntity {
             price,
             checkInTime,
             checkOutTime,
-            description,
             minHeadCount,
             maxHeadCount,
             rating,
