@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class YanoljaPayService {
+public class PaymentService {
 
     private final YanoljaPayRepository yanoljaPayRepository;
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
