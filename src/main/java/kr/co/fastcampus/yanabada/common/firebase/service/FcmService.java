@@ -46,12 +46,12 @@ public class FcmService {
     String fcmRequestUrlPostfix;
 
     public void sendToMessage(
-        Member receiver,
+        String fcmToken,
         Notification notification,
         Data data
     ) {
         try {
-            FcmMessageRequest fcmMessage = makeFcmMessage(receiver, notification, data);
+            FcmMessageRequest fcmMessage = makeFcmMessage(fcmToken, notification, data);
             sendMessageToFcmServer(objectMapper.writeValueAsString(fcmMessage));
         } catch (JsonProcessingException e) {
             throw new JsonProcessFailedException();
@@ -87,7 +87,7 @@ public class FcmService {
     }
 
     private FcmMessageRequest makeFcmMessage(
-        Member receiver,
+        String fcmToken,
         Notification notification,
         Data data
     ) {
@@ -95,7 +95,7 @@ public class FcmService {
             .builder()
             .notification(notification)
             .data(data)
-            .token(memberRepository.getMember(receiver.getId()).getFcmToken())
+            .token(fcmToken)
             .build();
 
         return FcmMessageRequest

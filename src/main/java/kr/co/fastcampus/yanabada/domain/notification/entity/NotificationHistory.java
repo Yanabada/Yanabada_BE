@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType;
@@ -33,8 +34,14 @@ public class NotificationHistory extends BaseEntity {
     private Member receiver;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private NotificationType type;
+    private NotificationType notificationType;
     @Column(nullable = false)
     private String content;
+    @Column(nullable = false)
+    private String image;
+    @Builder.Default
+    LocalDateTime registeredDate = LocalDateTime.now();
+    @Builder.Default
+    private Boolean read = false;
 
 }
