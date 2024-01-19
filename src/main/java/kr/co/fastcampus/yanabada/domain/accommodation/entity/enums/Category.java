@@ -5,6 +5,7 @@ public enum Category {
     MOTEL,
     PENSION,
     GUESTHOUSE,
-    POOL_VILLA
+    POOL_VILLA,
+    CAMPING
 
 }

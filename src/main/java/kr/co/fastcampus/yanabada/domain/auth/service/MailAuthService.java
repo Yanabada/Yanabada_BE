@@ -4,8 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthCodeRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthCodeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,12 +19,12 @@ public class MailAuthService {
     @Value("${email.user}")
     private String user;
 
-    public EmailAuthCodeResponse sendEmail(EmailAuthCodeRequest emailAuthCodeRequest) {
+    public Integer sendEmail(String email) {
         int authCode = makeRandomCode();
         String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
-        sendToSmtp(user, emailAuthCodeRequest.email(), title, content);
-        return new EmailAuthCodeResponse(authCode);
+        sendToSmtp(user, email, title, content);
+        return authCode;
     }
 
     private String makeContent(int authCode) {
