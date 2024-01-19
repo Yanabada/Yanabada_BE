@@ -27,9 +27,11 @@ import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.AdminPayment;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.payment.repository.AdminPaymentRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
@@ -53,16 +55,12 @@ public class ProductService {
     private static final String CRON_SCHEDULING = "0 0 0 * * *";
 
     private final ProductRepository productRepository;
-
     private final MemberRepository memberRepository;
-
     private final OrderRepository orderRepository;
-
     private final TradeRepository tradeRepository;
-
     private final YanoljaPayRepository yanoljaPayRepository;
-
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
+    private final AdminPaymentRepository adminPaymentRepository;
 
     @Transactional
     public ProductIdResponse saveProduct(
@@ -167,11 +165,16 @@ public class ProductService {
     }
 
     private void cancelTradeRelatedToProduct(Product product) {
+        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
+
         tradeRepository.findByProduct(product)
             .forEach(trade -> {
                 if (trade.getStatus() == TradeStatus.WAITING) {
                     long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
                     refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
+                    trade.getBuyer().addPoint(trade.getPoint());
+                    adminPayment.withdraw(bill);
+
                     trade.reject();
                     //TODO: Buyer에게 알림 (Optional)
                 }

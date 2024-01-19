@@ -15,7 +15,6 @@ import kr.co.fastcampus.yanabada.common.exception.CannotTradeOwnProductException
 import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectYanoljaPayPasswordException;
-import kr.co.fastcampus.yanabada.common.exception.NotEnoughPointException;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
@@ -31,9 +30,11 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
+import kr.co.fastcampus.yanabada.domain.payment.entity.AdminPayment;
 import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPayHistory;
+import kr.co.fastcampus.yanabada.domain.payment.repository.AdminPaymentRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.TradeRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayHistoryRepository;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
@@ -54,22 +55,26 @@ public class TradeService {
     private final OrderRepository orderRepository;
     private final YanoljaPayRepository yanoljaPayRepository;
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
+    private final AdminPaymentRepository adminPaymentRepository;
 
     @Transactional
     public TradeIdResponse saveTrade(
         Long buyerId,
         TradeSaveRequest request
     ) {
+        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Product product = productRepository.getProduct(request.productId());
         Member seller = product.getOrder().getMember();
         Member buyer = memberRepository.getMember(buyerId);
 
-        validateTradeSaveRequest(product, seller, buyer, request.point());
+        validateTradeSaveRequest(product, seller, buyer);
 
         long bill = product.getPrice()
             + PayFeeCalculator.calculate(product.getPrice(), request.paymentType())
             - request.point();
         payBill(buyer, bill, request, product);
+        adminPayment.deposit(bill);
+        buyer.subtractPoint(request.point());
 
         product.book();
 
@@ -82,6 +87,7 @@ public class TradeService {
 
     @Transactional
     public void approveTrade(Long sellerId, Long tradeId) {
+        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -89,6 +95,9 @@ public class TradeService {
 
         long bill = trade.getSellingPrice();
         receiveBill(seller, bill, trade.getProduct());
+        adminPayment.withdraw(bill);
+        adminPayment.increaseAccumulatedUsageAmount(bill);
+        adminPayment.increaseAccumulatedDiscountAmount(trade.getPrice() - trade.getSellingPrice());
 
         trade.complete();
         trade.getProduct().soldOut();
@@ -100,6 +109,7 @@ public class TradeService {
 
     @Transactional
     public void rejectTrade(Long sellerId, Long tradeId) {
+        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -107,6 +117,8 @@ public class TradeService {
 
         long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
         refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
+        trade.getBuyer().addPoint(trade.getPoint());
+        adminPayment.withdraw(bill);
 
         trade.reject();
         trade.getProduct().onSale();
@@ -116,6 +128,7 @@ public class TradeService {
 
     @Transactional
     public void cancelTrade(Long buyerId, Long tradeId) {
+        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member buyer = memberRepository.getMember(buyerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -123,6 +136,8 @@ public class TradeService {
 
         long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
         refundBill(buyer, bill, trade.getPaymentType(), trade.getProduct());
+        buyer.addPoint(trade.getPoint());
+        adminPayment.withdraw(bill);
 
         trade.cancel();
         trade.getProduct().onSale();
@@ -181,17 +196,13 @@ public class TradeService {
     private void validateTradeSaveRequest(
         Product product,
         Member seller,
-        Member buyer,
-        Integer point
+        Member buyer
     ) {
         if (product.getStatus() != ProductStatus.ON_SALE) {
             throw new IllegalProductStatusException();
         }
         if (Objects.equals(seller, buyer)) {
             throw new CannotTradeOwnProductException();
-        }
-        if (buyer.getPoint() < point) {
-            throw new NotEnoughPointException();
         }
     }
 
