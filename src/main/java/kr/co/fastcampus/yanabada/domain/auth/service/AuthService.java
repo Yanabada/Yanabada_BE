@@ -43,14 +43,19 @@ public class AuthService {
         }
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
+
+        int randNum = (int) ((Math.random()*10000)%5);
+        String image = randNum + "profile.png";     //todo: 환경 변수
+
         Member member = Member.builder()
-                .email(signUpRequest.email())
-                .nickName(signUpRequest.nickName())
-                .password(encodedPassword)
-                .phoneNumber(signUpRequest.phoneNumber())
-                .roleType(ROLE_USER)
-                .providerType(EMAIL)
-                .build();
+            .email(signUpRequest.email())
+            .nickName(signUpRequest.nickName())
+            .password(encodedPassword)
+            .phoneNumber(signUpRequest.phoneNumber())
+            .roleType(ROLE_USER)
+            .imageUrl(image)
+            .providerType(EMAIL)
+            .build();
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
