@@ -5,6 +5,7 @@ import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPayAmountRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPayHistorySearchRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.YanoljaPaySaveRequest;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.AdminPaymentInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistorySummaryPageResponse;
@@ -83,6 +84,13 @@ public class PaymentController {
                 2L,
                 historyId
             )
+        );
+    }
+
+    @GetMapping("/admin")
+    public ResponseBody<AdminPaymentInfoResponse> getAdminPayment() {
+        return ResponseBody.ok(
+            paymentService.getAdminPayment()
         );
     }
 }
