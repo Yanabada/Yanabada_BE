@@ -109,7 +109,6 @@ public class TradeService {
 
     @Transactional
     public void rejectTrade(Long sellerId, Long tradeId) {
-        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -118,7 +117,7 @@ public class TradeService {
         long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
         refundBill(trade.getBuyer(), bill, trade.getPaymentType(), trade.getProduct());
         trade.getBuyer().addPoint(trade.getPoint());
-        adminPayment.withdraw(bill);
+        adminPaymentRepository.getAdminPayment().withdraw(bill);
 
         trade.reject();
         trade.getProduct().onSale();
@@ -128,7 +127,6 @@ public class TradeService {
 
     @Transactional
     public void cancelTrade(Long buyerId, Long tradeId) {
-        AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member buyer = memberRepository.getMember(buyerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -137,7 +135,7 @@ public class TradeService {
         long bill = trade.getSellingPrice() + trade.getFee() - trade.getPoint();
         refundBill(buyer, bill, trade.getPaymentType(), trade.getProduct());
         buyer.addPoint(trade.getPoint());
-        adminPayment.withdraw(bill);
+        adminPaymentRepository.getAdminPayment().withdraw(bill);
 
         trade.cancel();
         trade.getProduct().onSale();
