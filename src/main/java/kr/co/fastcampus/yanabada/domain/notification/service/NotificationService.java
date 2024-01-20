@@ -200,7 +200,7 @@ public class NotificationService {
     public NotificationPageResponse getNotifications(Long memberId, Pageable pageable) {
         Member member = memberRepository.getMember(memberId);
         Page<NotificationHistory> histories =
-            notificationHistoryRepository.findByMember(member, pageable);
+            notificationHistoryRepository.findByReceiver(member, pageable);
         Page<NotificationInfoResponse> responses = histories.map(history -> {
             NotificationInfoResponse response;
             if (history.getNotificationType().equals(CHAT)) {

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationHistoryRepository extends JpaRepository<NotificationHistory, Long> {
 
-    Page<NotificationHistory> findByMember(Member member, Pageable pageable);
+    Page<NotificationHistory> findByReceiver(Member receiver, Pageable pageable);
 }
