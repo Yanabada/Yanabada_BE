@@ -43,26 +43,21 @@ public class NotificationService {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public void sendChatMessage(Member sender, String content) {
+    public void sendChatMessage(Member sender, Member receiver, String content) {
         Notification notification = Notification.builder()
             .title(CHAT_MESSAGE_TITLE)
             .body(sender.getNickName() + ": " + content)
             .build();
         Data data = Data.builder().notificationType(CHAT.name()).build();
-        fcmService.sendToMessage(sender.getFcmToken(), notification, data);
+        fcmService.sendToMessage(receiver.getFcmToken(), notification, data);
     }
 
     @Transactional
-    public void sendChatCreated(ChatNotificationDto chatDto) {
+    public void sendChatCreated(ChatNotificationDto chatDto, String content) {
 
         Notification notification = Notification.builder()
-            .title(CHAT_CREATED_TITLE)
-            .body(
-                chatDto.sender().getNickName()
-                    + CHAT_CREATED_CONTENT_INFIX
-                    + getShortPhrase(chatDto.accommodationName())
-                    + CHAT_CREATED_CONTENT_POSTFIX
-            )
+            .title(CHAT_MESSAGE_TITLE)
+            .body(chatDto.sender().getNickName() + ": " + content)
             .build();
         Data data = Data.builder().notificationType(CHAT.name()).build();
         fcmService.sendToMessage(chatDto.receiver().getFcmToken(), notification, data);
