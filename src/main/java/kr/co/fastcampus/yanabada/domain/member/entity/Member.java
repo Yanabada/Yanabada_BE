@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
     private String nickName;
     private String password;
     private String phoneNumber;
-    private String imageUrl;
+    private String image;
     @Builder.Default
     private Integer point = 0;
     @Enumerated(EnumType.STRING)
@@ -46,10 +46,6 @@ public class Member extends BaseEntity {
 
     public void updatePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public void updateImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public void subtractPoint(int point) {

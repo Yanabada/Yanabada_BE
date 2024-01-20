@@ -10,7 +10,7 @@ public record MemberDetailResponse(
     String email,
     String nickName,
     String phoneNumber,
-    String imageUrl,
+    String image,
     Integer point,
     ProviderType provider
 ) {
@@ -20,7 +20,7 @@ public record MemberDetailResponse(
             .email(member.getEmail())
             .nickName(member.getNickName())
             .phoneNumber(member.getPhoneNumber())
-            .imageUrl(member.getImageUrl())
+            .image(member.getImage())
             .point(member.getPoint())
             .provider(member.getProviderType())
             .build();

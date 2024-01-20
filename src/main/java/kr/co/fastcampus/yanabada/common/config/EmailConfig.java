@@ -25,8 +25,8 @@ public class EmailConfig {
     public JavaMailSender mailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
-        mailSender.setPort(port);    //todo: 상수 분리
-        mailSender.setUsername(user);     //todo: 상수 분리
+        mailSender.setPort(port);
+        mailSender.setUsername(user);
         mailSender.setPassword(password);
 
         Properties javaMailProperties = getMailProperties();
