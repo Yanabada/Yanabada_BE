@@ -3,7 +3,7 @@ package kr.co.fastcampus.yanabada.domain.member.controller;
 import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
@@ -68,13 +68,13 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
-    @PutMapping("/image")
-    public ResponseBody<Void> modifyImage(
+    @PutMapping("/fcm-token")
+    public ResponseBody<Void> updateFcmToken(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid ImgUrlModifyRequest imgUrlRequest
+        @RequestBody @Valid FcmTokenUpdateRequest fcmTokenRequest
     ) {
-        memberService.modifyImageUrl(
-            imgUrlRequest, principalDetails.email(), principalDetails.provider()
+        memberService.updateFcmToken(
+            principalDetails.id(), fcmTokenRequest
         );
         return ResponseBody.ok();
     }

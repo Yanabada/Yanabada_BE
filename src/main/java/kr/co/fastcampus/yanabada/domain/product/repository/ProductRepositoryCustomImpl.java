@@ -4,6 +4,7 @@ import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QAccommodati
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QAccommodationOption.accommodationOption;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QRoom.room;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QRoomOption.roomOption;
+import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category.CAMPING;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category.GUESTHOUSE;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category.HOTEL_RESORT;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category.MOTEL;
@@ -61,7 +62,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
-        int totalCount = getTotalCount(query);
+        int totalCount = getTotalCount(createQuery(request));
 
         return new PageImpl<>(products, pageable, totalCount);
     }
@@ -194,6 +195,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             case PENSION -> accommodation.category.eq(PENSION);
             case GUESTHOUSE -> accommodation.category.eq(GUESTHOUSE);
             case POOL_VILLA -> accommodation.category.eq(POOL_VILLA);
+            case CAMPING -> accommodation.category.eq(CAMPING);
         };
     }
 

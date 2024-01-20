@@ -56,6 +56,10 @@ dependencies {
 
 	//email
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
+
+	//fcm
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 }
 
 tasks.named('test') {

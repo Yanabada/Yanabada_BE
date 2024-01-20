@@ -4,8 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,16 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class Oauth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+
+    @Value("${spring.login.root-url}")
+    String rootUrl;
+
     @Override
     public void onAuthenticationFailure(
         HttpServletRequest request,
         HttpServletResponse response,
         AuthenticationException exception
-    ) throws IOException, ServletException {
-        response.sendRedirect("http://localhost:8080/");
-        //todo: 환경 변수로 뺄 예정
+    ) throws IOException {
+        response.sendRedirect(rootUrl);
     }
 }

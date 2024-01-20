@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType;
 import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +25,13 @@ public class YanoljaPayHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ContentsType contentsType;
+
+    @Column(nullable = false)
+    private String contents;
 
     @Column(nullable = false)
     private Long transactionAmount; // 거래 금액 필드
@@ -40,33 +47,34 @@ public class YanoljaPayHistory {
     @JoinColumn(name = "yanolja_pay_id")
     private YanoljaPay yanoljaPay;
 
-    public Member getMember() {
-        return yanoljaPay != null ? yanoljaPay.getMember() : null;
-    }
-
-
     private YanoljaPayHistory(
         YanoljaPay yanoljaPay,
+        ContentsType contentsType,
+        String contents,
         Long transactionAmount,
-        String transactionType,
+        TransactionType transactionType,
         LocalDateTime transactionTime
     ) {
         this.yanoljaPay = yanoljaPay;
+        this.contentsType = contentsType;
+        this.contents = contents;
         this.transactionAmount = transactionAmount;
-        this.transactionType = TransactionType.valueOf(transactionType);
+        this.transactionType = transactionType;
         this.transactionTime = transactionTime;
     }
 
-
     public static YanoljaPayHistory create(
-
         YanoljaPay yanoljaPay,
+        ContentsType contentsType,
+        String contents,
         Long transactionAmount,
-        String transactionType,
+        TransactionType transactionType,
         LocalDateTime transactionTime
     ) {
         return new YanoljaPayHistory(
             yanoljaPay,
+            contentsType,
+            contents,
             transactionAmount,
             transactionType,
             transactionTime

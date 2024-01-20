@@ -29,7 +29,7 @@ public record ChatRoomSummaryResponse(
     ) {
         return ChatRoomSummaryResponse.builder()
             .chatRoomCode(chatRoomCode)
-            .partnerImage(partner.getImageUrl())
+            .partnerImage(partner.getImage())
             .partnerNickname(partner.getNickName())
             .lastChatMessage(message.getContent())
             .lastSentMessageTime(message.getSendDateTime())

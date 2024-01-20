@@ -12,15 +12,11 @@ public record OauthSignUpRequest(
         message = "이메일 형식으로 입력해주세요."
     )
     String email,
-    @NotEmpty(message = "사용자 이름이 비어있을 수 없습니다")
-    String memberName,
     @NotEmpty(message = "닉네임이 비어있을 수 없습니다")
     String nickName,
     @NotEmpty(message = "휴대 전화 번호가 비어있을 수 없습니다")
     String phoneNumber,
     @NonNull
-    ProviderType provider,
-    String deviceKey
-
+    ProviderType provider
 ) {
 }

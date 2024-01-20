@@ -40,6 +40,11 @@ spring:
     host: 127.0.0.1
     port: 6379
 
+  login:
+    oauth2-password: oauth2-password
+    oauth2-redirect-url: /redirect_url
+    root-url: http://localhost:8080
+
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
 
@@ -51,4 +56,12 @@ email:
 
 chatroom:
   topic:
-    prefix: "/sub/chatroom/"
+    prefix: /sub/chatroom/
+
+firebase:
+  project-id: yanabada-b13ee
+  key-path: yanabada-firebase-key.json
+  fcm-request-url:
+    prefix: https://fcm.googleapis.com/v1/projects/
+    postfix: /messages:send
+

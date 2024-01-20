@@ -40,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         /* 토큰 로그인, 회원가입 경우 해당 필터 실행 안됨 */
         return request.getRequestURI().contains("/sign-up")
-                || request.getRequestURI().contains("/login");  //todo: 로그아웃 추가 고민
+                || request.getRequestURI().contains("/login");
     }
 
     @Override
