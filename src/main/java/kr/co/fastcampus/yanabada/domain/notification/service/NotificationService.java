@@ -50,6 +50,7 @@ public class NotificationService {
     private final NotificationHistoryRepository notificationHistoryRepository;
     private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
+    private static final String PNG_EXTENSION = ".png";
 
     @Transactional
     public void sendChatMessage(Member sender, String content) {
@@ -107,7 +108,7 @@ public class NotificationService {
             .receiver(tradeApprovalDto.receiver())
             .notificationType(TRADE_REQUEST)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REQUEST.name().toLowerCase() + ".png")
+            .image(TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -133,7 +134,7 @@ public class NotificationService {
             .receiver(tradeApprovalDto.receiver())
             .notificationType(TRADE_CANCELED)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_CANCELED.name().toLowerCase() + ".png") //todo: png 상수처리?
+            .image(TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -158,7 +159,7 @@ public class NotificationService {
             .receiver(tradeApprovalDto.receiver())
             .notificationType(TRADE_APPROVAL)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL.name().toLowerCase() + ".png")
+            .image(TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -183,7 +184,7 @@ public class NotificationService {
             .receiver(tradeApprovalDto.receiver())
             .notificationType(TRADE_REJECTED)
             .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REJECTED.name().toLowerCase() + ".png")
+            .image(TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
