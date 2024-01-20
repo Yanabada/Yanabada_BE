@@ -39,12 +39,20 @@ public enum ErrorCode {
 
     ILLEGAL_PRODUCT_STATUS("해당 기능을 수행할 수 없는 상품 상태입니다."),
     CANNOT_TRADE_OWN_PRODUCT("자신이 등록한 상품을 거래할 수 없습니다."),
+
     ILLEGAL_TRADE_STATUS("해당 기능을 수행할 수 없는 거래 상태입니다."),
     NOT_ENOUGH_POINT("포인트가 부족합니다."),
     NOT_ENOUGH_YANOLJAPAY_BALANCE("야놀자 페이 잔액이 부족합니다."),
     DUPLICATE_YANOLJAPAY("이미 야놀자 페이에 가입되어있습니다."),
     INCORRECT_YANOLJAPAY_PASSWORD("일치하지 않는 야놀자 페이 비밀번호 입니다."),
     UNAVAILABLE_STATUS_QUERY("찾을 수 없는 STATUS 쿼리파라미터입니다."),
+
+    JSON_PROCESS_FAILED("객체를 스트링으로 변환하는 데 실패하였습니다."),
+
+    OKHTTP3_REQUEST_FAILED("okhttp3의 리퀘스트 생성이 실패하였습니다."),
+    FCM_MESSAGE_SEND_FAILED("FCM 메세지 전송이 실패하였습니다."),
+    FCM_ACCESS_TOKEN_GET_FAILED("FCM 엑세스 토큰을 발급 받는 데 실패하였습니다.")
+
     ;
 
     private final String message;
