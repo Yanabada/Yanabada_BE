@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
@@ -17,6 +18,7 @@ import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +37,8 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
+    @Value("${spring.login.oauth2-password}")
+    String oauthPassword;
 
     @Transactional
     public Long signUp(SignUpRequest signUpRequest) {
@@ -43,14 +47,16 @@ public class AuthService {
         }
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
+
         Member member = Member.builder()
-                .email(signUpRequest.email())
-                .nickName(signUpRequest.nickName())
-                .password(encodedPassword)
-                .phoneNumber(signUpRequest.phoneNumber())
-                .roleType(ROLE_USER)
-                .providerType(EMAIL)
-                .build();
+            .email(signUpRequest.email())
+            .nickName(signUpRequest.nickName())
+            .password(encodedPassword)
+            .phoneNumber(signUpRequest.phoneNumber())
+            .roleType(ROLE_USER)
+            .image(getRandomProfileImage())
+            .providerType(EMAIL)
+            .build();
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
@@ -59,19 +65,25 @@ public class AuthService {
     @Transactional
     public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
 
-        String encodedPassword = passwordEncoder.encode("oauth-password");
-        //todo: 패스워드 환경변수 분리
+        String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
             .email(signUpRequest.email())
             .nickName(signUpRequest.nickName())
             .password(encodedPassword)
             .phoneNumber(signUpRequest.phoneNumber())
             .roleType(ROLE_USER)
+            .image(getRandomProfileImage())
             .providerType(signUpRequest.provider())
             .build();
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
+    }
+
+    private String getRandomProfileImage() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(5) + 1;
+        return randomNumber + "profile.png";     //todo: 환경 변수 분리
     }
 
     @Transactional

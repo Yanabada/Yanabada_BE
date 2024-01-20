@@ -40,6 +40,11 @@ spring:
     host: 127.0.0.1
     port: 6379
 
+  login:
+    oauth2-password: oauth2-password
+    oauth2-redirect-url: /redirect_url
+    root-url: http://localhost:8080
+
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
 

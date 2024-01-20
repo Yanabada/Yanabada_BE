@@ -4,6 +4,7 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.KAKAO;
 
 import java.util.HashMap;
 import java.util.Map;
+import kr.co.fastcampus.yanabada.common.exception.NotMatchedProviderNameException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class Oauth2Attribute {
             return ofKakao(KAKAO.name(), "email", attributes);
             //todo: 다른 OAuth 구현 시 조건문 추가
         }
-        throw new RuntimeException();   //todo: CustomEx
+        throw new NotMatchedProviderNameException();
     }
 
     private static Oauth2Attribute ofKakao(
