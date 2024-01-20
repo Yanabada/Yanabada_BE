@@ -1,5 +1,8 @@
 package kr.co.fastcampus.yanabada.common.config;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
@@ -11,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -34,8 +38,15 @@ public class SecurityConfig {
     private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth",
-        "/auth/**"
+        "/auth", "/auth/**"
+    };
+
+    private static final String[] PERMIT_PATHS_POST_METHOD = {
+        "/accommodations/**", "/orders"
+    };
+
+    private static final String[] PERMIT_PATHS_GET_METHOD = {
+        "/products", "/products/**"
     };
 
     @Bean
@@ -49,8 +60,11 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(PERMIT_PATHS).permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers(PERMIT_PATHS).permitAll()
+            .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
+            .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
+            .requestMatchers("/products/own").denyAll()
+            .anyRequest().authenticated()
         );
 
         http.oauth2Login(oauth2 -> oauth2
