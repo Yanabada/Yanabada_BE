@@ -12,6 +12,7 @@ import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.FcmAccessTokenGetFailedException;
 import kr.co.fastcampus.yanabada.common.exception.FcmMessageSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
+import kr.co.fastcampus.yanabada.common.exception.NotMatchedProviderNameException;
 import kr.co.fastcampus.yanabada.common.exception.OkHttp3RequestFailedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
@@ -174,6 +175,15 @@ public class GlobalExceptionHandler {
         FcmAccessTokenGetFailedException e
     ) {
         log.error("[FcmAccessTokenGetFailedException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(NotMatchedProviderNameException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> notMatchedProviderNameException(
+        NotMatchedProviderNameException e
+    ) {
+        log.error("[NotMatchedProviderNameException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
 

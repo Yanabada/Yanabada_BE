@@ -17,6 +17,7 @@ import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,8 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
+    @Value("${spring.login.oauth2-password}")
+    String oauthPassword;
 
     @Transactional
     public Long signUp(SignUpRequest signUpRequest) {
@@ -59,8 +62,7 @@ public class AuthService {
     @Transactional
     public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
 
-        String encodedPassword = passwordEncoder.encode("oauth-password");
-        //todo: 패스워드 환경변수 분리
+        String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
             .email(signUpRequest.email())
             .nickName(signUpRequest.nickName())

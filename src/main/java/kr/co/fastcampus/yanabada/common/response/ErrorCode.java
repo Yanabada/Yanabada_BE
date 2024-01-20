@@ -51,7 +51,9 @@ public enum ErrorCode {
 
     OKHTTP3_REQUEST_FAILED("okhttp3의 리퀘스트 생성이 실패하였습니다."),
     FCM_MESSAGE_SEND_FAILED("FCM 메세지 전송이 실패하였습니다."),
-    FCM_ACCESS_TOKEN_GET_FAILED("FCM 엑세스 토큰을 발급 받는 데 실패하였습니다.")
+    FCM_ACCESS_TOKEN_GET_FAILED("FCM 엑세스 토큰을 발급 받는 데 실패하였습니다."),
+
+    NOT_MATCHED_PROVIDER_NAME("Provider 이름이 매칭이 안됩니다."),
 
     ;
 
