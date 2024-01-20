@@ -23,43 +23,32 @@ public class AdminPayment extends BaseEntity {
     private Long balance;
 
     @Column(nullable = false)
-    private Long accumulatedUsers;
-
-    @Column(nullable = false)
     private Long accumulatedUsageAmount;
 
     @Column(nullable = false)
     private Long accumulatedDiscountAmount;
 
-    public void deposit(int depositAmount) {
+    public void deposit(long depositAmount) {
         balance += depositAmount;
     }
 
-    public void withdrawal(int withdrawalAmount) {
+    public void withdraw(long withdrawalAmount) {
         balance -= withdrawalAmount;
     }
 
-    public void incrementAccumulatedUsers(int userCount) {
-        accumulatedUsers += userCount;
-    }
-
-    public void decrementAccumulatedUsers(int userCount) {
-        accumulatedUsers -= userCount;
-    }
-
-    public void incrementAccumulatedUsageAmount(int amount) {
+    public void increaseAccumulatedUsageAmount(long amount) {
         accumulatedUsageAmount += amount;
     }
 
-    public void decrementAccumulatedUsageAmount(int amount) {
+    public void decreaseAccumulatedUsageAmount(long amount) {
         accumulatedUsageAmount -= amount;
     }
 
-    public void incrementAccumulatedDiscountAmount(int amount) {
+    public void increaseAccumulatedDiscountAmount(long amount) {
         accumulatedDiscountAmount += amount;
     }
 
-    public void decrementAccumulatedDiscountAmount(int amount) {
+    public void decreaseAccumulatedDiscountAmount(long amount) {
         accumulatedDiscountAmount -= amount;
     }
 }
