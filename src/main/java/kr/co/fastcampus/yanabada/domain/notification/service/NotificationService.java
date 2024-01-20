@@ -19,17 +19,25 @@ import static kr.co.fastcampus.yanabada.domain.notification.property.Notificatio
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REQUEST_CONTENT_POSTFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_REQUEST_TITLE;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Notification;
 import kr.co.fastcampus.yanabada.common.firebase.service.FcmService;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
 import kr.co.fastcampus.yanabada.domain.notification.dto.TradeNotificationDto;
+import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationInfoResponse;
+import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationPageResponse;
 import kr.co.fastcampus.yanabada.domain.notification.entity.NotificationHistory;
 import kr.co.fastcampus.yanabada.domain.notification.repository.NotificationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +49,7 @@ public class NotificationService {
     private final FcmService fcmService;
     private final NotificationHistoryRepository notificationHistoryRepository;
     private final ObjectMapper objectMapper;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void sendChatMessage(Member sender, String content) {
@@ -185,5 +194,44 @@ public class NotificationService {
             return name;
         }
         return name.substring(0, 7) + "...";
+    }
+
+    @Transactional
+    public NotificationPageResponse getNotifications(Long memberId, Pageable pageable) {
+        Member member = memberRepository.getMember(memberId);
+        Page<NotificationHistory> histories =
+            notificationHistoryRepository.findByReceiver(member, pageable);
+        Page<NotificationInfoResponse> responses = histories.map(history -> {
+            NotificationInfoResponse response;
+            if (history.getNotificationType().equals(CHAT)) {
+                String content = history.getContent();
+                String senderNickname = convertJsonToString("senderNickname", content);
+                String accommodationName = convertJsonToString("accommodationName", content);
+                response = NotificationInfoResponse.from(
+                    senderNickname, accommodationName, history
+                );
+
+            } else {
+                String content = history.getContent();
+                String accommodationName = convertJsonToString("accommodationName", content);
+                response = NotificationInfoResponse.from(
+                    null, accommodationName, history
+                );
+            }
+            history.updateRead(true);
+            return response;
+        });
+
+        return NotificationPageResponse.from(responses);
+
+    }
+
+    private String convertJsonToString(String key, String content) {
+        try {
+            JsonNode node = objectMapper.readTree(content);
+            return node.get(key).asText();
+        } catch (JsonProcessingException e) {
+            throw new JsonProcessFailedException();
+        }
     }
 }

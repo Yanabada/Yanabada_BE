@@ -29,19 +29,29 @@ public class NotificationHistory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private Member receiver;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
+
     @Column(nullable = false)
     private String content;
+
     @Column(nullable = false)
     private String image;
+
     @Builder.Default
-    LocalDateTime registeredDate = LocalDateTime.now();
+    private LocalDateTime registeredDate = LocalDateTime.now();
+
     @Builder.Default
-    private Boolean read = false;
+    private Boolean isRead = false;
+
+    public void updateRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
 }
