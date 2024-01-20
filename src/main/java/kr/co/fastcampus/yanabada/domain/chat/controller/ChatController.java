@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.chat.controller;
 
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.chat.dto.ReceivedChatMessage;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomModifyRequest;
 import kr.co.fastcampus.yanabada.domain.chat.dto.request.ChatRoomSaveRequest;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,34 +57,36 @@ public class ChatController {
 
     @GetMapping
     public ResponseBody<List<ChatRoomSummaryResponse>> getChatRooms(
+        @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        Long memberId = 1L;
-        return ResponseBody.ok(chatService.getChatRooms(memberId));
+        return ResponseBody.ok(chatService.getChatRooms(principalDetails.id()));
     }
 
     @GetMapping("/{chatRoomCode}")
     public ResponseBody<ChatMessagePageResponse> getChatRoom(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("chatRoomCode") String chatRoomCode,
         @PageableDefault(size = 20, sort = "sendDateTime", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
-        Long memberId = 1L;
-        return ResponseBody.ok(chatService.getChatRoomMessages(memberId, chatRoomCode, pageable));
+        return ResponseBody.ok(
+            chatService.getChatRoomMessages(principalDetails.id(), chatRoomCode, pageable)
+        );
     }
 
     @PutMapping
     public ResponseBody<ChatRoomModifyResponse> modifyChatRoom(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ChatRoomModifyRequest request
     ) {
-        Long memberId = 1L;
-        return ResponseBody.ok(chatService.updateChatRoom(memberId, request));
+        return ResponseBody.ok(chatService.updateChatRoom(principalDetails.id(), request));
     }
 
     @DeleteMapping
     public ResponseBody<ChatRoomModifyResponse> modifyOrDeleteChatRoom(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ChatRoomModifyRequest request
     ) {
-        Long memberId = 1L;
-        return ResponseBody.ok(chatService.modifyOrDeleteChatRoom(memberId, request));
+        return ResponseBody.ok(chatService.modifyOrDeleteChatRoom(principalDetails.id(), request));
     }
 }

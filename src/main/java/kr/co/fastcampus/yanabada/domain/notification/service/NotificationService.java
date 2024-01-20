@@ -5,9 +5,6 @@ import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.Notific
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_CANCELED;
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REJECTED;
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REQUEST;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_INFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_MESSAGE_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CONTENT_POSTFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_TITLE;
@@ -53,26 +50,21 @@ public class NotificationService {
     private static final String PNG_EXTENSION = ".png";
 
     @Transactional
-    public void sendChatMessage(Member sender, String content) {
+    public void sendChatMessage(Member sender, Member receiver, String content) {
         Notification notification = Notification.builder()
             .title(CHAT_MESSAGE_TITLE)
             .body(sender.getNickName() + ": " + content)
             .build();
         Data data = Data.builder().notificationType(CHAT.name()).build();
-        fcmService.sendToMessage(sender.getFcmToken(), notification, data);
+        fcmService.sendToMessage(receiver.getFcmToken(), notification, data);
     }
 
     @Transactional
-    public void sendChatCreated(ChatNotificationDto chatDto) {
+    public void sendChatCreated(ChatNotificationDto chatDto, String content) {
 
         Notification notification = Notification.builder()
-            .title(CHAT_CREATED_TITLE)
-            .body(
-                chatDto.sender().getNickName()
-                    + CHAT_CREATED_CONTENT_INFIX
-                    + getShortPhrase(chatDto.accommodationName())
-                    + CHAT_CREATED_CONTENT_POSTFIX
-            )
+            .title(CHAT_MESSAGE_TITLE)
+            .body(chatDto.sender().getNickName() + ": " + content)
             .build();
         Data data = Data.builder().notificationType(CHAT.name()).build();
         fcmService.sendToMessage(chatDto.receiver().getFcmToken(), notification, data);
@@ -90,24 +82,24 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendTradeRequest(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeRequest(TradeNotificationDto tradeNotificationDto) {
         Notification notification = Notification.builder()
             .title(TRADE_REQUEST_TITLE)
             .body(
-                getShortPhrase(tradeApprovalDto.accommodationName())
+                getShortPhrase(tradeNotificationDto.accommodationName())
                     + TRADE_REQUEST_CONTENT_POSTFIX
             )
             .build();
 
         Data data = Data.builder().notificationType(TRADE_REQUEST.name()).build();
 
-        fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
+        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
-            .receiver(tradeApprovalDto.receiver())
+            .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REQUEST)
-            .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
+            .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
             .image(TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
@@ -115,25 +107,25 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendTradeCanceled(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeCanceled(TradeNotificationDto tradeNotificationDto) {
         Notification notification = Notification.builder()
             .title(TRADE_CANCELED_TITLE)
             .body(
                 TRADE_CANCELED_CONTENT_PREFIX
-                    + getShortPhrase(tradeApprovalDto.accommodationName())
+                    + getShortPhrase(tradeNotificationDto.accommodationName())
                     + TRADE_CANCELED_CONTENT_POSTFIX
             )
             .build();
 
         Data data = Data.builder().notificationType(TRADE_CANCELED.name()).build();
 
-        fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
+        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
-            .receiver(tradeApprovalDto.receiver())
+            .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_CANCELED)
-            .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
+            .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
             .image(TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
@@ -141,24 +133,24 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendTradeApproval(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeApproval(TradeNotificationDto tradeNotificationDto) {
         Notification notification = Notification.builder()
             .title(TRADE_APPROVAL_TITLE)
             .body(
-                getShortPhrase(tradeApprovalDto.accommodationName())
+                getShortPhrase(tradeNotificationDto.accommodationName())
                     + TRADE_APPROVAL_CONTENT_POSTFIX
             )
             .build();
 
         Data data = Data.builder().notificationType(TRADE_APPROVAL.name()).build();
 
-        fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
+        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
-            .receiver(tradeApprovalDto.receiver())
+            .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_APPROVAL)
-            .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
+            .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
             .image(TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
@@ -166,24 +158,24 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendTradeRejected(TradeNotificationDto tradeApprovalDto) {
+    public void sendTradeRejected(TradeNotificationDto tradeNotificationDto) {
         Notification notification = Notification.builder()
             .title(TRADE_REJECTED_TITLE)
             .body(
-                getShortPhrase(tradeApprovalDto.accommodationName())
+                getShortPhrase(tradeNotificationDto.accommodationName())
                     + TRADE_REJECTED_CONTENT_POSTFIX
             )
             .build();
 
         Data data = Data.builder().notificationType(TRADE_REJECTED.name()).build();
 
-        fcmService.sendToMessage(tradeApprovalDto.receiver().getFcmToken(), notification, data);
+        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
-            .receiver(tradeApprovalDto.receiver())
+            .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REJECTED)
-            .content(tradeApprovalDto.convertMapToJsonStr(objectMapper))
+            .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
             .image(TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);

@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.product.controller;
 
 import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductPatchRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSaveRequest;
 import kr.co.fastcampus.yanabada.domain.product.dto.request.ProductSearchRequest;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,10 +39,11 @@ public class ProductController {
 
     @PostMapping
     public ResponseBody<ProductIdResponse> addProduct(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody @Valid ProductSaveRequest request
     ) {
         return ResponseBody.ok(
-            productService.saveProduct(1L, request)
+            productService.saveProduct(principalDetails.id(), request)
         );
     }
 
@@ -64,31 +67,33 @@ public class ProductController {
 
     @PatchMapping("/{productId}")
     public ResponseBody<ProductIdResponse> modifyProduct(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("productId") Long productId,
         @RequestBody ProductPatchRequest request
     ) {
         return ResponseBody.ok(
-            productService.updateProduct(1L, productId, request)
+            productService.updateProduct(principalDetails.id(), productId, request)
         );
     }
 
     @DeleteMapping("/{productId}")
     public ResponseBody<Void> deleteProduct(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("productId") Long productId
     ) {
-        productService.cancelProduct(1L, productId);
+        productService.cancelProduct(principalDetails.id(), productId);
         return ResponseBody.ok();
     }
 
     @GetMapping("/own")
     public ResponseBody<ProductHistoryPageResponse> getOwnProduct(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam(name = "status", required = false) ProductStatus status,
         @PageableDefault(sort = "registeredDate", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
-        Long memberId = 1L;
         return ResponseBody.ok(
-            productService.getOwnProduct(memberId, status, pageable)
+            productService.getOwnProduct(principalDetails.id(), status, pageable)
         );
     }
 }

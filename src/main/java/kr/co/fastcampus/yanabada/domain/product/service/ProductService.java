@@ -26,6 +26,8 @@ import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
 import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.notification.dto.TradeNotificationDto;
+import kr.co.fastcampus.yanabada.domain.notification.service.NotificationService;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
@@ -70,6 +72,7 @@ public class ProductService {
     private final YanoljaPayRepository yanoljaPayRepository;
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
     private final AdminPaymentRepository adminPaymentRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public ProductIdResponse saveProduct(
@@ -154,7 +157,7 @@ public class ProductService {
 
         validateProductCancelRequest(member, product);
 
-        cancelTradeRelatedToProduct(product);
+        rejectTradeRelatedToProduct(product);
         product.cancel();
     }
 
@@ -167,13 +170,13 @@ public class ProductService {
                 if (product.getIsAutoCancel()) {
                     product.getOrder().cancel();
                 }
-                cancelTradeRelatedToProduct(product);
+                rejectTradeRelatedToProduct(product);
                 product.expire();
             }
         );
     }
 
-    private void cancelTradeRelatedToProduct(Product product) {
+    private void rejectTradeRelatedToProduct(Product product) {
         AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
 
         tradeRepository.findByProduct(product)
@@ -185,7 +188,13 @@ public class ProductService {
                     adminPayment.withdraw(bill);
 
                     trade.reject();
-                    //TODO: Buyer에게 알림 (Optional)
+
+                    notificationService.sendTradeRejected(
+                        TradeNotificationDto.from(
+                            trade.getBuyer(),
+                            trade.getProduct().getOrder().getRoom().getAccommodation().getName()
+                        )
+                    );
                 }
             });
     }
