@@ -22,6 +22,8 @@ import kr.co.fastcampus.yanabada.domain.chat.repository.ChatMessageRepository;
 import kr.co.fastcampus.yanabada.domain.chat.repository.ChatRoomRepository;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
+import kr.co.fastcampus.yanabada.domain.notification.service.NotificationService;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatus;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
@@ -42,6 +44,8 @@ public class ChatService {
     private final MemberRepository memberRepository;
 
     private final ProductRepository productRepository;
+
+    private final NotificationService notificationService;
 
     @Transactional
     public ChatRoomInfoResponse getOrSaveChatRoom(ChatRoomSaveRequest request) {
@@ -240,6 +244,11 @@ public class ChatService {
         LocalDateTime sendTime = LocalDateTime.now();
         checkChatRoomMember(chatRoom, sender);
         updateMemberPresenceStatus(chatRoom, sender);
+        if (chatRoom.getMessages().size() == 0) {
+            sendFcmAndHistoryNotification(chatRoom, sender, message.content());
+        } else {
+            sendFcmNotification(chatRoom, sender, message.content());
+        }
         addMessageToChatRoom(chatRoom, message, sender, sendTime);
         return createSendChatMessage(chatRoom, sender, message, sendTime);
     }
@@ -262,5 +271,33 @@ public class ChatService {
         ChatRoom chatRoom, Member sender, ReceivedChatMessage message, LocalDateTime sendTime
     ) {
         return SendChatMessage.from(chatRoom, sender, message.content(), sendTime);
+    }
+
+    private ChatNotificationDto createChatNotificationDto(
+        Member sender, Member receiver, ChatRoom chatRoom
+    ) {
+        return ChatNotificationDto.from(sender, receiver, chatRoom);
+    }
+
+    private void sendFcmAndHistoryNotification(ChatRoom chatRoom, Member sender, String content) {
+        if (isSeller(sender, chatRoom)) {
+            notificationService.sendChatCreated(
+                createChatNotificationDto(sender, chatRoom.getBuyer(), chatRoom),
+                content
+            );
+        } else {
+            notificationService.sendChatCreated(
+                createChatNotificationDto(sender, chatRoom.getSeller(), chatRoom),
+                content
+            );
+        }
+    }
+
+    private void sendFcmNotification(ChatRoom chatRoom, Member sender, String content) {
+        if (isSeller(sender, chatRoom)) {
+            notificationService.sendChatMessage(sender, chatRoom.getBuyer(), content);
+        } else {
+            notificationService.sendChatMessage(sender, chatRoom.getSeller(), content);
+        }
     }
 }
