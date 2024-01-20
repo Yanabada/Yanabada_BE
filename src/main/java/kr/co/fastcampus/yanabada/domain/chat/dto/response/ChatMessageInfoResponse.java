@@ -20,7 +20,7 @@ public record ChatMessageInfoResponse(
     ) {
         return ChatMessageInfoResponse.builder()
             .senderId(sender.getId())
-            .senderImage(sender.getImageUrl())
+            .senderImage(sender.getImage())
             .senderNickname(sender.getNickName())
             .content(content)
             .sendDateTime(sendDateTime)

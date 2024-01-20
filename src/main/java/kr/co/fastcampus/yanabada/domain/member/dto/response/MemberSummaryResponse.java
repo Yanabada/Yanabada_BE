@@ -7,14 +7,14 @@ import lombok.Builder;
 public record MemberSummaryResponse(
     Long id,
     String nickname,
-    String imageUrl
+    String image
 ) {
 
     public static MemberSummaryResponse from(Member member) {
         return MemberSummaryResponse.builder()
             .id(member.getId())
             .nickname(member.getNickName())
-            .imageUrl(member.getImageUrl())
+            .image(member.getImage())
             .build();
     }
 }
