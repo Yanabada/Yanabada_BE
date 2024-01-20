@@ -196,7 +196,7 @@ public class NotificationService {
         return name.substring(0, 7) + "...";
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public NotificationPageResponse getNotifications(Long memberId, Pageable pageable) {
         Member member = memberRepository.getMember(memberId);
         Page<NotificationHistory> histories =
