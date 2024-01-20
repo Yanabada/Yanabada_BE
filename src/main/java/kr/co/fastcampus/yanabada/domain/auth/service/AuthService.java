@@ -50,7 +50,7 @@ public class AuthService {
             .password(encodedPassword)
             .phoneNumber(signUpRequest.phoneNumber())
             .roleType(ROLE_USER)
-            .imageUrl(getRandomProfileImage())
+            .image(getRandomProfileImage())
             .providerType(EMAIL)
             .build();
 
@@ -69,7 +69,7 @@ public class AuthService {
             .password(encodedPassword)
             .phoneNumber(signUpRequest.phoneNumber())
             .roleType(ROLE_USER)
-            .imageUrl(getRandomProfileImage())
+            .image(getRandomProfileImage())
             .providerType(signUpRequest.provider())
             .build();
 

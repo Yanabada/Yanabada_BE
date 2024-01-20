@@ -26,7 +26,7 @@ public class Member extends BaseEntity {
     private String nickName;
     private String password;
     private String phoneNumber;
-    private String imageUrl;
+    private String image;
     @Builder.Default
     private Integer point = 0;
     @Enumerated(EnumType.STRING)
@@ -47,8 +47,8 @@ public class Member extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public void updateImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void updateImage(String image) {
+        this.image = image;
     }
 
     public void updateFcmToken(String fcmToken) {

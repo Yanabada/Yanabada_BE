@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImgUrlModifyRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.ImageModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
@@ -72,10 +72,10 @@ public class MemberController {
     @PutMapping("/image")
     public ResponseBody<Void> modifyImage(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid ImgUrlModifyRequest imgUrlRequest
+        @RequestBody @Valid ImageModifyRequest imageRequest
     ) {
-        memberService.modifyImageUrl(
-            imgUrlRequest, principalDetails.email(), principalDetails.provider()
+        memberService.modifyImage(
+            imageRequest, principalDetails.email(), principalDetails.provider()
         );
         return ResponseBody.ok();
     }
