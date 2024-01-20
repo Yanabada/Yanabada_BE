@@ -7,7 +7,6 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImageModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;

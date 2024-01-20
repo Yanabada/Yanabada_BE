@@ -48,10 +48,6 @@ public class Member extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public void updateImage(String image) {
-        this.image = image;
-    }
-
     public void subtractPoint(int point) {
         if (this.point < point) {
             throw new NotEnoughPointException();

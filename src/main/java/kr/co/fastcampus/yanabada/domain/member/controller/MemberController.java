@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.ImageModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
