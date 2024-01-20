@@ -67,16 +67,6 @@ public class MemberService {
         member.updatePhoneNumber(phoneNumberRequest.phoneNumber());
     }
 
-    @Transactional
-    public void modifyImage(
-        ImageModifyRequest imageRequest,
-        String email,
-        ProviderType providerType
-    ) {
-        Member member = memberRepository.getMember(email, providerType);
-        member.updateImage(imageRequest.image());
-    }
-
     @Transactional(readOnly = true)
     public EmailAuthResponse verifyEmail(
         EmailAuthRequest emailRequest

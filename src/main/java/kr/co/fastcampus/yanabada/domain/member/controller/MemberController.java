@@ -69,17 +69,6 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
-    @PutMapping("/image")
-    public ResponseBody<Void> modifyImage(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody @Valid ImageModifyRequest imageRequest
-    ) {
-        memberService.modifyImage(
-            imageRequest, principalDetails.email(), principalDetails.provider()
-        );
-        return ResponseBody.ok();
-    }
-
     @PutMapping("/fcm-token")
     public ResponseBody<Void> updateFcmToken(
         @AuthenticationPrincipal PrincipalDetails principalDetails,

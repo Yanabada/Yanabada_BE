@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
@@ -78,8 +79,9 @@ public class AuthService {
     }
 
     private String getRandomProfileImage() {
-        int randNum = (int) ((Math.random() * 10000) % 5);
-        return randNum + "profile.png";     //todo: 환경 변수 분리
+        Random random = new Random();
+        int randomNumber = random.nextInt(5) + 1;
+        return randomNumber + "profile.png";     //todo: 환경 변수 분리
     }
 
     @Transactional
