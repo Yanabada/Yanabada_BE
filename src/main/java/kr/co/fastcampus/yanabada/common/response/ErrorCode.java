@@ -55,6 +55,8 @@ public enum ErrorCode {
 
     NOT_MATCHED_PROVIDER_NAME("Provider 이름이 매칭이 안됩니다."),
 
+    NOTIFICATION_NOT_FOUND("존재하지 않는 알림입니다."),
+
     ;
 
     private final String message;
