@@ -30,7 +30,7 @@ public record ChatNotificationDto(
             .accommodationName(
                 chatRoom.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
-            .image(sender.getImageUrl())
+            .image(sender.getImage())
             .build();
     }
 
