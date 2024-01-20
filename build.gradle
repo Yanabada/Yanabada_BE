@@ -66,6 +66,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named("jar") {
+	enabled = false
+}
+
 def queryDslSrcDir = 'src/main/generated'
 clean {
 	delete file(queryDslSrcDir)
