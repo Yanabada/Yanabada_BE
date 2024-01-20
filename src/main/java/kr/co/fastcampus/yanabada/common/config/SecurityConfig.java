@@ -87,7 +87,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.addExposedHeader("Authorization");
-        configuration.setAllowCredentials(true); //todo : 쿠키를 포함한 크로스 도메인 요청을 허용? 확인필요
+        configuration.setAllowCredentials(true);    //쿠키를 포함한 크로스 도메인 요청을 허용
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
