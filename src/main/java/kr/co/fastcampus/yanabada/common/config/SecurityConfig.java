@@ -34,8 +34,8 @@ public class SecurityConfig {
     private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
 
     private static final String[] PERMIT_PATHS = {
-        "/",
-        "/**"
+        "/auth",
+        "/auth/**"
     };
 
     @Bean
@@ -83,7 +83,7 @@ public class SecurityConfig {
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() { // h2-console 화면설정
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console());
     }
