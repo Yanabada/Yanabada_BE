@@ -12,11 +12,13 @@ public record ChatNotificationDto(
     Member receiver,
     String accommodationName,
     String chatRoomCode,
+    String senderNickname,
     String image
 ) {
 
     public String convertMapToJsonStr(ObjectMapper objectMapper) {
         Map<String, String> contentMap = new HashMap<>();
+        contentMap.put("senderNickname", senderNickname);
         contentMap.put("accommodationName", accommodationName);
         contentMap.put("chatRoomCode", chatRoomCode);
         try {
