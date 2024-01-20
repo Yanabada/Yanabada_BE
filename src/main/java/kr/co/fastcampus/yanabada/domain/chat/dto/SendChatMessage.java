@@ -27,7 +27,7 @@ public record SendChatMessage(
             .chatRoomCode(chatRoom.getCode())
             .sendId(sender.getId())
             .senderNickname(sender.getNickName())
-            .senderProfileImage(sender.getImageUrl())
+            .senderProfileImage(sender.getImage())
             .content(content)
             .sendTime(sendTime)
             .build();
