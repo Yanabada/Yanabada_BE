@@ -56,7 +56,7 @@ email:
 
 chatroom:
   topic:
-    prefix: "/sub/chatroom/"
+    prefix: /sub/chatroom/
 
 firebase:
   project-id: yanabada-b13ee

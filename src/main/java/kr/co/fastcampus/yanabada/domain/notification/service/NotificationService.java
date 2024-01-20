@@ -5,9 +5,6 @@ import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.Notific
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_CANCELED;
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REJECTED;
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REQUEST;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_INFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_CONTENT_POSTFIX;
-import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_CREATED_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_MESSAGE_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CONTENT_POSTFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_TITLE;
@@ -50,6 +47,7 @@ public class NotificationService {
     private final NotificationHistoryRepository notificationHistoryRepository;
     private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
+    private static final String PNG_EXTENSION = ".png";
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
@@ -102,7 +100,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REQUEST)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REQUEST.name().toLowerCase() + ".png")
+            .image(TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -128,7 +126,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_CANCELED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_CANCELED.name().toLowerCase() + ".png") //todo: png 상수처리?
+            .image(TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -153,7 +151,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_APPROVAL)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL.name().toLowerCase() + ".png")
+            .image(TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -178,7 +176,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REJECTED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REJECTED.name().toLowerCase() + ".png")
+            .image(TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
