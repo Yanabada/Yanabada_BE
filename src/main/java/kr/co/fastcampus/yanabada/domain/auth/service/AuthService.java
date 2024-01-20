@@ -78,7 +78,7 @@ public class AuthService {
     }
 
     private String getRandomProfileImage() {
-        int randNum = (int) ((Math.random()*10000)%5);
+        int randNum = (int) ((Math.random() * 10000) % 5);
         return randNum + "profile.png";     //todo: 환경 변수 분리
     }
 
