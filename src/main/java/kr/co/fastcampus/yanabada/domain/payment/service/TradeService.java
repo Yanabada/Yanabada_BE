@@ -27,6 +27,8 @@ import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.notification.dto.TradeNotificationDto;
+import kr.co.fastcampus.yanabada.domain.notification.service.NotificationService;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
@@ -69,6 +71,7 @@ public class TradeService {
     private final YanoljaPayRepository yanoljaPayRepository;
     private final YanoljaPayHistoryRepository yanoljaPayHistoryRepository;
     private final AdminPaymentRepository adminPaymentRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public TradeIdResponse saveTrade(
@@ -91,7 +94,12 @@ public class TradeService {
 
         product.book();
 
-        //TODO: Seller에게 알림
+        notificationService.sendTradeRequest(
+            TradeNotificationDto.from(
+                seller,
+                product.getOrder().getRoom().getAccommodation().getName()
+            )
+        );
 
         return TradeIdResponse.from(
             tradeRepository.save(request.toEntity(product, seller, buyer))
@@ -117,7 +125,12 @@ public class TradeService {
         trade.getProduct().getOrder().trade();
         orderRepository.save(createOrderFromTrade(trade));
 
-        //TODO: Buyer에게 알림
+        notificationService.sendTradeApproval(
+            TradeNotificationDto.from(
+                trade.getBuyer(),
+                trade.getProduct().getOrder().getRoom().getAccommodation().getName()
+            )
+        );
     }
 
     @Transactional
@@ -135,7 +148,12 @@ public class TradeService {
         trade.reject();
         trade.getProduct().onSale();
 
-        //TODO: Buyer에게 알림(Optional)
+        notificationService.sendTradeRejected(
+            TradeNotificationDto.from(
+                trade.getBuyer(),
+                trade.getProduct().getOrder().getRoom().getAccommodation().getName()
+            )
+        );
     }
 
     @Transactional
@@ -153,7 +171,12 @@ public class TradeService {
         trade.cancel();
         trade.getProduct().onSale();
 
-        //TODO: Seller에게 알림(Optional)
+        notificationService.sendTradeCanceled(
+            TradeNotificationDto.from(
+                trade.getSeller(),
+                trade.getProduct().getOrder().getRoom().getAccommodation().getName()
+            )
+        );
     }
 
     @Transactional(readOnly = true)
