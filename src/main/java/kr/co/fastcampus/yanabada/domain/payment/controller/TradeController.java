@@ -1,6 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.payment.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
+import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradePageResponse;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,82 +35,91 @@ public class TradeController {
 
     @PostMapping
     public ResponseBody<TradeIdResponse> addTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody TradeSaveRequest request
     ) {
         return ResponseBody.ok(
-            tradeService.saveTrade(2L, request)
+            tradeService.saveTrade(principalDetails.id(), request)
         );
     }
 
     @PostMapping("/{tradeId}/approve")
     public ResponseBody<Void> approveTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.approveTrade(1L, tradeId);
+        tradeService.approveTrade(principalDetails.id(), tradeId);
         return ResponseBody.ok();
     }
 
     @PostMapping("/{tradeId}/reject")
     public ResponseBody<Void> rejectTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.rejectTrade(1L, tradeId);
+        tradeService.rejectTrade(principalDetails.id(), tradeId);
         return ResponseBody.ok();
     }
 
     @PostMapping("/{tradeId}/cancel")
     public ResponseBody<Void> cancelTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.cancelTrade(2L, tradeId);
+        tradeService.cancelTrade(principalDetails.id(), tradeId);
         return ResponseBody.ok();
     }
 
     @GetMapping("/approvals/{tradeId}")
     public ResponseBody<ApprovalTradeInfoResponse> getApprovalTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
         return ResponseBody.ok(
-            tradeService.getApprovalTrade(1L, tradeId)
+            tradeService.getApprovalTrade(principalDetails.id(), tradeId)
         );
     }
 
     @GetMapping("/approvals")
     public ResponseBody<ApprovalTradePageResponse> getApprovalTrades(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam(name = "status", required = false) TradeStatus status,
         @PageableDefault(sort = "registeredDate", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
         return ResponseBody.ok(
-            tradeService.getApprovalTrades(1L, status, pageable)
+            tradeService.getApprovalTrades(principalDetails.id(), status, pageable)
         );
     }
 
     @GetMapping("/purchases")
     public ResponseBody<PurchaseTradePageResponse> getPurchaseTrades(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam(name = "status", required = false) TradeStatus status,
         @PageableDefault(sort = "registeredDate", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
         return ResponseBody.ok(
-            tradeService.getPurchaseTrades(2L, status, pageable)
+            tradeService.getPurchaseTrades(principalDetails.id(), status, pageable)
         );
     }
 
     @GetMapping("/purchases/{tradeId}")
     public ResponseBody<PurchaseTradeInfoResponse> getPurchaseTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
         return ResponseBody.ok(
-            tradeService.getPurchaseTrade(2L, tradeId)
+            tradeService.getPurchaseTrade(principalDetails.id(), tradeId)
         );
     }
 
     @DeleteMapping("/{tradeId}")
     public ResponseBody<Void> deleteTrade(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.deleteTrade(1L, tradeId);
+        tradeService.deleteTrade(principalDetails.id(), tradeId);
         return ResponseBody.ok();
     }
 }
