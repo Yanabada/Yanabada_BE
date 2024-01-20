@@ -8,10 +8,11 @@ import lombok.Builder;
 
 @Builder
 public record NotificationInfoResponse(
+    Long notificationId,
     String senderNickname,
     String accommodationName,
     NotificationType type,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     LocalDateTime registeredDate,
     String image,
     Boolean isRead
@@ -23,6 +24,7 @@ public record NotificationInfoResponse(
         NotificationHistory history
     ) {
         return NotificationInfoResponse.builder()
+            .notificationId(history.getId())
             .senderNickname(senderNickname)
             .accommodationName(accommodationName)
             .type(history.getNotificationType())
