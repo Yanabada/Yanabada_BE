@@ -34,7 +34,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
         return queryFactory
             .selectFrom(order)
-            .leftJoin(product).on(containStatuses(ON_SALE, BOOKING))
+            .leftJoin(product).on(product.order.eq(order).and(containStatuses(ON_SALE, BOOKING)))
             .join(order.room, room).fetchJoin()
             .join(room.accommodation, accommodation).fetchJoin()
             .where(
