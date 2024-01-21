@@ -12,13 +12,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class YanabadaApplication {
 
-	@PostConstruct
-	public void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(YanabadaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(YanabadaApplication.class, args);
+    }
 
 }
