@@ -100,13 +100,13 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
         TokenIssueResponse tokenIssue
             = tokenService.getTokenIssue(loginRequest.email(), EMAIL.name());
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
+        Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
         storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
         storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
         storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
@@ -119,13 +119,13 @@ public class AuthService {
         LoginRequest loginRequest,
         ProviderType providerType
     ) {
-        Member member = memberRepository.getMember(loginRequest.email(), providerType);
         TokenIssueResponse tokenIssue
             = tokenService.getTokenIssue(loginRequest.email(), providerType.name());
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
+        Member member = memberRepository.getMember(loginRequest.email(), providerType);
         storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
         storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
         storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
@@ -140,9 +140,8 @@ public class AuthService {
             .httpOnly(true)
             .secure(true)
             .path("/")
-//            .domain("weplanplans.site") //todo: 서브도메인 맞춰야함
             .sameSite("None")
-            .build();
+            .build();   //todo: domain 서브도메인 맞추기
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
