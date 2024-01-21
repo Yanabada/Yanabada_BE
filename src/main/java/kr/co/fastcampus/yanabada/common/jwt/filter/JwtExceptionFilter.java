@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import kr.co.fastcampus.yanabada.common.exception.TokenCannotBeEmptyException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
@@ -35,6 +36,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
+        } catch (TokenCannotBeEmptyException e) {
+            ResponseBody<Void> responseBody
+                = ResponseBody.fail(e.getMessage());
+            completeResponse(response, e, responseBody, UNAUTHORIZED.value());
         } catch (TokenExpiredException | TokenNotExistAtCacheException e) {
             ResponseBody<TokenExpiredResponse> responseBody
                 = ResponseBody.fail(e.getMessage(), new TokenExpiredResponse(true));
