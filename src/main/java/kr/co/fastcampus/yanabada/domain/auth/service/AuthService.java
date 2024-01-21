@@ -3,8 +3,12 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
+import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -13,12 +17,14 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
+import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +43,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
+    private final ObjectMapper objectMapper;
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
 
@@ -87,30 +94,64 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(
+        HttpServletResponse response, LoginRequest loginRequest
+    ) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
         TokenIssueResponse tokenIssue
             = tokenService.getTokenIssue(loginRequest.email(), EMAIL.name());
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
+        Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
+        storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
+        storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
+        storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
         return LoginResponse.from(tokenIssue, member);
     }
 
     @Transactional
-    public LoginResponse loginOauth(LoginRequest loginRequest, ProviderType providerType) {
-        Member member = memberRepository.getMember(loginRequest.email(), providerType);
+    public LoginResponse loginOauth(
+        HttpServletResponse response,
+        LoginRequest loginRequest,
+        ProviderType providerType
+    ) {
         TokenIssueResponse tokenIssue
             = tokenService.getTokenIssue(loginRequest.email(), providerType.name());
         if (tokenIssue == null) {
             tokenIssue = jwtProvider
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
+        Member member = memberRepository.getMember(loginRequest.email(), providerType);
+        storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
+        storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
+        storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
         return LoginResponse.from(tokenIssue, member);
+    }
+
+    private void storeValueInCookie(
+        HttpServletResponse response, String key, String value
+    ) {
+        ResponseCookie cookie = ResponseCookie
+            .from(key, value)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("None")
+            .build();   //todo: domain 서브도메인 맞추기
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private String getMemberDtoJsonStr(Member member) {
+        try {
+            MemberDetailResponse memberDto = MemberDetailResponse.from(member);
+            return objectMapper.writeValueAsString(memberDto);
+        } catch (JsonProcessingException e) {
+            throw new JsonProcessFailedException();
+        }
     }
 
     @Transactional

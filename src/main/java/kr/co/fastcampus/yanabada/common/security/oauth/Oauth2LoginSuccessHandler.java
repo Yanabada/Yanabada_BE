@@ -55,7 +55,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             /* 바로 로그인 */
             LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
             LoginResponse loginResponse
-                = authService.loginOauth(loginRequest, ProviderType.valueOf(provider));
+                = authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
 
             String loginResponseJson = objectMapper.writeValueAsString(loginResponse);
             response.setStatus(OK.value());

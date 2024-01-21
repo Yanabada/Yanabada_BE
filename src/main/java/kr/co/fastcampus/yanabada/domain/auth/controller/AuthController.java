@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.auth.controller;
 
 import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
@@ -44,8 +45,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
-        return ResponseBody.ok(authService.login(loginRequest));
+    public ResponseBody<LoginResponse> login(
+        HttpServletResponse response,
+        @RequestBody @Valid LoginRequest loginRequest
+    ) {
+        return ResponseBody.ok(authService.login(response, loginRequest));
     }
 
     @PostMapping("/logout")
