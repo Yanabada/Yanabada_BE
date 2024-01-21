@@ -107,9 +107,7 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
-        storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
-        storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
-        storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
+        setTokenInCookie(response, tokenIssue, member);
         return LoginResponse.from(tokenIssue, member);
     }
 
@@ -126,14 +124,25 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), providerType);
-        storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
-        storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
-        log.info("memberDetailDto={}", getMemberDtoJsonStr(member));
-        storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
+        setTokenInCookie(response, tokenIssue, member);
         return LoginResponse.from(tokenIssue, member);
     }
 
-    private void storeValueInCookie(
+    private void setTokenInCookie(
+        HttpServletResponse response,
+        TokenIssueResponse tokenIssue,
+        Member member
+    ) {
+        setValueInCookie(response, "accessToken", tokenIssue.accessToken());
+        setValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
+        setValueInCookie(response, "id", String.valueOf(member.getId()));
+        setValueInCookie(response, "email", String.valueOf(member.getEmail()));
+        setValueInCookie(response, "nickName", String.valueOf(member.getNickName()));
+        setValueInCookie(response, "image", String.valueOf(member.getImage()));
+        setValueInCookie(response, "provider", String.valueOf(member.getProviderType()));
+    }
+
+    private void setValueInCookie(
         HttpServletResponse response, String key, String value
     ) {
         ResponseCookie cookie = ResponseCookie

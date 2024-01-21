@@ -54,12 +54,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = extractTokenFromRequest(request);
 
-        // 토큰 검사 생략(모두 허용 URL의 경우 토큰 검사 통과)
         if (!StringUtils.hasText(token)) {
-//            doFilter(request, response, filterChain);
-//            todo: doFilter 지우기
             throw new TokenCannotBeEmptyException();
-//            return;
         }
 
         if (!jwtProvider.verifyToken(token)) {
