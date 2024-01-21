@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
+import kr.co.fastcampus.yanabada.common.exception.TokenCannotBeEmptyException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
@@ -20,6 +21,7 @@ import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,8 +56,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 토큰 검사 생략(모두 허용 URL의 경우 토큰 검사 통과)
         if (!StringUtils.hasText(token)) {
-            doFilter(request, response, filterChain);
-            return;
+//            doFilter(request, response, filterChain);
+//            todo: doFilter 지우기
+            throw new TokenCannotBeEmptyException();
+//            return;
         }
 
         if (!jwtProvider.verifyToken(token)) {

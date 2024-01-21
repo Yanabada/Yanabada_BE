@@ -128,6 +128,7 @@ public class AuthService {
         Member member = memberRepository.getMember(loginRequest.email(), providerType);
         storeValueInCookie(response, "accessToken", tokenIssue.accessToken());
         storeValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
+        log.info("memberDetailDto={}", getMemberDtoJsonStr(member));
         storeValueInCookie(response, "member", getMemberDtoJsonStr(member));
         return LoginResponse.from(tokenIssue, member);
     }
