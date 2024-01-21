@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth", "/auth/**"
+        "/auth", "/auth/**", "/oauth2/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
