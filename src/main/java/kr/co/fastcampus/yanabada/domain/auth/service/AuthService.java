@@ -3,12 +3,9 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -18,7 +15,7 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
-import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -41,23 +38,21 @@ public class AuthService {
 
     private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
     private static final int PROFILE_IMAGE_BOUND = 5;
-
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final TokenService tokenService;
-    private final ObjectMapper objectMapper;
-    private final Random random;
+    private static final Random RANDOM = new Random();
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
     @Value("${spring.cookie.secure}")
     boolean secure;
 
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenService tokenService;
 
     @Transactional
-    public Long signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
             throw new EmailDuplicatedException();
         }
@@ -75,11 +70,11 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        return savedMember.getId();
+        return SignUpResponse.from(savedMember.getId());
     }
 
     @Transactional
-    public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
+    public SignUpResponse oauthSignUp(OauthSignUpRequest signUpRequest) {
 
         String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
@@ -93,11 +88,11 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        return savedMember.getId();
+        return SignUpResponse.from(savedMember.getId());
     }
 
     private String getRandomProfileImage() {
-        int randomNumber = random.nextInt(PROFILE_IMAGE_BOUND);
+        int randomNumber = RANDOM.nextInt(PROFILE_IMAGE_BOUND);
         return S3ImageUrlGenerator.generate(randomNumber + PROFILE_AND_PNG_EXTENSION);
     }
 
@@ -156,7 +151,7 @@ public class AuthService {
         ResponseCookie cookie = ResponseCookie
             .from(key, value)
             .httpOnly(true)
-            .secure(secure)
+            .secure(true)
             .path("/")
             .sameSite("None")
             .build();   //todo: domain 서브도메인 맞추기
