@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Oauth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${spring.login.root-url}")
+    @Value("${spring.login.app-home-url}")
     String rootUrl;
 
     @Override

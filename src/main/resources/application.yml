@@ -48,7 +48,7 @@ spring:
   login:
     oauth2-password: oauth2-password
     oauth2-redirect-url: /signin/3
-    root-url: http://localhost:8080
+    app-home-url: https://yanabada-fe-1r96.vercel.app
 
   cookie:
     secure: false
