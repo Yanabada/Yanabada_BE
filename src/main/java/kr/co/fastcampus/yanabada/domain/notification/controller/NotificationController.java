@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.notification.controller;
 
+import java.util.List;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
 import kr.co.fastcampus.yanabada.domain.notification.dto.request.NotificationDeleteRequest;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @RestController
