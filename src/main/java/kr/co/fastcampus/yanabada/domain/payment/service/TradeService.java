@@ -367,9 +367,6 @@ public class TradeService {
         Long memberId, TradeStatus status, Pageable pageable
     ) {
         Member member = memberRepository.getMember(memberId);
-        if (Objects.equals(status, CANCELED)) {
-            throw new UnavailableStatusQueryException();
-        }
         Page<Trade> trades = getTrades(member, SELLER, status, pageable);
         return ApprovalTradePageResponse.from(trades.map(ApprovalTradeSummaryResponse::from));
     }
@@ -379,9 +376,6 @@ public class TradeService {
         Long memberId, TradeStatus status, Pageable pageable
     ) {
         Member member = memberRepository.getMember(memberId);
-        if (Objects.equals(status, REJECTED)) {
-            throw new UnavailableStatusQueryException();
-        }
         Page<Trade> trades = getTrades(member, BUYER, status, pageable);
         return PurchaseTradePageResponse.from(trades.map(PurchaseTradeSummaryResponse::from));
     }
