@@ -20,5 +20,5 @@ public class NotificationProperties {
     public static final String TRADE_REJECTED_TITLE = "구매 승인 거절";
     public static final String TRADE_REJECTED_CONTENT_POSTFIX = "상품의 구매가 거절되었어요.";
 
-
+    public static final long EXPIRATION_DURATION = 7 * 2;
 }
