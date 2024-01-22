@@ -1,6 +1,10 @@
 package kr.co.fastcampus.yanabada.domain.order.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
 import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import lombok.Builder;
@@ -16,6 +20,10 @@ public record OrderInfoResponse(
     RoomCancelPolicy cancelPolicy,
     LocalDate checkInDate,
     LocalDate checkOutDate,
+    @JsonFormat(pattern = "HH:mm")
+    LocalTime checkInTime,
+    @JsonFormat(pattern = "HH:mm")
+    LocalTime checkOutTime,
     Integer price,
     Integer minHeadCount,
     Integer maxHeadCount,
@@ -28,19 +36,24 @@ public record OrderInfoResponse(
 ) {
 
     public static OrderInfoResponse from(Order order) {
+        Room room = order.getRoom();
+        Accommodation accommodation = room.getAccommodation();
+
         return OrderInfoResponse.builder()
             .orderId(order.getId())
             .code(order.getCode())
             .orderDate(order.getCheckInDate())
-            .accommodationName(order.getRoom().getAccommodation().getName())
-            .accommodationImage(order.getRoom().getAccommodation().getImage())
-            .roomName(order.getRoom().getName())
-            .cancelPolicy(order.getRoom().getCancelPolicy())
+            .accommodationName(accommodation.getName())
+            .accommodationImage(accommodation.getImage())
+            .roomName(room.getName())
+            .cancelPolicy(room.getCancelPolicy())
             .checkInDate(order.getCheckInDate())
             .checkOutDate(order.getCheckOutDate())
+            .checkInTime(room.getCheckInTime())
+            .checkOutTime(room.getCheckOutTime())
             .price(order.getPrice())
-            .minHeadCount(order.getRoom().getMinHeadCount())
-            .maxHeadCount(order.getRoom().getMaxHeadCount())
+            .minHeadCount(room.getMinHeadCount())
+            .maxHeadCount(room.getMaxHeadCount())
             .reservationPersonName(order.getReservationPersonName())
             .reservationPersonPhoneNumber(order.getReservationPersonPhoneNumber())
             .userPersonName(order.getUserPersonName())

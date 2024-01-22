@@ -10,6 +10,7 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.response.AdminPaymentInfoRes
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistorySummaryPageResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPaySummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.service.PaymentService;
@@ -44,12 +45,13 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseBody<Void> saveYanoljaPay(
+    public ResponseBody<YanoljaPayIdResponse> saveYanoljaPay(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody @Valid YanoljaPaySaveRequest request
     ) {
-        paymentService.saveYanoljaPay(principalDetails.id(), request);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            paymentService.saveYanoljaPay(principalDetails.id(), request)
+        );
     }
 
     @PostMapping("/charge")

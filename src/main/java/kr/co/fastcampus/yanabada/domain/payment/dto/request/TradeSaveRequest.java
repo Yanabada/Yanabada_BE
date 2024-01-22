@@ -2,6 +2,8 @@ package kr.co.fastcampus.yanabada.domain.payment.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
@@ -13,25 +15,27 @@ import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 
 public record TradeSaveRequest(
 
-    @NotNull
+    @NotNull(message = "상품 ID는 필수로 입력하셔야 합니다.")
+    @Positive(message = "상품 ID는 양수이어야 합니다.")
     Long productId,
 
-    @NotEmpty
+    @NotEmpty(message = "예약자 이름은 필수로 입력하셔야 합니다.")
     String reservationPersonName,
 
-    @NotEmpty
+    @NotEmpty(message = "예약자 휴대폰 번호는 필수로 입력하셔야 합니다.")
     String reservationPersonPhoneNumber,
 
-    @NotEmpty
+    @NotEmpty(message = "이용자 이름은 필수로 입력하셔야 합니다.")
     String userPersonName,
 
-    @NotEmpty
+    @NotEmpty(message = "이용자 휴대폰 번호는 필수로 입력하셔야 합니다.")
     String userPersonPhoneNumber,
 
-    @NotNull
+    @NotNull(message = "포인트는 필수로 입력하셔야 합니다.")
+    @PositiveOrZero(message = "포인트는 양수 또는 0이어야 합니다.")
     Integer point,
 
-    @NotNull
+    @NotNull(message = "결제 수단은 필수로 입력하셔야 합니다.")
     PaymentType paymentType,
 
     String simplePassword

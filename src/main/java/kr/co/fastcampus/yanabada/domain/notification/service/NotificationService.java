@@ -25,6 +25,7 @@ import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Notification;
 import kr.co.fastcampus.yanabada.common.firebase.service.FcmService;
+import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
@@ -46,11 +47,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class NotificationService {
 
+    private static final String PNG_EXTENSION = ".png";
+    private static final String CHAT_SENDER_NICKNAME_KEY = "senderNickname";
+    private static final String ACCOMMODATION_NAME_KEY = "accommodationName";
+
     private final FcmService fcmService;
     private final NotificationHistoryRepository notificationHistoryRepository;
     private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
-    private static final String PNG_EXTENSION = ".png";
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
@@ -103,7 +107,9 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REQUEST)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
+            .image(S3ImageUrlGenerator.generate(
+                TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
+            )
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -129,7 +135,9 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_CANCELED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
+            .image(S3ImageUrlGenerator.generate(
+                TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
+            )
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -154,7 +162,9 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_APPROVAL)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
+            .image(S3ImageUrlGenerator.generate(
+                TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
+            )
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -179,7 +189,9 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REJECTED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
+            .image(S3ImageUrlGenerator.generate(
+                TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
+            )
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -201,15 +213,15 @@ public class NotificationService {
             NotificationInfoResponse response;
             if (history.getNotificationType().equals(CHAT)) {
                 String content = history.getContent();
-                String senderNickname = convertJsonToString("senderNickname", content);
-                String accommodationName = convertJsonToString("accommodationName", content);
+                String senderNickname = convertJsonToString(CHAT_SENDER_NICKNAME_KEY, content);
+                String accommodationName = convertJsonToString(ACCOMMODATION_NAME_KEY, content);
                 response = NotificationInfoResponse.from(
                     senderNickname, accommodationName, history
                 );
 
             } else {
                 String content = history.getContent();
-                String accommodationName = convertJsonToString("accommodationName", content);
+                String accommodationName = convertJsonToString(ACCOMMODATION_NAME_KEY, content);
                 response = NotificationInfoResponse.from(
                     null, accommodationName, history
                 );

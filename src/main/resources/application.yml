@@ -70,3 +70,6 @@ firebase:
     prefix: https://fcm.googleapis.com/v1/projects/
     postfix: /messages:send
 
+s3:
+  end-point: https://yanabada-image.s3.ap-northeast-2.amazonaws.com/
+
