@@ -7,7 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotificationHistoryRepository extends JpaRepository<NotificationHistory, Long> {
+public interface NotificationHistoryRepository
+    extends JpaRepository<NotificationHistory, Long>, NotificationHistoryRepositoryCustom {
 
     Page<NotificationHistory> findByReceiver(Member receiver, Pageable pageable);
 
