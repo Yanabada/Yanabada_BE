@@ -77,12 +77,13 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseBody<Void> deleteProduct(
+    public ResponseBody<ProductIdResponse> deleteProduct(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("productId") Long productId
     ) {
-        productService.cancelProduct(principalDetails.id(), productId);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            productService.cancelProduct(principalDetails.id(), productId)
+        );
     }
 
     @GetMapping("/own")

@@ -6,8 +6,6 @@ import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.ContentsType.SALE;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.BUYER;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeRole.SELLER;
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.CANCELED;
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.WAITING;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.DEPOSIT;
 import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TransactionType.WITHDRAW;
@@ -20,7 +18,6 @@ import kr.co.fastcampus.yanabada.common.exception.IllegalProductStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IllegalTradeStatusException;
 import kr.co.fastcampus.yanabada.common.exception.IncorrectYanoljaPayPasswordException;
 import kr.co.fastcampus.yanabada.common.exception.TradeNotFoundException;
-import kr.co.fastcampus.yanabada.common.exception.UnavailableStatusQueryException;
 import kr.co.fastcampus.yanabada.common.exception.YanoljaPayNotFoundException;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
@@ -107,7 +104,7 @@ public class TradeService {
     }
 
     @Transactional
-    public void approveTrade(Long sellerId, Long tradeId) {
+    public TradeIdResponse approveTrade(Long sellerId, Long tradeId) {
         AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
@@ -131,10 +128,12 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional
-    public void rejectTrade(Long sellerId, Long tradeId) {
+    public TradeIdResponse rejectTrade(Long sellerId, Long tradeId) {
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -154,10 +153,12 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional
-    public void cancelTrade(Long buyerId, Long tradeId) {
+    public TradeIdResponse cancelTrade(Long buyerId, Long tradeId) {
         Member buyer = memberRepository.getMember(buyerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -177,6 +178,8 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional(readOnly = true)
@@ -210,7 +213,7 @@ public class TradeService {
     }
 
     @Transactional
-    public void deleteTrade(Long memberId, Long tradeId) {
+    public TradeIdResponse deleteTrade(Long memberId, Long tradeId) {
         Member member = memberRepository.getMember(memberId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -225,6 +228,8 @@ public class TradeService {
         if (trade.getHasSellerDeleted() && trade.getHasBuyerDeleted()) {
             tradeRepository.delete(trade);
         }
+
+        return TradeIdResponse.from(trade);
     }
 
     private void validateTradeSaveRequest(
@@ -367,9 +372,6 @@ public class TradeService {
         Long memberId, TradeStatus status, Pageable pageable
     ) {
         Member member = memberRepository.getMember(memberId);
-        if (Objects.equals(status, CANCELED)) {
-            throw new UnavailableStatusQueryException();
-        }
         Page<Trade> trades = getTrades(member, SELLER, status, pageable);
         return ApprovalTradePageResponse.from(trades.map(ApprovalTradeSummaryResponse::from));
     }
@@ -379,9 +381,6 @@ public class TradeService {
         Long memberId, TradeStatus status, Pageable pageable
     ) {
         Member member = memberRepository.getMember(memberId);
-        if (Objects.equals(status, REJECTED)) {
-            throw new UnavailableStatusQueryException();
-        }
         Page<Trade> trades = getTrades(member, BUYER, status, pageable);
         return PurchaseTradePageResponse.from(trades.map(PurchaseTradeSummaryResponse::from));
     }

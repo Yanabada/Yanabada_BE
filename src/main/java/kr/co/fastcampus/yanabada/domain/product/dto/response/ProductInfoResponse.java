@@ -28,6 +28,7 @@ public record ProductInfoResponse(
     Integer purchasePrice,
     Integer salesPercentage,
     String orderCode,
+    Boolean isAutoCancel,
     AccommodationInfoResponse accommodationInfo,
     RoomInfoResponse roomInfo
 ) {
@@ -54,6 +55,7 @@ public record ProductInfoResponse(
                 SalesPercentageCalculator.calculate(order.getPrice(), product.getPrice())
             )
             .orderCode(order.getCode())
+            .isAutoCancel(product.getIsAutoCancel())
             .accommodationInfo(AccommodationInfoResponse.from(accommodation))
             .roomInfo(RoomInfoResponse.from(room))
             .build();
