@@ -76,11 +76,7 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        yanoljaPayRepository.save(
-            YanoljaPay.create(
-                savedMember, null, null, null, 0L
-            )
-        );
+        yanoljaPayRepository.save(YanoljaPay.create(savedMember));
 
         return SignUpResponse.from(savedMember.getId());
     }
@@ -100,11 +96,7 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        yanoljaPayRepository.save(
-            YanoljaPay.create(
-                savedMember, null, null, null, 0L
-            )
-        );
+        yanoljaPayRepository.save(YanoljaPay.create(savedMember));
 
         return SignUpResponse.from(savedMember.getId());
     }
