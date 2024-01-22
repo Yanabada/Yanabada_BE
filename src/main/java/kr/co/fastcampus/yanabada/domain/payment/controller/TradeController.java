@@ -44,30 +44,33 @@ public class TradeController {
     }
 
     @PostMapping("/{tradeId}/approve")
-    public ResponseBody<Void> approveTrade(
+    public ResponseBody<TradeIdResponse> approveTrade(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.approveTrade(principalDetails.id(), tradeId);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            tradeService.approveTrade(principalDetails.id(), tradeId)
+        );
     }
 
     @PostMapping("/{tradeId}/reject")
-    public ResponseBody<Void> rejectTrade(
+    public ResponseBody<TradeIdResponse> rejectTrade(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.rejectTrade(principalDetails.id(), tradeId);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            tradeService.rejectTrade(principalDetails.id(), tradeId)
+        );
     }
 
     @PostMapping("/{tradeId}/cancel")
-    public ResponseBody<Void> cancelTrade(
+    public ResponseBody<TradeIdResponse> cancelTrade(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.cancelTrade(principalDetails.id(), tradeId);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            tradeService.cancelTrade(principalDetails.id(), tradeId)
+        );
     }
 
     @GetMapping("/approvals/{tradeId}")
@@ -115,11 +118,12 @@ public class TradeController {
     }
 
     @DeleteMapping("/{tradeId}")
-    public ResponseBody<Void> deleteTrade(
+    public ResponseBody<TradeIdResponse> deleteTrade(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable("tradeId") Long tradeId
     ) {
-        tradeService.deleteTrade(principalDetails.id(), tradeId);
-        return ResponseBody.ok();
+        return ResponseBody.ok(
+            tradeService.deleteTrade(principalDetails.id(), tradeId)
+        );
     }
 }
