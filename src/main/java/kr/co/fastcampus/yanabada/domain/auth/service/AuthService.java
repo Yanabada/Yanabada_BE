@@ -18,6 +18,7 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -41,6 +42,10 @@ public class AuthService {
 
     private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
     private static final int PROFILE_IMAGE_BOUND = 5;
+    private static final Random RANDOM = new Random();
+
+    @Value("${spring.login.oauth2-password}")
+    String oauthPassword;
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -48,14 +53,9 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
-    private final Random random;
-
-    @Value("${spring.login.oauth2-password}")
-    String oauthPassword;
-
 
     @Transactional
-    public Long signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
             throw new EmailDuplicatedException();
         }
@@ -73,11 +73,11 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        return savedMember.getId();
+        return SignUpResponse.from(savedMember.getId());
     }
 
     @Transactional
-    public Long oauthSignUp(OauthSignUpRequest signUpRequest) {
+    public SignUpResponse oauthSignUp(OauthSignUpRequest signUpRequest) {
 
         String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
@@ -91,11 +91,11 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
-        return savedMember.getId();
+        return SignUpResponse.from(savedMember.getId());
     }
 
     private String getRandomProfileImage() {
-        int randomNumber = random.nextInt(PROFILE_IMAGE_BOUND);
+        int randomNumber = RANDOM.nextInt(PROFILE_IMAGE_BOUND);
         return S3ImageUrlGenerator.generate(randomNumber + PROFILE_AND_PNG_EXTENSION);
     }
 
