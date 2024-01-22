@@ -23,6 +23,8 @@ import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +50,7 @@ public class AuthService {
     String oauthPassword;
 
     private final MemberRepository memberRepository;
+    private final YanoljaPayRepository yanoljaPayRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -73,6 +76,12 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
+        yanoljaPayRepository.save(
+            YanoljaPay.create(
+                savedMember, null, null, null, 0L
+            )
+        );
+
         return SignUpResponse.from(savedMember.getId());
     }
 
@@ -91,6 +100,12 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
+        yanoljaPayRepository.save(
+            YanoljaPay.create(
+                savedMember, null, null, null, 0L
+            )
+        );
+
         return SignUpResponse.from(savedMember.getId());
     }
 
