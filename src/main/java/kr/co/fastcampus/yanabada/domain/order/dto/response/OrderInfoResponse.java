@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.order.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
@@ -19,7 +20,9 @@ public record OrderInfoResponse(
     RoomCancelPolicy cancelPolicy,
     LocalDate checkInDate,
     LocalDate checkOutDate,
+    @JsonFormat(pattern = "HH:mm")
     LocalTime checkInTime,
+    @JsonFormat(pattern = "HH:mm")
     LocalTime checkOutTime,
     Integer price,
     Integer minHeadCount,
