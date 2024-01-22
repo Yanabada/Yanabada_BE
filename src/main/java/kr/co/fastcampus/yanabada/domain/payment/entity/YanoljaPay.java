@@ -64,18 +64,14 @@ public class YanoljaPay extends BaseEntity {
     }
 
     public static YanoljaPay create(
-        Member member,
-        String accountNumber,
-        String simplePassword,
-        String bankName,
-        Long balance
+        Member member
     ) {
         return new YanoljaPay(
             member,
-            accountNumber,
-            simplePassword,
-            bankName,
-            balance
+            null,
+            null,
+            null,
+            0L
         );
     }
 
