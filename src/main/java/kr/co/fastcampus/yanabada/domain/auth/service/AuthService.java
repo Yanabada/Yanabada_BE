@@ -46,6 +46,8 @@ public class AuthService {
     String oauthPassword;
     @Value("${spring.cookie.secure}")
     boolean secure;
+    @Value("${spring.cookie.domain}")
+    String domain;
 
     private final MemberRepository memberRepository;
     private final YanoljaPayRepository yanoljaPayRepository;
@@ -155,12 +157,14 @@ public class AuthService {
     private void setValueInCookie(
         HttpServletResponse response, String key, String value
     ) {
+        log.info("domain={}", domain);
         ResponseCookie cookie = ResponseCookie
             .from(key, value)
             .httpOnly(true)
-            .secure(true)
+            .secure(secure)
             .path("/")
             .sameSite("None")
+            .domain(domain)
             .build();   //todo: domain 서브도메인 맞추기
         response.addHeader("Set-Cookie", cookie.toString());
     }
