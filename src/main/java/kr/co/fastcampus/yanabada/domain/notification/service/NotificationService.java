@@ -266,4 +266,10 @@ public class NotificationService {
             throw new AccessForbiddenException();
         }
     }
+
+    @Transactional
+    public void deleteAllNotifications(Long memberId) {
+        Member member = memberRepository.getMember(memberId);
+        notificationHistoryRepository.deleteAllByReceiver(member);
+    }
 }
