@@ -52,6 +52,7 @@ spring:
 
   cookie:
     secure: false
+    domain: yanabada-fe-1r96.vercel.app
 
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
