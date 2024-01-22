@@ -18,6 +18,7 @@ import kr.co.fastcampus.yanabada.domain.payment.dto.response.AdminPaymentInfoRes
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistoryInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayHistorySummaryPageResponse;
+import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayIdResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPayInfoResponse;
 import kr.co.fastcampus.yanabada.domain.payment.dto.response.YanoljaPaySummaryResponse;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
@@ -65,7 +66,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public void saveYanoljaPay(
+    public YanoljaPayIdResponse saveYanoljaPay(
         Long memberId,
         YanoljaPaySaveRequest request
     ) {
@@ -80,6 +81,8 @@ public class PaymentService {
         yanoljaPay.setAccountNumber(request.accountNumber());
         yanoljaPay.setBankName(request.bankName());
         yanoljaPay.setSimplePassword(request.simplePassword());
+
+        return YanoljaPayIdResponse.from(yanoljaPay);
     }
 
     @Transactional
