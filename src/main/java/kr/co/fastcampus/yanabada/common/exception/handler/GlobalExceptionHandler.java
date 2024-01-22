@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,6 +41,13 @@ public class GlobalExceptionHandler {
     public ResponseBody<Void> handleBaseException(BaseException e) {
         log.warn("[BaseException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseBody<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        log.error("[NoHandlerFoundException] Message = {}", e.getMessage());
+        return ResponseBody.fail("잘못된 URL입니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -130,7 +138,7 @@ public class GlobalExceptionHandler {
         EmailSendFailedException e
     ) {
         log.error("[EmailSendFailedException] Message = {}", e.getMessage());
-        return ResponseBody.fail(e.getMessage());
+        return ResponseBody.error(e.getMessage());
     }
 
     @ExceptionHandler(EmailDuplicatedException.class)
@@ -148,7 +156,7 @@ public class GlobalExceptionHandler {
         JsonProcessFailedException e
     ) {
         log.error("[JsonProcessFailedException] Message = {}", e.getMessage());
-        return ResponseBody.fail(e.getMessage());
+        return ResponseBody.error(e.getMessage());
     }
 
     @ExceptionHandler(OkHttp3RequestFailedException.class)
@@ -157,7 +165,7 @@ public class GlobalExceptionHandler {
         OkHttp3RequestFailedException e
     ) {
         log.error("[OkHttp3RequestFailedException] Message = {}", e.getMessage());
-        return ResponseBody.fail(e.getMessage());
+        return ResponseBody.error(e.getMessage());
     }
 
     @ExceptionHandler(FcmMessageSendFailedException.class)
@@ -166,7 +174,7 @@ public class GlobalExceptionHandler {
         FcmMessageSendFailedException e
     ) {
         log.error("[FcmMessageSendFailedException] Message = {}", e.getMessage());
-        return ResponseBody.fail(e.getMessage());
+        return ResponseBody.error(e.getMessage());
     }
 
     @ExceptionHandler(FcmAccessTokenGetFailedException.class)
@@ -175,7 +183,7 @@ public class GlobalExceptionHandler {
         FcmAccessTokenGetFailedException e
     ) {
         log.error("[FcmAccessTokenGetFailedException] Message = {}", e.getMessage());
-        return ResponseBody.fail(e.getMessage());
+        return ResponseBody.error(e.getMessage());
     }
 
     @ExceptionHandler(NotMatchedProviderNameException.class)
