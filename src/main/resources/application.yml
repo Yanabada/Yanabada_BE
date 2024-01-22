@@ -45,6 +45,9 @@ spring:
     oauth2-redirect-url: /redirect_url
     root-url: http://localhost:8080
 
+  cookie:
+    secure: false
+
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
 

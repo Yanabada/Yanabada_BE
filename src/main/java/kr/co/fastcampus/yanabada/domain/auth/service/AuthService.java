@@ -52,6 +52,8 @@ public class AuthService {
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
+    @Value("${spring.cookie.secure}")
+    boolean secure;
 
 
     @Transactional
@@ -154,20 +156,11 @@ public class AuthService {
         ResponseCookie cookie = ResponseCookie
             .from(key, value)
             .httpOnly(true)
-            .secure(true)
+            .secure(secure)
             .path("/")
             .sameSite("None")
             .build();   //todo: domain 서브도메인 맞추기
         response.addHeader("Set-Cookie", cookie.toString());
-    }
-
-    private String getMemberDtoJsonStr(Member member) {
-        try {
-            MemberDetailResponse memberDto = MemberDetailResponse.from(member);
-            return objectMapper.writeValueAsString(memberDto);
-        } catch (JsonProcessingException e) {
-            throw new JsonProcessFailedException();
-        }
     }
 
     @Transactional
