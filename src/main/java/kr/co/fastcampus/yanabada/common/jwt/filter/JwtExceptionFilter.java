@@ -9,13 +9,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import kr.co.fastcampus.yanabada.common.exception.TokenCannotBeEmptyException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -36,7 +36,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch (TokenCannotBeEmptyException e) {
+        } catch (AuthenticationException e) {
             ResponseBody<Void> responseBody
                 = ResponseBody.fail(e.getMessage());
             completeResponse(response, e, responseBody, UNAUTHORIZED.value());
