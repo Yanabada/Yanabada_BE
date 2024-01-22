@@ -13,6 +13,7 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
@@ -38,6 +39,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class AuthService {
 
+    private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
+    private static final int PROFILE_IMAGE_BOUND = 5;
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -45,14 +49,9 @@ public class AuthService {
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
     private final Random random;
-    private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
-    private static final int PROFILE_IMAGE_BOUND = 5;
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
-
-    @Value("${s3.end-point}")
-    private String s3EndPoint;
 
 
     @Transactional
@@ -97,7 +96,7 @@ public class AuthService {
 
     private String getRandomProfileImage() {
         int randomNumber = random.nextInt(PROFILE_IMAGE_BOUND);
-        return s3EndPoint + randomNumber + PROFILE_AND_PNG_EXTENSION;
+        return S3ImageUrlGenerator.generate(randomNumber + PROFILE_AND_PNG_EXTENSION);
     }
 
     @Transactional
