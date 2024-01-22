@@ -48,4 +48,12 @@ public class NotificationController {
         notificationService.deleteNotifications(principalDetails.id(), requests);
         return ResponseBody.ok();
     }
+
+    @DeleteMapping("/all")
+    public ResponseBody<Void> deleteAllNotifications(
+        @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        notificationService.deleteAllNotifications(principalDetails.id());
+        return ResponseBody.ok();
+    }
 }
