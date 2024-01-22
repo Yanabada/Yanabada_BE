@@ -19,7 +19,7 @@ public record RoomSaveRequest(
     RoomCancelPolicy cancelPolicy
 ) {
 
-    public Room toEntity(Accommodation accommodation) {
+    public Room toEntity(Accommodation accommodation, String s3EndPoint) {
         return Room.create(
             accommodation,
             name,
@@ -29,7 +29,7 @@ public record RoomSaveRequest(
             minHeadCount,
             maxHeadCount,
             rating,
-            image,
+            s3EndPoint + image,
             cancelPolicy
         );
     }

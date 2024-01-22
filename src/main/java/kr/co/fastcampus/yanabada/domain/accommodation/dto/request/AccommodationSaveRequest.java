@@ -16,7 +16,7 @@ public record AccommodationSaveRequest(
     String image
 ) {
 
-    public Accommodation toEntity() {
+    public Accommodation toEntity(String s3EndPoint) {
         return Accommodation.create(
             name,
             address,
@@ -26,7 +26,7 @@ public record AccommodationSaveRequest(
             phoneNumber,
             description,
             category,
-            image
+            s3EndPoint + image
         );
     }
 }

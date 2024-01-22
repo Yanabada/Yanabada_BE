@@ -10,12 +10,16 @@ import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.repository.AccommodationRepository;
 import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AccommodationService {
+
+    @Value("${s3.end-point}")
+    private String s3EndPoint;
 
     private final AccommodationRepository accommodationRepository;
 
@@ -24,7 +28,7 @@ public class AccommodationService {
     @Transactional
     public void saveAccommodations(List<AccommodationSaveRequest> requests) {
         requests.stream()
-            .map(AccommodationSaveRequest::toEntity)
+            .map(request -> request.toEntity(s3EndPoint))
             .forEach(accommodationRepository::save);
     }
 
@@ -33,7 +37,7 @@ public class AccommodationService {
         requests.forEach(request -> {
             Accommodation accommodation =
                 accommodationRepository.getAccommodation(request.accommodationId());
-            accommodation.addRoom(request.toEntity(accommodation));
+            accommodation.addRoom(request.toEntity(accommodation, s3EndPoint));
         });
     }
 
