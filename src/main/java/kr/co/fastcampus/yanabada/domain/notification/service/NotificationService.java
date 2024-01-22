@@ -6,6 +6,7 @@ import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.Notific
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REJECTED;
 import static kr.co.fastcampus.yanabada.domain.notification.entity.enums.NotificationType.TRADE_REQUEST;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.CHAT_MESSAGE_TITLE;
+import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.EXPIRATION_DURATION;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_CONTENT_POSTFIX;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_APPROVAL_TITLE;
 import static kr.co.fastcampus.yanabada.domain.notification.property.NotificationProperties.TRADE_CANCELED_CONTENT_POSTFIX;
@@ -19,6 +20,7 @@ import static kr.co.fastcampus.yanabada.domain.notification.property.Notificatio
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
@@ -39,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,7 @@ public class NotificationService {
     private static final String PNG_EXTENSION = ".png";
     private static final String CHAT_SENDER_NICKNAME_KEY = "senderNickname";
     private static final String ACCOMMODATION_NAME_KEY = "accommodationName";
+    private static final String CRON_SCHEDULING = "0 0 0 * * *";
 
     private final FcmService fcmService;
     private final NotificationHistoryRepository notificationHistoryRepository;
@@ -259,5 +263,13 @@ public class NotificationService {
         if (!Objects.equals(member.getId(), notificationHistory.getReceiver().getId())) {
             throw new AccessForbiddenException();
         }
+    }
+
+    @Scheduled(cron = CRON_SCHEDULING)
+    @Transactional
+    public void deleteExpiredNotificationHistories() {
+        List<NotificationHistory> notificationHistories
+            = notificationHistoryRepository.getByExpired(EXPIRATION_DURATION);
+        notificationHistories.forEach(notificationHistoryRepository::delete);
     }
 }
