@@ -3,12 +3,9 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -19,7 +16,6 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
-import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
@@ -48,6 +44,8 @@ public class AuthService {
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
+    @Value("${spring.cookie.secure}")
+    boolean secure;
 
     private final MemberRepository memberRepository;
     private final YanoljaPayRepository yanoljaPayRepository;
@@ -55,7 +53,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
@@ -166,15 +163,6 @@ public class AuthService {
             .sameSite("None")
             .build();   //todo: domain 서브도메인 맞추기
         response.addHeader("Set-Cookie", cookie.toString());
-    }
-
-    private String getMemberDtoJsonStr(Member member) {
-        try {
-            MemberDetailResponse memberDto = MemberDetailResponse.from(member);
-            return objectMapper.writeValueAsString(memberDto);
-        } catch (JsonProcessingException e) {
-            throw new JsonProcessFailedException();
-        }
     }
 
     @Transactional

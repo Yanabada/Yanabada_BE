@@ -29,7 +29,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final AuthService authService;
     private final ObjectMapper objectMapper;
-    @Value("${spring.login.root-url}")
+    @Value("${spring.login.app-home-url}")
     String rootUrl;
     @Value("${spring.login.oauth2-redirect-url}")
     String oauthRedirectUrl;
