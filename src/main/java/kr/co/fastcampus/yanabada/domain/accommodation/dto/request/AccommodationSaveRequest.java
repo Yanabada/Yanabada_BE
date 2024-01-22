@@ -1,5 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.dto.request;
 
+import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Category;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.Region;
@@ -26,7 +27,7 @@ public record AccommodationSaveRequest(
             phoneNumber,
             description,
             category,
-            image
+            S3ImageUrlGenerator.generate(image)
         );
     }
 }
