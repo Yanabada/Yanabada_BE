@@ -36,6 +36,7 @@ import kr.co.fastcampus.yanabada.domain.notification.entity.NotificationHistory;
 import kr.co.fastcampus.yanabada.domain.notification.repository.NotificationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,11 @@ public class NotificationService {
     private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
     private static final String PNG_EXTENSION = ".png";
+    private static final String CHAT_SENDER_NICKNAME_KEY = "senderNickname";
+    private static final String ACCOMMODATION_NAME_KEY = "accommodationName";
+
+    @Value("${s3.end-point}")
+    private String s3EndPoint;
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
@@ -103,7 +109,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REQUEST)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
+            .image(s3EndPoint + TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -129,7 +135,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_CANCELED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
+            .image(s3EndPoint + TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -154,7 +160,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_APPROVAL)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
+            .image(s3EndPoint + TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -179,7 +185,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REJECTED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
+            .image(s3EndPoint + TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -201,15 +207,15 @@ public class NotificationService {
             NotificationInfoResponse response;
             if (history.getNotificationType().equals(CHAT)) {
                 String content = history.getContent();
-                String senderNickname = convertJsonToString("senderNickname", content);
-                String accommodationName = convertJsonToString("accommodationName", content);
+                String senderNickname = convertJsonToString(CHAT_SENDER_NICKNAME_KEY, content);
+                String accommodationName = convertJsonToString(ACCOMMODATION_NAME_KEY, content);
                 response = NotificationInfoResponse.from(
                     senderNickname, accommodationName, history
                 );
 
             } else {
                 String content = history.getContent();
-                String accommodationName = convertJsonToString("accommodationName", content);
+                String accommodationName = convertJsonToString(ACCOMMODATION_NAME_KEY, content);
                 response = NotificationInfoResponse.from(
                     null, accommodationName, history
                 );
