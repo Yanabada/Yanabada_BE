@@ -4,6 +4,8 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
@@ -157,16 +159,19 @@ public class AuthService {
     private void setValueInCookie(
         HttpServletResponse response, String key, String value
     ) {
-        log.info("domain={}", domain);
-        ResponseCookie cookie = ResponseCookie
-            .from(key, value)
-            .httpOnly(true)
-            .secure(secure)
-            .path("/")
-            .sameSite("None")
-            .domain(domain)
-            .build();   //todo: domain 서브도메인 맞추기
-        response.addHeader("Set-Cookie", cookie.toString());
+        try {
+            ResponseCookie cookie = ResponseCookie
+                .from(key, URLEncoder.encode(value, "UTF-8"))
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .sameSite("None")
+                .domain(domain)
+                .build();
+            response.addHeader("Set-Cookie", cookie.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional
