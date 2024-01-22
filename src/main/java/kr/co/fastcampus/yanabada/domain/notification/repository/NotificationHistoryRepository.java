@@ -14,4 +14,6 @@ public interface NotificationHistoryRepository extends JpaRepository<Notificatio
     default NotificationHistory getNotificationHistory(Long id) {
         return findById(id).orElseThrow(NotificationNotFoundException::new);
     }
+
+    void deleteAllByReceiver(Member receiver);
 }
