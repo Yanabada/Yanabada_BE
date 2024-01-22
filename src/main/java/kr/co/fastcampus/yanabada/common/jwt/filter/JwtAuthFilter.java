@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.exception.MemberNotFoundException;
-import kr.co.fastcampus.yanabada.common.exception.TokenCannotBeEmptyException;
-import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotExistAtCacheException;
 import kr.co.fastcampus.yanabada.common.exception.TokenNotValidatedException;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -21,7 +19,6 @@ import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,13 +36,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        /* 토큰 로그인, 회원가입 경우 해당 필터 실행 안됨 */
-        return request.getRequestURI().contains("/sign-up")
-                || request.getRequestURI().contains("/login");
-    }
-
-    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -55,11 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = extractTokenFromRequest(request);
 
         if (!StringUtils.hasText(token)) {
-            throw new TokenCannotBeEmptyException();
-        }
-
-        if (!jwtProvider.verifyToken(token)) {
-            throw new TokenExpiredException();
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String email = jwtProvider.getEmail(token);

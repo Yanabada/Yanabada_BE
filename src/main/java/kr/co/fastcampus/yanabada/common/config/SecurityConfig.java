@@ -5,6 +5,7 @@ import static org.springframework.http.HttpMethod.POST;
 
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthFilter;
+import kr.co.fastcampus.yanabada.common.jwt.filter.JwtAuthenticationEntryPoint;
 import kr.co.fastcampus.yanabada.common.jwt.filter.JwtExceptionFilter;
 import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginFailureHandler;
 import kr.co.fastcampus.yanabada.common.security.oauth.Oauth2LoginSuccessHandler;
@@ -36,9 +37,12 @@ public class SecurityConfig {
     private final Oauth2UserService oauth2UserService;
     private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
     private final Oauth2LoginFailureHandler oauth2LoginFailureHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
 
     private static final String[] PERMIT_PATHS = {
-        "/auth", "/auth/**", "/oauth2/**"
+        "/auth", "/auth/**", "/login/**",
+        "/oauth2/**", "/signin/**", "/error/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -66,6 +70,10 @@ public class SecurityConfig {
             .requestMatchers("/products/own").denyAll()
             .anyRequest().authenticated()
         );
+
+        http.exceptionHandling(exceptionHandling -> {
+            exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+        });
 
         http.oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(
