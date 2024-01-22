@@ -19,7 +19,6 @@ import static kr.co.fastcampus.yanabada.domain.notification.property.Notificatio
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -33,7 +32,6 @@ import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
 import kr.co.fastcampus.yanabada.domain.notification.dto.TradeNotificationDto;
 import kr.co.fastcampus.yanabada.domain.notification.dto.request.NotificationDeleteRequest;
-import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationIdResponse;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationInfoResponse;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationPageResponse;
 import kr.co.fastcampus.yanabada.domain.notification.entity.NotificationHistory;
