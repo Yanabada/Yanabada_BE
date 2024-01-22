@@ -107,7 +107,7 @@ public class TradeService {
     }
 
     @Transactional
-    public void approveTrade(Long sellerId, Long tradeId) {
+    public TradeIdResponse approveTrade(Long sellerId, Long tradeId) {
         AdminPayment adminPayment = adminPaymentRepository.getAdminPayment();
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
@@ -131,10 +131,12 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional
-    public void rejectTrade(Long sellerId, Long tradeId) {
+    public TradeIdResponse rejectTrade(Long sellerId, Long tradeId) {
         Member seller = memberRepository.getMember(sellerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -154,10 +156,12 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional
-    public void cancelTrade(Long buyerId, Long tradeId) {
+    public TradeIdResponse cancelTrade(Long buyerId, Long tradeId) {
         Member buyer = memberRepository.getMember(buyerId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -177,6 +181,8 @@ public class TradeService {
                 trade.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
         );
+
+        return TradeIdResponse.from(trade);
     }
 
     @Transactional(readOnly = true)
@@ -210,7 +216,7 @@ public class TradeService {
     }
 
     @Transactional
-    public void deleteTrade(Long memberId, Long tradeId) {
+    public TradeIdResponse deleteTrade(Long memberId, Long tradeId) {
         Member member = memberRepository.getMember(memberId);
         Trade trade = tradeRepository.getTrade(tradeId);
 
@@ -225,6 +231,8 @@ public class TradeService {
         if (trade.getHasSellerDeleted() && trade.getHasBuyerDeleted()) {
             tradeRepository.delete(trade);
         }
+
+        return TradeIdResponse.from(trade);
     }
 
     private void validateTradeSaveRequest(

@@ -148,7 +148,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void cancelProduct(
+    public ProductIdResponse cancelProduct(
         Long memberId,
         Long productId
     ) {
@@ -159,6 +159,8 @@ public class ProductService {
 
         rejectTradeRelatedToProduct(product);
         product.cancel();
+
+        return ProductIdResponse.from(product);
     }
 
     @Scheduled(cron = CRON_SCHEDULING)
