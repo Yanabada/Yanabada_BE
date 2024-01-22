@@ -42,6 +42,7 @@ public class AuthService {
 
     private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
     private static final int PROFILE_IMAGE_BOUND = 5;
+    private static final Random RANDOM = new Random();
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
@@ -52,7 +53,6 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
-    private final Random random;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
@@ -95,7 +95,7 @@ public class AuthService {
     }
 
     private String getRandomProfileImage() {
-        int randomNumber = random.nextInt(PROFILE_IMAGE_BOUND);
+        int randomNumber = RANDOM.nextInt(PROFILE_IMAGE_BOUND);
         return S3ImageUrlGenerator.generate(randomNumber + PROFILE_AND_PNG_EXTENSION);
     }
 
