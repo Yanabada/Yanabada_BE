@@ -2,6 +2,7 @@ package kr.co.fastcampus.yanabada.domain.notification.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.NotificationDeleteRequest;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationIdResponse;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationPageResponse;
 import kr.co.fastcampus.yanabada.domain.notification.service.NotificationService;
@@ -14,8 +15,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -36,13 +40,12 @@ public class NotificationController {
         );
     }
 
-    @DeleteMapping("/notificationId")
-    public ResponseBody<NotificationIdResponse> deleteNotification(
+    @DeleteMapping
+    public ResponseBody<Void> deleteNotifications(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @PathVariable("notificationId") Long notificationId
+        @RequestBody List<NotificationDeleteRequest> requests
     ) {
-        return ResponseBody.ok(
-            notificationService.deleteNotification(principalDetails.id(), notificationId)
-        );
+        notificationService.deleteNotifications(principalDetails.id(), requests);
+        return ResponseBody.ok();
     }
 }
