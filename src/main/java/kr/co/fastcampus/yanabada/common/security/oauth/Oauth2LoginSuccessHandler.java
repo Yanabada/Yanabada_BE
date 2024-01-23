@@ -1,14 +1,10 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
-import static org.springframework.http.HttpStatus.OK;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
-import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
