@@ -2,6 +2,8 @@ package kr.co.fastcampus.yanabada.domain.order.repository;
 
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QAccommodation.accommodation;
 import static kr.co.fastcampus.yanabada.domain.accommodation.entity.QRoom.room;
+import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy.YNBD_1;
+import static kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy.YNBD_2;
 import static kr.co.fastcampus.yanabada.domain.order.entity.QOrder.order;
 import static kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus.RESERVED;
 import static kr.co.fastcampus.yanabada.domain.product.entity.QProduct.product;
@@ -10,6 +12,8 @@ import static kr.co.fastcampus.yanabada.domain.product.entity.enums.ProductStatu
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
@@ -34,12 +38,13 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
         return queryFactory
             .selectFrom(order)
-            .leftJoin(product).on(product.order.eq(order).and(containStatuses(ON_SALE, BOOKING)))
+            .leftJoin(product).on(product.order.eq(order), containStatuses(ON_SALE, BOOKING))
             .join(order.room, room).fetchJoin()
             .join(room.accommodation, accommodation).fetchJoin()
             .where(
                 equalMember(member),
-                equalStatus(RESERVED)
+                equalStatus(RESERVED),
+                hasRoomCancelFee()
             )
             .groupBy(order)
             .having(count.eq(ZERO_COUNT))
@@ -98,5 +103,31 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         }
 
         return order.checkInDate.lt(date);
+    }
+
+    private BooleanExpression hasRoomCancelFee() {
+        return new CaseBuilder()
+            .when(room.cancelPolicy.eq(YNBD_1)).then(hasRoomCancelFeeInYNBD_1())
+            .when(room.cancelPolicy.eq(YNBD_2)).then(hasRoomCancelFeeInYNBD_2())
+            .otherwise(true)
+            .eq(true);
+    }
+
+    private ComparableExpression<Boolean> hasRoomCancelFeeInYNBD_1() {
+        return new CaseBuilder()
+            .when(
+                order.checkInDate.loe(LocalDate.now().plusDays(YNBD_1.getFeeOccurrenceDuration()))
+            )
+            .then(true)
+            .otherwise(false);
+    }
+
+    private ComparableExpression<Boolean> hasRoomCancelFeeInYNBD_2() {
+        return new CaseBuilder()
+            .when(
+                order.checkInDate.loe(LocalDate.now().plusDays(YNBD_2.getFeeOccurrenceDuration()))
+            )
+            .then(true)
+            .otherwise(false);
     }
 }
