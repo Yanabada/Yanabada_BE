@@ -1,14 +1,10 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
-import static org.springframework.http.HttpStatus.OK;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
-import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
@@ -56,10 +52,6 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
             LoginResponse loginResponse
                 = authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
-
-            String loginResponseJson = objectMapper.writeValueAsString(loginResponse);
-            response.setStatus(OK.value());
-            response.getWriter().write(loginResponseJson);
         } else {
             /* 회원 가입 필요 */
             //todo: url 변경 예정

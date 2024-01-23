@@ -52,6 +52,7 @@ spring:
 
   cookie:
     secure: false
+    domain: null
 
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
