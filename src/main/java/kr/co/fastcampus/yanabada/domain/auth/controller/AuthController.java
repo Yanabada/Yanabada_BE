@@ -4,6 +4,7 @@ import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZ
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -20,6 +21,7 @@ import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,6 +36,11 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+
+    @GetMapping("/redirect-test")
+    public void redirectTest(HttpServletResponse response) throws IOException {
+        response.sendRedirect("https://yanabada-fe-1r96.vercel.app/sigin/3\"");
+    }
 
     @PostMapping("/sign-up")
     public ResponseBody<SignUpResponse> signUp(
