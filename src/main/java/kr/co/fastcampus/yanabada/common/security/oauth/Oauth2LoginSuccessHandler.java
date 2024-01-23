@@ -29,7 +29,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final AuthService authService;
     private final ObjectMapper objectMapper;
-    @Value("${spring.login.root-url}")
+    @Value("${spring.login.app-home-url}")
     String rootUrl;
     @Value("${spring.login.oauth2-redirect-url}")
     String oauthRedirectUrl;
@@ -56,10 +56,6 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
             LoginResponse loginResponse
                 = authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
-
-            String loginResponseJson = objectMapper.writeValueAsString(loginResponse);
-            response.setStatus(OK.value());
-            response.getWriter().write(loginResponseJson);
         } else {
             /* 회원 가입 필요 */
             //todo: url 변경 예정

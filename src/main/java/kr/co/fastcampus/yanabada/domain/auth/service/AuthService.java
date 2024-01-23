@@ -3,12 +3,11 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
@@ -19,10 +18,11 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
-import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
+import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,13 +46,17 @@ public class AuthService {
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
+    @Value("${spring.cookie.secure}")
+    boolean secure;
+    @Value("${spring.cookie.domain}")
+    String domain;
 
     private final MemberRepository memberRepository;
+    private final YanoljaPayRepository yanoljaPayRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
@@ -73,6 +77,8 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
+        yanoljaPayRepository.save(YanoljaPay.create(savedMember));
+
         return SignUpResponse.from(savedMember.getId());
     }
 
@@ -91,6 +97,8 @@ public class AuthService {
             .build();
 
         Member savedMember = memberRepository.save(member);
+        yanoljaPayRepository.save(YanoljaPay.create(savedMember));
+
         return SignUpResponse.from(savedMember.getId());
     }
 
@@ -151,22 +159,18 @@ public class AuthService {
     private void setValueInCookie(
         HttpServletResponse response, String key, String value
     ) {
-        ResponseCookie cookie = ResponseCookie
-            .from(key, value)
-            .httpOnly(true)
-            .secure(true)
-            .path("/")
-            .sameSite("None")
-            .build();   //todo: domain 서브도메인 맞추기
-        response.addHeader("Set-Cookie", cookie.toString());
-    }
-
-    private String getMemberDtoJsonStr(Member member) {
         try {
-            MemberDetailResponse memberDto = MemberDetailResponse.from(member);
-            return objectMapper.writeValueAsString(memberDto);
-        } catch (JsonProcessingException e) {
-            throw new JsonProcessFailedException();
+            ResponseCookie cookie = ResponseCookie
+                .from(key, URLEncoder.encode(value, "UTF-8"))
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .sameSite("None")
+                .domain(domain)
+                .build();
+            response.addHeader("Set-Cookie", cookie.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
