@@ -41,7 +41,8 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_PATHS = {
         "/auth", "/auth/**", "/login/**",
-        "/oauth2/**", "/signin/**", "/error/**"
+        "/oauth2/**", "/signin/**", "/error/**",
+        "/ws-stomp", "/ws-stomp/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -49,7 +50,8 @@ public class SecurityConfig {
     };
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
-        "/products", "/products/**"
+        "/products", "/products/**",
+        "/ws-stomp", "/ws-stomp/**"
     };
 
     private static final String[] ALLOW_ORIGINS = {
@@ -65,7 +67,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         );
 
         http.authorizeHttpRequests(authorize -> authorize
