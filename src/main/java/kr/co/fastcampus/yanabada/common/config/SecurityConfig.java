@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -51,6 +50,12 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
         "/products", "/products/**"
+    };
+
+    private static final String[] ALLOW_ORIGINS = {
+        "http://localhost:8080",
+        "http://localhost:5173",
+        "https://yanabada-fe-1r96.vercel.app"
     };
 
     @Bean
@@ -91,7 +96,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://api.weplanplans.site", "https://weplanplans.vercel.app", "https://dev-weplanplans.vercel.app", "http://localhost:8080")); // TODO: 5173 open
+        configuration.setAllowedOrigins(List.of(ALLOW_ORIGINS)); // TODO: 5173 open
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.addExposedHeader("Authorization");
