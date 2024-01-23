@@ -37,11 +37,6 @@ public class AuthController {
     private final AuthService authService;
     private final MemberService memberService;
 
-    @GetMapping("/redirect-test")
-    public void redirectTest(HttpServletResponse response) throws IOException {
-        response.sendRedirect("https://yanabada-fe-1r96.vercel.app/sigin/3\"");
-    }
-
     @PostMapping("/sign-up")
     public ResponseBody<SignUpResponse> signUp(
         @RequestBody @Valid SignUpRequest signUpRequest
