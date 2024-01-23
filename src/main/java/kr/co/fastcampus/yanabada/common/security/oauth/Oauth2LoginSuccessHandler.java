@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthService authService;
-    private final ObjectMapper objectMapper;
     @Value("${spring.login.app-home-url}")
     String rootUrl;
     @Value("${spring.login.oauth2-redirect-url}")
