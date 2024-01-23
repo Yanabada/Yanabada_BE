@@ -107,13 +107,13 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     private BooleanExpression hasRoomCancelFee() {
         return new CaseBuilder()
-            .when(room.cancelPolicy.eq(YNBD_1)).then(hasRoomCancelFeeInYNBD_1())
-            .when(room.cancelPolicy.eq(YNBD_2)).then(hasRoomCancelFeeInYNBD_2())
+            .when(room.cancelPolicy.eq(YNBD_1)).then(hasRoomCancelFeeInYnbd_1())
+            .when(room.cancelPolicy.eq(YNBD_2)).then(hasRoomCancelFeeInYnbd_2())
             .otherwise(true)
             .eq(true);
     }
 
-    private ComparableExpression<Boolean> hasRoomCancelFeeInYNBD_1() {
+    private ComparableExpression<Boolean> hasRoomCancelFeeInYnbd_1() {
         return new CaseBuilder()
             .when(
                 order.checkInDate.loe(LocalDate.now().plusDays(YNBD_1.getFeeOccurrenceDuration()))
@@ -122,7 +122,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
             .otherwise(false);
     }
 
-    private ComparableExpression<Boolean> hasRoomCancelFeeInYNBD_2() {
+    private ComparableExpression<Boolean> hasRoomCancelFeeInYnbd_2() {
         return new CaseBuilder()
             .when(
                 order.checkInDate.loe(LocalDate.now().plusDays(YNBD_2.getFeeOccurrenceDuration()))
