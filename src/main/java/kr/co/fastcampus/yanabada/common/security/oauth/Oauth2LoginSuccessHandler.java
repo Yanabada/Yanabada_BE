@@ -55,10 +55,12 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         } else {
             /* 회원 가입 필요 */
             //todo: url 변경 예정
-            String redirectUrl = rootUrl
-                + oauthRedirectUrl
-                + "?email=" + attribute.get("email")
-                + "&provider=" + attribute.get("provider");
+//            String redirectUrl = rootUrl
+//                + oauthRedirectUrl
+//                + "?email=" + attribute.get("email")
+//                + "&provider=" + attribute.get("provider");
+            String redirectUrl = "https://yanabada-fe-1r96.vercel.app/sigin/3";
+            log.info("oauth redirect url={}", redirectUrl);
             response.sendRedirect(redirectUrl);
         }
 
