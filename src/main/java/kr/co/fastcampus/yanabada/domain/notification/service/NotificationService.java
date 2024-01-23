@@ -19,6 +19,7 @@ import static kr.co.fastcampus.yanabada.domain.notification.property.Notificatio
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
 import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
@@ -30,7 +31,7 @@ import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
 import kr.co.fastcampus.yanabada.domain.notification.dto.TradeNotificationDto;
-import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationIdResponse;
+import kr.co.fastcampus.yanabada.domain.notification.dto.request.NotificationDeleteRequest;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationInfoResponse;
 import kr.co.fastcampus.yanabada.domain.notification.dto.response.NotificationPageResponse;
 import kr.co.fastcampus.yanabada.domain.notification.entity.NotificationHistory;
@@ -244,13 +245,16 @@ public class NotificationService {
     }
 
     @Transactional
-    public NotificationIdResponse deleteNotification(Long memberId, Long notificationId) {
+    public void deleteNotifications(
+        Long memberId, List<NotificationDeleteRequest> requests
+    ) {
         Member member = memberRepository.getMember(memberId);
-        NotificationHistory notificationHistory =
-            notificationHistoryRepository.getNotificationHistory(notificationId);
-        validateMemberAndNotificationHistory(member, notificationHistory);
-        notificationHistoryRepository.delete(notificationHistory);
-        return NotificationIdResponse.from(notificationHistory);
+        requests.stream()
+            .map(request -> notificationHistoryRepository.getNotificationHistory(request.id()))
+            .forEach(notificationHistory -> {
+                validateMemberAndNotificationHistory(member, notificationHistory);
+                notificationHistoryRepository.delete(notificationHistory);
+            });
     }
 
     private void validateMemberAndNotificationHistory(
@@ -259,5 +263,11 @@ public class NotificationService {
         if (!Objects.equals(member.getId(), notificationHistory.getReceiver().getId())) {
             throw new AccessForbiddenException();
         }
+    }
+
+    @Transactional
+    public void deleteAllNotifications(Long memberId) {
+        Member member = memberRepository.getMember(memberId);
+        notificationHistoryRepository.deleteAllByReceiver(member);
     }
 }
