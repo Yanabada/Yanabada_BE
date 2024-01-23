@@ -172,9 +172,7 @@ public class ChatService {
     private Page<ChatMessageInfoResponse> convertChatMessagesToInfoResponses(
         Page<ChatMessage> messages
     ) {
-        return messages.map(message -> ChatMessageInfoResponse.from(
-            message.getSender(), message.getContent(), message.getSendDateTime()
-        ));
+        return messages.map(ChatMessageInfoResponse::from);
     }
 
     @Transactional
@@ -280,17 +278,10 @@ public class ChatService {
     }
 
     private void sendFcmAndHistoryNotification(ChatRoom chatRoom, Member sender, String content) {
-        if (isSeller(sender, chatRoom)) {
-            notificationService.sendChatCreated(
-                createChatNotificationDto(sender, chatRoom.getBuyer(), chatRoom),
-                content
-            );
-        } else {
-            notificationService.sendChatCreated(
-                createChatNotificationDto(sender, chatRoom.getSeller(), chatRoom),
-                content
-            );
-        }
+        notificationService.sendChatCreated(
+            createChatNotificationDto(sender, chatRoom.getSeller(), chatRoom),
+            content
+        );
     }
 
     private void sendFcmNotification(ChatRoom chatRoom, Member sender, String content) {
