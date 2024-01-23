@@ -1,8 +1,7 @@
 package kr.co.fastcampus.yanabada.domain.chat.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
-import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.chat.entity.ChatMessage;
 import lombok.Builder;
 
 @Builder
@@ -11,19 +10,16 @@ public record ChatMessageInfoResponse(
     String senderImage,
     String senderNickname,
     String content,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     LocalDateTime sendDateTime
 ) {
 
-    public static ChatMessageInfoResponse from(
-        Member sender, String content, LocalDateTime sendDateTime
-    ) {
+    public static ChatMessageInfoResponse from(ChatMessage message) {
         return ChatMessageInfoResponse.builder()
-            .senderId(sender.getId())
-            .senderImage(sender.getImage())
-            .senderNickname(sender.getNickName())
-            .content(content)
-            .sendDateTime(sendDateTime)
+            .senderId(message.getSender().getId())
+            .senderImage(message.getSender().getImage())
+            .senderNickname(message.getSender().getNickName())
+            .content(message.getContent())
+            .sendDateTime(message.getSendDateTime())
             .build();
     }
 }
