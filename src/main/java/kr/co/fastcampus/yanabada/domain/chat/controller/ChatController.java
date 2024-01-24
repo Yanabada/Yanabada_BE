@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/chats")
+@RequestMapping("/v1/chats")
 @RequiredArgsConstructor
 public class ChatController {
 
