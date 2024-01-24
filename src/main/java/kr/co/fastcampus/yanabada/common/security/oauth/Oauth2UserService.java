@@ -36,9 +36,6 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
             .getUserInfoEndpoint()
             .getUserNameAttributeName();
 
-        log.info("registrationId={}", registrationId);
-        log.info("userNameAttributeName={}", userNameAttributeName);
-
         Oauth2Attribute oauth2Attribute = Oauth2Attribute.of(
                 registrationId, userNameAttributeName, oauth2User.getAttributes()
         );
