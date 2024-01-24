@@ -1,7 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.accommodation.dto.request;
 
 import java.time.LocalTime;
-import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Accommodation;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.enums.RoomCancelPolicy;
@@ -30,7 +29,7 @@ public record RoomSaveRequest(
             minHeadCount,
             maxHeadCount,
             rating,
-            S3ImageUrlGenerator.generate(image),
+            image,
             cancelPolicy
         );
     }
