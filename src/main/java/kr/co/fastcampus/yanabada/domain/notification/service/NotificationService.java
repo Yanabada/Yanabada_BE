@@ -85,7 +85,7 @@ public class NotificationService {
             .receiver(chatDto.receiver())
             .notificationType(CHAT)
             .content(chatDto.convertMapToJsonStr(objectMapper))
-            .image(chatDto.image())
+            .image(chatDto.sender().getImage())
             .build();
 
         notificationHistoryRepository.save(notificationHistory);

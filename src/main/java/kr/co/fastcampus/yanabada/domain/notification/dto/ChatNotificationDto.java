@@ -13,10 +13,7 @@ import lombok.Builder;
 public record ChatNotificationDto(
     Member sender,
     Member receiver,
-    String accommodationName,
-    String chatRoomCode,
-    String senderNickname,
-    String image
+    String accommodationName
 ) {
 
     public static ChatNotificationDto from(
@@ -30,15 +27,13 @@ public record ChatNotificationDto(
             .accommodationName(
                 chatRoom.getProduct().getOrder().getRoom().getAccommodation().getName()
             )
-            .image(sender.getImage())
             .build();
     }
 
     public String convertMapToJsonStr(ObjectMapper objectMapper) {
         Map<String, String> contentMap = new HashMap<>();
-        contentMap.put("senderNickname", senderNickname);
+        contentMap.put("senderNickname", sender().getNickName());
         contentMap.put("accommodationName", accommodationName);
-        contentMap.put("chatRoomCode", chatRoomCode);
         try {
             return objectMapper.writeValueAsString(contentMap);
         } catch (JsonProcessingException e) {
