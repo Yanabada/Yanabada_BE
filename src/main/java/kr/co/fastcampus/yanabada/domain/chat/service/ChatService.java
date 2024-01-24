@@ -239,7 +239,6 @@ public class ChatService {
     public SendChatMessage saveChatMessage(ReceivedChatMessage message) {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(message.chatRoomCode());
         Member sender = memberRepository.getMember(message.senderId());
-        LocalDateTime sendTime = LocalDateTime.now();
         checkChatRoomMember(chatRoom, sender);
         updateMemberPresenceStatus(chatRoom, sender);
         if (chatRoom.getMessages().size() == 0) {
@@ -247,6 +246,7 @@ public class ChatService {
         } else {
             sendFcmNotification(chatRoom, sender, message.content());
         }
+        LocalDateTime sendTime = LocalDateTime.now();
         addMessageToChatRoom(chatRoom, message, sender, sendTime);
         return createSendChatMessage(chatRoom, sender, message, sendTime);
     }
