@@ -7,19 +7,19 @@ import lombok.Builder;
 @Builder
 public record ChatMessageInfoResponse(
     Long senderId,
-    String senderImage,
+    String senderProfileImage,
     String senderNickname,
     String content,
-    LocalDateTime sendDateTime
+    LocalDateTime sendTime
 ) {
 
     public static ChatMessageInfoResponse from(ChatMessage message) {
         return ChatMessageInfoResponse.builder()
             .senderId(message.getSender().getId())
-            .senderImage(message.getSender().getImage())
+            .senderProfileImage(message.getSender().getImage())
             .senderNickname(message.getSender().getNickName())
             .content(message.getContent())
-            .sendDateTime(message.getSendDateTime())
+            .sendTime(message.getSendDateTime())
             .build();
     }
 }

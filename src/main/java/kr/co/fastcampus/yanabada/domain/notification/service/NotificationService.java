@@ -27,7 +27,6 @@ import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Notification;
 import kr.co.fastcampus.yanabada.common.firebase.service.FcmService;
-import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import kr.co.fastcampus.yanabada.domain.notification.dto.ChatNotificationDto;
@@ -39,6 +38,7 @@ import kr.co.fastcampus.yanabada.domain.notification.entity.NotificationHistory;
 import kr.co.fastcampus.yanabada.domain.notification.repository.NotificationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,6 +54,9 @@ public class NotificationService {
     private static final String CHAT_SENDER_NICKNAME_KEY = "senderNickname";
     private static final String ACCOMMODATION_NAME_KEY = "accommodationName";
     private static final String CRON_SCHEDULING = "0 0 0 * * *";
+
+    @Value("${s3.end-point}")
+    private String s3EndPoint;
 
     private final FcmService fcmService;
     private final NotificationHistoryRepository notificationHistoryRepository;
@@ -111,9 +114,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REQUEST)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(S3ImageUrlGenerator.generate(
-                TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
-            )
+            .image(s3EndPoint + TRADE_REQUEST.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -139,9 +140,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_CANCELED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(S3ImageUrlGenerator.generate(
-                TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
-            )
+            .image(s3EndPoint + TRADE_CANCELED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -166,9 +165,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_APPROVAL)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(S3ImageUrlGenerator.generate(
-                TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
-            )
+            .image(s3EndPoint + TRADE_APPROVAL.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 
@@ -193,9 +190,7 @@ public class NotificationService {
             .receiver(tradeNotificationDto.receiver())
             .notificationType(TRADE_REJECTED)
             .content(tradeNotificationDto.convertMapToJsonStr(objectMapper))
-            .image(S3ImageUrlGenerator.generate(
-                TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
-            )
+            .image(s3EndPoint + TRADE_REJECTED.name().toLowerCase() + PNG_EXTENSION)
             .build();
         notificationHistoryRepository.save(notificationHistory);
 

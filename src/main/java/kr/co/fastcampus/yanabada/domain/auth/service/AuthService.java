@@ -12,7 +12,6 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
-import kr.co.fastcampus.yanabada.common.utils.S3ImageUrlGenerator;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
@@ -50,6 +49,8 @@ public class AuthService {
     boolean secure;
     @Value("${spring.cookie.domain}")
     String domain;
+    @Value("${s3.end-point}")
+    private String s3EndPoint;
 
     private final MemberRepository memberRepository;
     private final YanoljaPayRepository yanoljaPayRepository;
@@ -104,7 +105,7 @@ public class AuthService {
 
     private String getRandomProfileImage() {
         int randomNumber = RANDOM.nextInt(PROFILE_IMAGE_BOUND);
-        return S3ImageUrlGenerator.generate(randomNumber + PROFILE_AND_PNG_EXTENSION);
+        return s3EndPoint + randomNumber + PROFILE_AND_PNG_EXTENSION;
     }
 
     @Transactional
