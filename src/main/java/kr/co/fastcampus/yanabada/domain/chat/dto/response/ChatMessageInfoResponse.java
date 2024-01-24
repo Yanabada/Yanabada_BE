@@ -10,7 +10,7 @@ public record ChatMessageInfoResponse(
     String senderImage,
     String senderNickname,
     String content,
-    LocalDateTime sendDateTime
+    LocalDateTime sendTime
 ) {
 
     public static ChatMessageInfoResponse from(ChatMessage message) {
@@ -19,7 +19,7 @@ public record ChatMessageInfoResponse(
             .senderImage(message.getSender().getImage())
             .senderNickname(message.getSender().getNickName())
             .content(message.getContent())
-            .sendDateTime(message.getSendDateTime())
+            .sendTime(message.getSendDateTime())
             .build();
     }
 }
