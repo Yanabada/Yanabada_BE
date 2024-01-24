@@ -16,7 +16,7 @@ public record ReceivedChatMessage(
     String chatRoomCode,
     @NotNull(message = "전송자 ID는 필수로 입력하셔야 합니다.")
     @Positive(message = "전송자 ID는 양수이어야 합니다.")
-    Long sendId,
+    Long senderId,
     @NotBlank(message = "메세지 내용이 없습니다.")
     @Size(max = 255, message = "메세지 내용은 255자를 넘을 수 없습니다.")
     String content

@@ -9,11 +9,10 @@ import lombok.Builder;
 @Builder
 public record SendChatMessage(
     String chatRoomCode,
-    Long sendId,
+    Long senderId,
     String senderNickname,
     String senderProfileImage,
     String content,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     LocalDateTime sendTime
 ) {
 
@@ -25,7 +24,7 @@ public record SendChatMessage(
     ) {
         return SendChatMessage.builder()
             .chatRoomCode(chatRoom.getCode())
-            .sendId(sender.getId())
+            .senderId(sender.getId())
             .senderNickname(sender.getNickName())
             .senderProfileImage(sender.getImage())
             .content(content)
