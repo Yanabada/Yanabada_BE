@@ -46,18 +46,19 @@ public class SecurityConfig {
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
-        "/accommodations/**", "/orders"
+        "/v1/accommodations/**", "/v1/orders"
     };
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
-        "/products", "/products/**",
+        "/v1/products", "/v1/products/**",
         "/ws-stomp", "/ws-stomp/**"
     };
 
     private static final String[] ALLOW_ORIGINS = {
         "http://localhost:8080",
         "http://localhost:5173",
-        "https://yanabada-fe-1r96.vercel.app"
+        "https://yanabada-fe-1r96.vercel.app",
+        "https://www.yanabada.com"
     };
 
     @Bean
@@ -74,7 +75,7 @@ public class SecurityConfig {
             .requestMatchers(PERMIT_PATHS).permitAll()
             .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
             .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
-            .requestMatchers("/products/own").denyAll()
+            .requestMatchers("/v1/products/own").denyAll()
             .anyRequest().authenticated()
         );
 
