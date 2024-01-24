@@ -163,8 +163,9 @@ public class AuthService {
         try {
             ResponseCookie cookie = ResponseCookie
                 .from(key, URLEncoder.encode(value, "UTF-8"))
-                .secure(secure)
+                .secure(true)
                 .path("/")
+                .sameSite("None")
                 .build();
             response.addHeader("Set-Cookie", cookie.toString());
         } catch (UnsupportedEncodingException e) {
