@@ -41,8 +41,7 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_PATHS = {
         "/auth", "/auth/**", "/login/**",
-        "/oauth2/**", "/signin/**", "/error/**",
-        "/ws-stomp", "/ws-stomp/**"
+        "/oauth2/**", "/signin/**", "/error/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -50,8 +49,7 @@ public class SecurityConfig {
     };
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
-        "/products", "/products/**",
-        "/ws-stomp", "/ws-stomp/**"
+        "/products", "/products/**"
     };
 
     private static final String[] ALLOW_ORIGINS = {
