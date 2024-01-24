@@ -42,6 +42,7 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void message(ReceivedChatMessage message) {
+        System.out.println("컨트롤러message = " + message);
         messagingTemplate.convertAndSend(
             chatroomTopicPrefix + message.chatRoomCode(),
             chatService.saveChatMessage(message)

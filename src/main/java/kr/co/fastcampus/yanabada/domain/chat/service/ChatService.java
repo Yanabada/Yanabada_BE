@@ -242,12 +242,17 @@ public class ChatService {
         LocalDateTime sendTime = LocalDateTime.now();
         checkChatRoomMember(chatRoom, sender);
         updateMemberPresenceStatus(chatRoom, sender);
+        System.out.println("서비스message = " + message);
         if (chatRoom.getMessages().size() == 0) {
             sendFcmAndHistoryNotification(chatRoom, sender, message.content());
+            System.out.println("서비스message2 = " + message);
         } else {
             sendFcmNotification(chatRoom, sender, message.content());
+            System.out.println("서비스message3 = " + message);
         }
+        System.out.println("서비스message4 = " + message);
         addMessageToChatRoom(chatRoom, message, sender, sendTime);
+        System.out.println("서비스message5 = " + message);
         return createSendChatMessage(chatRoom, sender, message, sendTime);
     }
 
