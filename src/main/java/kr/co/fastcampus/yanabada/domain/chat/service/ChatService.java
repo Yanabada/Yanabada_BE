@@ -238,7 +238,7 @@ public class ChatService {
     @Transactional
     public SendChatMessage saveChatMessage(ReceivedChatMessage message) {
         ChatRoom chatRoom = chatRoomRepository.getChatroom(message.chatRoomCode());
-        Member sender = memberRepository.getMember(message.sendId());
+        Member sender = memberRepository.getMember(message.senderId());
         LocalDateTime sendTime = LocalDateTime.now();
         checkChatRoomMember(chatRoom, sender);
         updateMemberPresenceStatus(chatRoom, sender);
