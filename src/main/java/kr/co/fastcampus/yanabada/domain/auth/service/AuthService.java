@@ -12,6 +12,7 @@ import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.common.utils.CookieCreator;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
@@ -109,7 +110,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse login(
+    public void login(
         HttpServletResponse response, LoginRequest loginRequest
     ) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -122,12 +123,11 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
-        setTokenInCookie(response, tokenIssue, member);
-        return LoginResponse.from(tokenIssue, member);
+        CookieCreator.storeLoginResponse(response, tokenIssue, member);
     }
 
     @Transactional
-    public LoginResponse loginOauth(
+    public void loginOauth(
         HttpServletResponse response,
         LoginRequest loginRequest,
         ProviderType providerType
@@ -139,38 +139,7 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), providerType);
-        setTokenInCookie(response, tokenIssue, member);
-        return LoginResponse.from(tokenIssue, member);
-    }
-
-    private void setTokenInCookie(
-        HttpServletResponse response,
-        TokenIssueResponse tokenIssue,
-        Member member
-    ) {
-        setValueInCookie(response, "accessToken", tokenIssue.accessToken());
-        setValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
-        setValueInCookie(response, "id", String.valueOf(member.getId()));
-        setValueInCookie(response, "email", String.valueOf(member.getEmail()));
-        setValueInCookie(response, "nickName", String.valueOf(member.getNickName()));
-        setValueInCookie(response, "image", String.valueOf(member.getImage()));
-        setValueInCookie(response, "provider", String.valueOf(member.getProviderType()));
-    }
-
-    private void setValueInCookie(
-        HttpServletResponse response, String key, String value
-    ) {
-        try {
-            ResponseCookie cookie = ResponseCookie
-                .from(key, URLEncoder.encode(value, "UTF-8"))
-                .secure(true)
-                .path("/")
-                .sameSite("None")
-                .build();
-            response.addHeader("Set-Cookie", cookie.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        CookieCreator.storeLoginResponse(response, tokenIssue, member);
     }
 
     @Transactional
