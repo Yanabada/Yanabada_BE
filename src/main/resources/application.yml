@@ -80,3 +80,4 @@ server:
         secure: true
         path: /
         same-site: none
+        domain: yanabada.com
