@@ -52,7 +52,8 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
         "/v1/products", "/v1/products/**",
-        "/ws-stomp", "/ws-stomp/**"
+        "/ws-stomp", "/ws-stomp/**",
+        "/v1/payments/admin"
     };
 
     private static final String[] ALLOW_ORIGINS = {
