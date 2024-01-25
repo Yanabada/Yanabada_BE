@@ -43,37 +43,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = extractTokenFromRequest(request);
-        System.out.println("token1 = " + token);
 
         if (!StringUtils.hasText(token)) {
             filterChain.doFilter(request, response);
             return;
         }
-        System.out.println("token2 = " + token);
         String email = jwtProvider.getEmail(token);
         String provider = jwtProvider.getProvider(token);
 
         if (!tokenService.isExistToken(email, provider)) {
-            System.out.println("token??? = " + token);
             /* 로그아웃 된 토큰 사용 */
             throw new TokenNotExistAtCacheException();
         }
         System.out.println("token3 = " + token);
         try {
-            System.out.println("token!!!!! = " + token);
             Member findMember = memberRepository
                 .getMember(email, ProviderType.valueOf(provider));
-            System.out.println("token4 = " + token);
             PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
 
             // SecurityContext에 인증 객체를 등록
             Authentication auth = getAuthentication(principalDetails);
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (MemberNotFoundException e) {
-            System.out.println("e = " + e);
             throw new TokenNotValidatedException();
         }
-        System.out.println("token5 = " + token);
         filterChain.doFilter(request, response);
     }
 
