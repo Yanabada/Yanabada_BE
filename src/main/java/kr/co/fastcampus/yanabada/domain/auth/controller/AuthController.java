@@ -52,11 +52,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseBody<LoginResponse> login(
+    public ResponseBody<Void> login(
         HttpServletResponse response,
         @RequestBody @Valid LoginRequest loginRequest
     ) {
-        return ResponseBody.ok(authService.login(response, loginRequest));
+        authService.login(response, loginRequest);
+        return ResponseBody.ok();
     }
 
     @PostMapping("/logout")
