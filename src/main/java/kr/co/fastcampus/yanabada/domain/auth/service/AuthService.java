@@ -4,17 +4,15 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
-
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
+import kr.co.fastcampus.yanabada.common.utils.CookieCreator;
 import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.common.utils.RandomNumberGenerator;
 import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
@@ -22,7 +20,6 @@ import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -36,7 +33,6 @@ import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthService {
+
     private static final int PROFILE_IMAGE_BOUND = 5;
     private static final int PROFILE_IMAGE_ORIGIN = 0;
     private static final int ROOM_ID_BOUND = 101;
@@ -149,7 +146,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse login(
+    public void login(
         HttpServletResponse response, LoginRequest loginRequest
     ) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -162,12 +159,11 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), EMAIL.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), EMAIL);
-        setTokenInCookie(response, tokenIssue, member);
-        return LoginResponse.from(tokenIssue, member);
+        CookieCreator.storeLoginResponse(response, tokenIssue, member);
     }
 
     @Transactional
-    public LoginResponse loginOauth(
+    public void loginOauth(
         HttpServletResponse response,
         LoginRequest loginRequest,
         ProviderType providerType
@@ -179,38 +175,7 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), providerType);
-        setTokenInCookie(response, tokenIssue, member);
-        return LoginResponse.from(tokenIssue, member);
-    }
-
-    private void setTokenInCookie(
-        HttpServletResponse response,
-        TokenIssueResponse tokenIssue,
-        Member member
-    ) {
-        setValueInCookie(response, "accessToken", tokenIssue.accessToken());
-        setValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
-        setValueInCookie(response, "id", String.valueOf(member.getId()));
-        setValueInCookie(response, "email", String.valueOf(member.getEmail()));
-        setValueInCookie(response, "nickName", String.valueOf(member.getNickName()));
-        setValueInCookie(response, "image", String.valueOf(member.getImage()));
-        setValueInCookie(response, "provider", String.valueOf(member.getProviderType()));
-    }
-
-    private void setValueInCookie(
-        HttpServletResponse response, String key, String value
-    ) {
-        try {
-            ResponseCookie cookie = ResponseCookie
-                .from(key, URLEncoder.encode(value, "UTF-8"))
-                .secure(true)
-                .path("/")
-                .sameSite("None")
-                .build();
-            response.addHeader("Set-Cookie", cookie.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        CookieCreator.storeLoginResponse(response, tokenIssue, member);
     }
 
     @Transactional
