@@ -46,7 +46,8 @@ public class SecurityConfig {
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
-        "/v1/accommodations/**", "/v1/orders"
+        "/v1/accommodations/**", "/v1/orders",
+        "/v1/accommodations"
     };
 
     private static final String[] PERMIT_PATHS_GET_METHOD = {
