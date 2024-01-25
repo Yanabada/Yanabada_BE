@@ -92,7 +92,7 @@ public class AuthService {
 
         Member savedMember = memberRepository.save(member);
         yanoljaPayRepository.save(YanoljaPay.create(savedMember));
-        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder (member)));
+        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder(member)));
 
         return SignUpResponse.from(savedMember.getId());
     }
@@ -113,7 +113,7 @@ public class AuthService {
 
         Member savedMember = memberRepository.save(member);
         yanoljaPayRepository.save(YanoljaPay.create(savedMember));
-        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder (member)));
+        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder(member)));
 
         return SignUpResponse.from(savedMember.getId());
     }
@@ -124,7 +124,7 @@ public class AuthService {
         return s3EndPoint + randomNumber + PROFILE_AND_PNG_EXTENSION;
     }
 
-    private Order createRandomDummyOrder (Member member) {
+    private Order createRandomDummyOrder(Member member) {
         int randomRoomId = RandomNumberGenerator.generate(ROOM_ID_ORIGIN, ROOM_ID_BOUND);
         Room randomRoom = roomRepository.getRoom((long) randomRoomId);
         LocalDate checkInDate = LocalDate.now().plusDays(4);
