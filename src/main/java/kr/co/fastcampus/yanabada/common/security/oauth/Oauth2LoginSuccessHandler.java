@@ -51,7 +51,10 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
         } else {
             /* 회원 가입 필요 */
-            String redirectUrl = appUrl + redirectPath;
+            String redirectUrl = appUrl
+                + redirectPath
+                + "?email=" + email
+                + "&provider=" + provider;
             CookieCreator.storeOauth2Attribute(response, email, provider);
             response.sendRedirect(redirectUrl);
         }
