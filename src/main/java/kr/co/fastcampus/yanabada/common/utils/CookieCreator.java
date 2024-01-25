@@ -1,8 +1,11 @@
 package kr.co.fastcampus.yanabada.common.utils;
 
+import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
+
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import org.springframework.http.ResponseCookie;
@@ -40,6 +43,7 @@ public class CookieCreator {
                 .secure(true)
                 .path("/")
                 .sameSite("None")
+                .maxAge(REFRESH_TOKEN_EXPIRE_TIME)
                 .build();
             response.addHeader("Set-Cookie", cookie.toString());
         } catch (UnsupportedEncodingException e) {
