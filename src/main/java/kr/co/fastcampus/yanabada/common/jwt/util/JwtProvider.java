@@ -79,7 +79,6 @@ public class JwtProvider {
     }
 
     public String getEmail(String token) {
-        System.out.println("tokenemail = " + token);
         return parseClaims(token).getSubject();
     }
 
@@ -88,21 +87,16 @@ public class JwtProvider {
     }
 
     public String getProvider(String token) {
-        System.out.println("tokenprovider = " + token);
         return parseClaims(token).get("provider", String.class);
     }
 
     private Claims parseClaims(String accessToken) {
-        System.out.println("accessToken = " + accessToken);
         try {
-            System.out.println("accessToken222 = " + accessToken);
             return Jwts.parserBuilder().setSigningKey(secretKey)
                     .build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
-            System.out.println("accessToken3333 = " + accessToken);
             throw new TokenExpiredException();
         } catch (Exception e) {
-            System.out.println("accessToken44444 = " + accessToken);
             throw new ClaimParseFailedException();
         }
     }
