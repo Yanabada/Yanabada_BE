@@ -44,7 +44,7 @@ public class CookieCreator {
                 .path("/")
                 .sameSite("None")
                 .maxAge(REFRESH_TOKEN_EXPIRE_TIME)
-                .domain("localhost")
+                .domain("yanabada.com")
                 .build();
             response.addHeader("Set-Cookie", cookie.toString());
         } catch (UnsupportedEncodingException e) {
