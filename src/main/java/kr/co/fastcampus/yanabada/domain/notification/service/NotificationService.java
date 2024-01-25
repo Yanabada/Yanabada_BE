@@ -20,6 +20,7 @@ import static kr.co.fastcampus.yanabada.domain.notification.property.Notificatio
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.util.internal.StringUtil;
 import java.util.List;
 import java.util.Objects;
 import kr.co.fastcampus.yanabada.common.exception.AccessForbiddenException;
@@ -44,6 +45,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -77,7 +79,7 @@ public class NotificationService {
 
     @Transactional
     public void sendChatCreated(ChatNotificationDto chatDto, String content) {
-        if (!chatDto.receiver().getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(chatDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(CHAT_MESSAGE_TITLE)
                 .body(chatDto.sender().getNickName() + ": " + content)
@@ -100,7 +102,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRequest(TradeNotificationDto tradeNotificationDto) {
-        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_REQUEST_TITLE)
                 .body(
@@ -129,7 +131,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeCanceled(TradeNotificationDto tradeNotificationDto) {
-        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_CANCELED_TITLE)
                 .body(
@@ -159,7 +161,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeApproval(TradeNotificationDto tradeNotificationDto) {
-        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_APPROVAL_TITLE)
                 .body(
@@ -188,7 +190,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRejected(TradeNotificationDto tradeNotificationDto) {
-        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_REJECTED_TITLE)
                 .body(
