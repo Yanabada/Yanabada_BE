@@ -1,12 +1,11 @@
 package kr.co.fastcampus.yanabada.common.security.oauth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import kr.co.fastcampus.yanabada.common.utils.CookieCreator;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +24,9 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final AuthService authService;
     @Value("${spring.login.app-home-url}")
-    String rootUrl;
+    String appUrl;
     @Value("${spring.login.oauth2-redirect-url}")
-    String oauthRedirectUrl;
+    String redirectPath;
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
 
@@ -49,16 +48,11 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         if (isExist) {
             /* 바로 로그인 */
             LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
-            LoginResponse loginResponse
-                = authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
+            authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
         } else {
             /* 회원 가입 필요 */
-            //todo: url 변경 예정
-            String redirectUrl = rootUrl
-                + oauthRedirectUrl
-                + "?email=" + attribute.get("email")
-                + "&provider=" + attribute.get("provider");
-            log.info("oauth redirect url={}", redirectUrl);
+            String redirectUrl = appUrl + redirectPath;
+            CookieCreator.storeOauth2Attribute(response, email, provider);
             response.sendRedirect(redirectUrl);
         }
 
