@@ -65,23 +65,26 @@ public class NotificationService {
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
-        Notification notification = Notification.builder()
-            .title(CHAT_MESSAGE_TITLE)
-            .body(sender.getNickName() + ": " + content)
-            .build();
-        Data data = Data.builder().notificationType(CHAT.name()).build();
-        fcmService.sendToMessage(receiver.getFcmToken(), notification, data);
+        if (!receiver.getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(CHAT_MESSAGE_TITLE)
+                .body(sender.getNickName() + ": " + content)
+                .build();
+            Data data = Data.builder().notificationType(CHAT.name()).build();
+            fcmService.sendToMessage(receiver.getFcmToken(), notification, data);
+        }
     }
 
     @Transactional
     public void sendChatCreated(ChatNotificationDto chatDto, String content) {
-
-        Notification notification = Notification.builder()
-            .title(CHAT_MESSAGE_TITLE)
-            .body(chatDto.sender().getNickName() + ": " + content)
-            .build();
-        Data data = Data.builder().notificationType(CHAT.name()).build();
-        fcmService.sendToMessage(chatDto.receiver().getFcmToken(), notification, data);
+        if (!chatDto.receiver().getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(CHAT_MESSAGE_TITLE)
+                .body(chatDto.sender().getNickName() + ": " + content)
+                .build();
+            Data data = Data.builder().notificationType(CHAT.name()).build();
+            fcmService.sendToMessage(chatDto.receiver().getFcmToken(), notification, data);
+        }
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
@@ -97,17 +100,21 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRequest(TradeNotificationDto tradeNotificationDto) {
-        Notification notification = Notification.builder()
-            .title(TRADE_REQUEST_TITLE)
-            .body(
-                getShortPhrase(tradeNotificationDto.accommodationName())
-                    + TRADE_REQUEST_CONTENT_POSTFIX
-            )
-            .build();
+        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(TRADE_REQUEST_TITLE)
+                .body(
+                    getShortPhrase(tradeNotificationDto.accommodationName())
+                        + TRADE_REQUEST_CONTENT_POSTFIX
+                )
+                .build();
 
-        Data data = Data.builder().notificationType(TRADE_REQUEST.name()).build();
+            Data data = Data.builder().notificationType(TRADE_REQUEST.name()).build();
 
-        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
+            fcmService.sendToMessage(
+                tradeNotificationDto.receiver().getFcmToken(), notification, data
+            );
+        }
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
@@ -122,18 +129,22 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeCanceled(TradeNotificationDto tradeNotificationDto) {
-        Notification notification = Notification.builder()
-            .title(TRADE_CANCELED_TITLE)
-            .body(
-                TRADE_CANCELED_CONTENT_PREFIX
-                    + getShortPhrase(tradeNotificationDto.accommodationName())
-                    + TRADE_CANCELED_CONTENT_POSTFIX
-            )
-            .build();
+        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(TRADE_CANCELED_TITLE)
+                .body(
+                    TRADE_CANCELED_CONTENT_PREFIX
+                        + getShortPhrase(tradeNotificationDto.accommodationName())
+                        + TRADE_CANCELED_CONTENT_POSTFIX
+                )
+                .build();
 
-        Data data = Data.builder().notificationType(TRADE_CANCELED.name()).build();
+            Data data = Data.builder().notificationType(TRADE_CANCELED.name()).build();
 
-        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
+            fcmService.sendToMessage(
+                tradeNotificationDto.receiver().getFcmToken(), notification, data
+            );
+        }
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
@@ -148,17 +159,21 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeApproval(TradeNotificationDto tradeNotificationDto) {
-        Notification notification = Notification.builder()
-            .title(TRADE_APPROVAL_TITLE)
-            .body(
-                getShortPhrase(tradeNotificationDto.accommodationName())
-                    + TRADE_APPROVAL_CONTENT_POSTFIX
-            )
-            .build();
+        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(TRADE_APPROVAL_TITLE)
+                .body(
+                    getShortPhrase(tradeNotificationDto.accommodationName())
+                        + TRADE_APPROVAL_CONTENT_POSTFIX
+                )
+                .build();
 
-        Data data = Data.builder().notificationType(TRADE_APPROVAL.name()).build();
+            Data data = Data.builder().notificationType(TRADE_APPROVAL.name()).build();
 
-        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
+            fcmService.sendToMessage(
+                tradeNotificationDto.receiver().getFcmToken(), notification, data
+            );
+        }
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
@@ -173,17 +188,21 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRejected(TradeNotificationDto tradeNotificationDto) {
-        Notification notification = Notification.builder()
-            .title(TRADE_REJECTED_TITLE)
-            .body(
-                getShortPhrase(tradeNotificationDto.accommodationName())
-                    + TRADE_REJECTED_CONTENT_POSTFIX
-            )
-            .build();
+        if (!tradeNotificationDto.receiver().getFcmToken().isEmpty()) {
+            Notification notification = Notification.builder()
+                .title(TRADE_REJECTED_TITLE)
+                .body(
+                    getShortPhrase(tradeNotificationDto.accommodationName())
+                        + TRADE_REJECTED_CONTENT_POSTFIX
+                )
+                .build();
 
-        Data data = Data.builder().notificationType(TRADE_REJECTED.name()).build();
+            Data data = Data.builder().notificationType(TRADE_REJECTED.name()).build();
 
-        fcmService.sendToMessage(tradeNotificationDto.receiver().getFcmToken(), notification, data);
+            fcmService.sendToMessage(
+                tradeNotificationDto.receiver().getFcmToken(), notification, data
+            );
+        }
 
         NotificationHistory notificationHistory
             = NotificationHistory.builder()
