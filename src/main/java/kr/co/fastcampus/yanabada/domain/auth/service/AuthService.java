@@ -46,10 +46,6 @@ public class AuthService {
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
-    @Value("${spring.cookie.secure}")
-    boolean secure;
-    @Value("${spring.cookie.domain}")
-    String domain;
     @Value("${s3.end-point}")
     private String s3EndPoint;
 

@@ -21,7 +21,6 @@ spring:
   web:
     resources:
       add-mappings: false
-
   security:
     oauth2:
       client:
@@ -50,9 +49,6 @@ spring:
     oauth2-redirect-url: /signin/3
     app-home-url: https://yanabada-fe-1r96.vercel.app
 
-  cookie:
-    secure: false
-    domain: null
 
 jwt:
   secretKey: yanabadaSecretKeyyanabadaSecretKeyyanabadaSecretKey
@@ -77,3 +73,10 @@ firebase:
 s3:
   end-point: https://yanabada-image.s3.ap-northeast-2.amazonaws.com/
 
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+        path: /
+        same-site: none
