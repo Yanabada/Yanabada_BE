@@ -9,15 +9,12 @@ import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.util.List;
 import kr.co.fastcampus.yanabada.common.exception.FcmAccessTokenGetFailedException;
-import kr.co.fastcampus.yanabada.common.exception.FcmMessageSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.exception.OkHttp3RequestFailedException;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Data;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Message;
 import kr.co.fastcampus.yanabada.common.firebase.dto.request.FcmMessageRequest.Notification;
-import kr.co.fastcampus.yanabada.domain.member.entity.Member;
-import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
@@ -34,7 +31,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FcmService {
 
-    private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
     @Value("${firebase.project-id}")
     String projectId;
@@ -78,7 +74,6 @@ public class FcmService {
 
             if (response.code() != 200) {
                 log.error(response.toString());
-                throw new FcmMessageSendFailedException();
             }
 
         } catch (IOException e) {

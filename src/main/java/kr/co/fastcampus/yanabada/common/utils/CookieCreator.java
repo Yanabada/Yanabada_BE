@@ -5,7 +5,6 @@ import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.REFRESH_
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import org.springframework.http.ResponseCookie;
