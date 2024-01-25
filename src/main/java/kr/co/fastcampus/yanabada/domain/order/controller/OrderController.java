@@ -26,8 +26,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseBody<Void> addOrder(@RequestBody OrderSaveRequest request) {
-        orderService.saveOrder(request);
+    public ResponseBody<Void> addOrders(@RequestBody List<OrderSaveRequest> requests) {
+        orderService.saveOrders(requests);
         return ResponseBody.ok();
     }
 
