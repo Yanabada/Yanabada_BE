@@ -67,7 +67,7 @@ public class NotificationService {
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
-        if (!receiver.getFcmToken().isEmpty()) {
+        if (!StringUtils.hasText(receiver.getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(CHAT_MESSAGE_TITLE)
                 .body(sender.getNickName() + ": " + content)
