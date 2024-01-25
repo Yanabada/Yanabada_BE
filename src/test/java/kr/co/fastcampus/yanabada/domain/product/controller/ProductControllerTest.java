@@ -46,7 +46,7 @@ public class ProductControllerTest {
             )
 
             //then
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value("SUCCESS"));
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value("FAIL"));
     }
 }
