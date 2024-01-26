@@ -18,7 +18,6 @@ import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
-import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final MemberService memberService;
 
     @PostMapping("/sign-up")
     public ResponseBody<SignUpResponse> signUp(

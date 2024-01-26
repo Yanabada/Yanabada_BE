@@ -62,6 +62,7 @@ public class AuthService {
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         checkEmailDupl(signUpRequest.email(), EMAIL);
+        mailAuthService.checkEmailIsVerified(signUpRequest.email());
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 

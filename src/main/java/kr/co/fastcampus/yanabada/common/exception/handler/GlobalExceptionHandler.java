@@ -15,6 +15,7 @@ import kr.co.fastcampus.yanabada.common.exception.FcmMessageSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.JsonProcessFailedException;
 import kr.co.fastcampus.yanabada.common.exception.NotMatchedProviderNameException;
 import kr.co.fastcampus.yanabada.common.exception.OkHttp3RequestFailedException;
+import kr.co.fastcampus.yanabada.common.exception.EmailNotVerifiedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenExpiredResponse;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
@@ -197,11 +198,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAuthTimeExpiredException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseBody<Void> emailAuthTimeExpiredException(
         EmailAuthTimeExpiredException e
     ) {
         log.error("[EmailAuthTimeExpiredException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseBody<Void> emailNotVerifiedException(
+        EmailNotVerifiedException e
+    ) {
+        log.error("[EmailNotVerifiedException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
 }

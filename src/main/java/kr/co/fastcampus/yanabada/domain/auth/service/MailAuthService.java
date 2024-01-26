@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailAuthTimeExpiredException;
+import kr.co.fastcampus.yanabada.common.exception.EmailNotVerifiedException;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeDto;
@@ -23,6 +24,7 @@ public class MailAuthService {
     @Value("${email.user}")
     private String user;
     private static final long EMAIL_CODE_EXPIRED_TIME = 3 * 60000L; //3분
+    private static final long EMAIL_MAINTAINED_VERIFIED_TIME = 10 * 60000L; //10분
 
     public void sendEmail(String email) {
         String authCode = makeRandomCode();
@@ -38,8 +40,14 @@ public class MailAuthService {
         if(!findAuthCodeDto.code().equals(code)) return false;
 
         AuthCodeDto newAuthCodeDto = new AuthCodeDto(findAuthCodeDto.code(), true);
-        redisUtils.setDataAsHash(email, newAuthCodeDto, EMAIL_CODE_EXPIRED_TIME);
+        redisUtils.setDataAsHash(email, newAuthCodeDto, EMAIL_MAINTAINED_VERIFIED_TIME);
         return true;
+    }
+
+    public boolean checkEmailIsVerified(String email) {
+        AuthCodeDto findAuthCodeDto = redisUtils.getDataAsHash(email);
+        if(findAuthCodeDto == null) throw new EmailNotVerifiedException();
+        return findAuthCodeDto.isVerified();
     }
 
     private void saveAuthCodeSendHistoryInRedis(String email, String authCode) {
