@@ -1,11 +1,10 @@
 package kr.co.fastcampus.yanabada.domain.auth.service;
 
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
+import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.KAKAO;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
@@ -16,7 +15,6 @@ import kr.co.fastcampus.yanabada.common.utils.CookieCreator;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -26,7 +24,6 @@ import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,9 +55,7 @@ public class AuthService {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
-            throw new EmailDuplicatedException();
-        }
+        checkEmailDupl(signUpRequest.email(), EMAIL);
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 
@@ -82,6 +77,7 @@ public class AuthService {
 
     @Transactional
     public SignUpResponse oauthSignUp(OauthSignUpRequest signUpRequest) {
+        checkEmailDupl(signUpRequest.email(), signUpRequest.provider());
 
         String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
@@ -98,6 +94,12 @@ public class AuthService {
         yanoljaPayRepository.save(YanoljaPay.create(savedMember));
 
         return SignUpResponse.from(savedMember.getId());
+    }
+
+    private void checkEmailDupl(String signUpRequest, ProviderType kakao) {
+        if (memberRepository.existsByEmailAndProviderType(signUpRequest, kakao)) {
+            throw new EmailDuplicatedException();
+        }
     }
 
     private String getRandomProfileImage() {
