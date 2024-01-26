@@ -3,8 +3,10 @@ package kr.co.fastcampus.yanabada.domain.member.service;
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
+import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeVerifyRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailCodeSendRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.AuthCodeVerifyResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
@@ -68,15 +70,22 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public EmailAuthResponse verifyEmail(
-        EmailAuthRequest emailRequest
+    public void sendAuthCodeToEmail(
+        EmailCodeSendRequest emailRequest
     ) {
         boolean isExist = memberRepository
             .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
         if (isExist) {
             throw new EmailDuplicatedException();
         }
-        return new EmailAuthResponse(mailAuthService.sendEmail(emailRequest.email()));
+        mailAuthService.sendEmail(emailRequest.email());
+    }
+
+    @Transactional(readOnly = true)
+    public AuthCodeVerifyResponse verifyAuthCode(AuthCodeVerifyRequest codeRequest) {
+        return new AuthCodeVerifyResponse(
+            mailAuthService.verifyAuthCode(codeRequest.email(), codeRequest.code())
+        );
     }
 
     @Transactional(readOnly = true)

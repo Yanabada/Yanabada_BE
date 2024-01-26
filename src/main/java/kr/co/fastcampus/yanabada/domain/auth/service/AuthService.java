@@ -1,7 +1,6 @@
 package kr.co.fastcampus.yanabada.domain.auth.service;
 
 import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
-import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.KAKAO;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import jakarta.servlet.http.HttpServletResponse;

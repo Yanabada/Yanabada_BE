@@ -4,6 +4,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Random;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
+import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,18 +18,35 @@ public class MailAuthService {
 
     private static final int AUTH_CODE_LENGTH = 6;
     private final JavaMailSender mailSender;
+    private final RedisUtils<AuthCodeDto> redisUtils;
     @Value("${email.user}")
     private String user;
+    private static final long EMAIL_CODE_EXPIRED_TIME = 5 * 60000L; //5분
 
-    public Integer sendEmail(String email) {
-        int authCode = makeRandomCode();
+    public void sendEmail(String email) {
+        String authCode = makeRandomCode();
         String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
         sendToSmtp(user, email, title, content);
-        return authCode;
+        saveAuthCodeSendHistoryInRedis(email, authCode);
     }
 
-    private String makeContent(int authCode) {
+    public boolean verifyAuthCode(String email, String code) {
+        AuthCodeDto findAuthCodeDto = redisUtils.getDataAsHash(email);
+        if(findAuthCodeDto == null) return false;
+        if(!findAuthCodeDto.code().equals(code)) return false;
+
+        AuthCodeDto newAuthCodeDto = new AuthCodeDto(findAuthCodeDto.code(), true);
+        redisUtils.setDataAsHash(email, newAuthCodeDto, EMAIL_CODE_EXPIRED_TIME);
+        return true;
+    }
+
+    private void saveAuthCodeSendHistoryInRedis(String email, String authCode) {
+        AuthCodeDto authCodeDto = new AuthCodeDto(authCode, false);
+        redisUtils.setDataAsHash(email, authCodeDto, EMAIL_CODE_EXPIRED_TIME);
+    }
+
+    private String makeContent(String authCode) {
         return "<br><br>" + "인증 번호는 " + authCode + "입니다.";
     }
 
@@ -46,13 +65,13 @@ public class MailAuthService {
         }
     }
 
-    private Integer makeRandomCode() {
+    private String makeRandomCode() {
         Random r = new Random();
         StringBuilder randomNumber = new StringBuilder();
         for (int i = 0; i < AUTH_CODE_LENGTH; i++) {
             randomNumber.append(r.nextInt(AUTH_CODE_LENGTH));
         }
-        return Integer.parseInt(randomNumber.toString());
+        return randomNumber.toString();
     }
 
 }
