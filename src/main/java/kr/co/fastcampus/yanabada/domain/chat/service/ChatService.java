@@ -144,7 +144,7 @@ public class ChatService {
             .sorted((cr1, cr2) -> {
                 LocalDateTime lastMessageTime1 = cr1.lastSentMessageTime();
                 LocalDateTime lastMessageTime2 = cr2.lastSentMessageTime();
-                return lastMessageTime2.compareTo(lastMessageTime1);
+                return lastMessageTime1.compareTo(lastMessageTime2);
             })
             .toList();
     }
