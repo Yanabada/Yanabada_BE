@@ -51,7 +51,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
         } else {
             /* 회원 가입 필요 */
-            String redirectUrl = appUrl
+            String redirectUrl = "https://www.yanabada.com"
                 + redirectPath
                 + "?email=" + email
                 + "&provider=" + provider;
