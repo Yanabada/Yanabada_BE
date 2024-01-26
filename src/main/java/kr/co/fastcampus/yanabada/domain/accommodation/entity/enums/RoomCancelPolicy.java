@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum RoomCancelPolicy {
-    YNBD_1(7L),
-    YNBD_2(6L),
+    YNBD_1(6L),
+    YNBD_2(5L),
     YNBD_3(Long.MAX_VALUE),
     ;
 

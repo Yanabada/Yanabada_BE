@@ -49,6 +49,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             /* 바로 로그인 */
             LoginRequest loginRequest = new LoginRequest(email, oauthPassword);
             authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
+            response.sendRedirect(appUrl + "/");
         } else {
             /* 회원 가입 필요 */
             String redirectUrl = appUrl
