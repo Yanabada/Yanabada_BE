@@ -84,7 +84,7 @@ public class AuthController {
     }
 
     @PostMapping("/duplication/nickname")
-    public ResponseBody<DuplCheckResponse> checkDuplNickName(
+    public ResponseBody<DuplCheckResponse> checkfDuplNickName(
         @RequestBody @Valid NickNameDuplCheckRequest nickNameRequest
     ) {
         return ResponseBody.ok(authService.isExistNickName(nickNameRequest));

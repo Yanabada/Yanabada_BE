@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kr.co.fastcampus.yanabada.common.exception.BaseException;
+import kr.co.fastcampus.yanabada.common.exception.EmailAuthTimeExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.exception.FcmAccessTokenGetFailedException;
@@ -195,4 +196,12 @@ public class GlobalExceptionHandler {
         return ResponseBody.fail(e.getMessage());
     }
 
+    @ExceptionHandler(EmailAuthTimeExpiredException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseBody<Void> emailAuthTimeExpiredException(
+        EmailAuthTimeExpiredException e
+    ) {
+        log.error("[EmailAuthTimeExpiredException] Message = {}", e.getMessage());
+        return ResponseBody.fail(e.getMessage());
+    }
 }

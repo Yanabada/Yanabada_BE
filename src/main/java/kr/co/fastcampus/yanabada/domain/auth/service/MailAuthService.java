@@ -3,6 +3,7 @@ package kr.co.fastcampus.yanabada.domain.auth.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Random;
+import kr.co.fastcampus.yanabada.common.exception.EmailAuthTimeExpiredException;
 import kr.co.fastcampus.yanabada.common.exception.EmailSendFailedException;
 import kr.co.fastcampus.yanabada.common.redis.RedisUtils;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeDto;
@@ -21,7 +22,7 @@ public class MailAuthService {
     private final RedisUtils<AuthCodeDto> redisUtils;
     @Value("${email.user}")
     private String user;
-    private static final long EMAIL_CODE_EXPIRED_TIME = 5 * 60000L; //5분
+    private static final long EMAIL_CODE_EXPIRED_TIME = 3 * 60000L; //3분
 
     public void sendEmail(String email) {
         String authCode = makeRandomCode();
@@ -33,7 +34,7 @@ public class MailAuthService {
 
     public boolean verifyAuthCode(String email, String code) {
         AuthCodeDto findAuthCodeDto = redisUtils.getDataAsHash(email);
-        if(findAuthCodeDto == null) return false;
+        if(findAuthCodeDto == null) throw new EmailAuthTimeExpiredException();
         if(!findAuthCodeDto.code().equals(code)) return false;
 
         AuthCodeDto newAuthCodeDto = new AuthCodeDto(findAuthCodeDto.code(), true);

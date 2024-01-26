@@ -58,6 +58,8 @@ public enum ErrorCode {
     NOTIFICATION_NOT_FOUND("존재하지 않는 알림입니다."),
     TOKEN_CANNOT_BE_EMPTY("토큰이 비어있습니다."),
 
+    EMAIL_AUTH_TIME_EXPIRED("이메일 인증 시간이 이미 끝났습니다.")
+
     ;
 
     private final String message;
