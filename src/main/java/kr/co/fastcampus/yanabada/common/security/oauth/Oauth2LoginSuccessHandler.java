@@ -51,10 +51,12 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             authService.loginOauth(response, loginRequest, ProviderType.valueOf(provider));
         } else {
             /* 회원 가입 필요 */
-            String redirectUrl = "http://localhost:5173"
+            String redirectUrl = "https://www.yanabada.com"
                 + redirectPath
                 + "?email=" + email
-                + "&provider=" + provider;
+                + "&provider=" + provider
+                + "&test=test";
+            log.info("kakao redirectUrl={}", redirectUrl);
             CookieCreator.storeOauth2Attribute(response, email, provider);
             response.sendRedirect(redirectUrl);
         }
