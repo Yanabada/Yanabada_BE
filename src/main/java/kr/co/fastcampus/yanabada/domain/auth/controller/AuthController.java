@@ -80,21 +80,21 @@ public class AuthController {
     public ResponseBody<DuplCheckResponse> checkDuplEmail(
         @RequestBody @Valid EmailDuplCheckRequest emailRequest
     ) {
-        return ResponseBody.ok(memberService.isExistEmail(emailRequest));
+        return ResponseBody.ok(authService.isExistEmail(emailRequest));
     }
 
     @PostMapping("/duplication/nickname")
     public ResponseBody<DuplCheckResponse> checkDuplNickName(
         @RequestBody @Valid NickNameDuplCheckRequest nickNameRequest
     ) {
-        return ResponseBody.ok(memberService.isExistNickName(nickNameRequest));
+        return ResponseBody.ok(authService.isExistNickName(nickNameRequest));
     }
 
     @PostMapping("/verification-code/email")
     public ResponseBody<Void> sendAuthCodeToEmail(
         @RequestBody @Valid EmailCodeSendRequest emailCodeSendRequest
     ) {
-        memberService.sendAuthCodeToEmail(emailCodeSendRequest);
+        authService.sendAuthCodeToEmail(emailCodeSendRequest);
         return ResponseBody.ok();
     }
 
@@ -102,7 +102,7 @@ public class AuthController {
     public ResponseBody<AuthCodeVerifyResponse> verifyAuthCodeForEmail(
         @RequestBody @Valid AuthCodeVerifyRequest codeRequest
     ) {
-        return ResponseBody.ok(memberService.verifyAuthCode(codeRequest));
+        return ResponseBody.ok(authService.verifyAuthCode(codeRequest));
     }
 
     @PostMapping("/verification/phone")
