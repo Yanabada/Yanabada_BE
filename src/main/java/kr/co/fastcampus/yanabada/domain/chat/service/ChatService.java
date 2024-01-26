@@ -125,7 +125,7 @@ public class ChatService {
         return ChatRoomSummaryResponse.from(
             chatRoom.getCode(),
             partner,
-            messages.get(messages.size() - 1),
+            messages.get(0),
             chatRoom.getProduct(),
             unreadCount
         );
@@ -144,7 +144,7 @@ public class ChatService {
             .sorted((cr1, cr2) -> {
                 LocalDateTime lastMessageTime1 = cr1.lastSentMessageTime();
                 LocalDateTime lastMessageTime2 = cr2.lastSentMessageTime();
-                return lastMessageTime1.compareTo(lastMessageTime2);
+                return lastMessageTime2.compareTo(lastMessageTime1);
             })
             .toList();
     }
