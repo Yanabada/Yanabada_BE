@@ -25,6 +25,15 @@ public class CookieCreator {
         setValueInCookie(response, "provider", String.valueOf(member.getProviderType()));
     }
 
+    public static void storeSocialLoginResponse(
+        HttpServletResponse response,
+        TokenIssueResponse tokenIssue,
+        Member member
+    ) {
+        setValueInCookie(response, "isLoggedIn", "yes");
+        storeLoginResponse(response, tokenIssue, member);
+    }
+
     public static void storeOauth2Attribute(
         HttpServletResponse response,
         String email, String provider
