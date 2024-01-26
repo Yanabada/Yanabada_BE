@@ -24,8 +24,8 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Optional<Trade> findByProductAndStatus(Product product, TradeStatus status);
 
     @Query("SELECT t FROM Trade t "
-        + "WHERE (:role = 'SELLER' AND t.seller = :member OR "
-        + ":role = 'BUYER' AND t.buyer = :member) "
+        + "WHERE (:role = 'SELLER' AND t.seller = :member AND t.hasSellerDeleted = false OR "
+        + ":role = 'BUYER' AND t.buyer = :member AND t.hasBuyerDeleted = false) "
         + "AND (:status IS NULL OR t.status = :status)")
     Page<Trade> findByMemberRoleAndStatus(
         @Param("member") Member member,
