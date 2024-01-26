@@ -32,10 +32,12 @@ public class OrderService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void saveOrder(OrderSaveRequest request) {
-        Room room = roomRepository.getRoom(request.roomId());
-        Member member = memberRepository.getMember(request.memberId());
-        Order order = orderRepository.save(request.toEntity(room, member, LocalDateTime.now()));
+    public void saveOrders(List<OrderSaveRequest> requests) {
+        requests.forEach(request -> {
+            Room room = roomRepository.getRoom(request.roomId());
+            Member member = memberRepository.getMember(request.memberId());
+            Order order = orderRepository.save(request.toEntity(room, member, LocalDateTime.now()));
+        });
     }
 
     @Transactional(readOnly = true)
