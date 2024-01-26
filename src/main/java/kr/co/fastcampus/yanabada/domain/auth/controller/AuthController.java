@@ -16,6 +16,7 @@ import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
@@ -75,6 +76,13 @@ public class AuthController {
         return ResponseBody.ok(
             authService.generateNewAccessToken(JwtUtils.extractTokenFromRawToken(refreshToken))
         );
+    }
+
+    @PostMapping("/duplication/email")
+    public ResponseBody<DuplCheckResponse> checkDuplEmail(
+        @RequestBody EmailDuplCheckRequest emailRequest
+    ) {
+        return ResponseBody.ok(memberService.isExistEmail(emailRequest));
     }
 
     @PostMapping("/duplication/nickname")
