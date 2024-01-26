@@ -166,7 +166,7 @@ public class AuthService {
 
 
     @Transactional(readOnly = true)
-    public void sendAuthCodeToEmail(
+    public void sendAuthCodeToEmailForSignUp(
         EmailCodeSendRequest emailRequest
     ) {
         boolean isExist = memberRepository
@@ -174,7 +174,14 @@ public class AuthService {
         if (isExist) {
             throw new EmailDuplicatedException();
         }
-        mailAuthService.sendEmail(emailRequest.email());
+        mailAuthService.sendAuthCodeToEmail(emailRequest.email());
+    }
+
+    @Transactional(readOnly = true)
+    public void sendAuthCodeToEmailForPwdModify(
+        EmailCodeSendRequest emailRequest
+    ) {
+        mailAuthService.sendAuthCodeToEmail(emailRequest.email());
     }
 
     @Transactional(readOnly = true)
@@ -182,15 +189,6 @@ public class AuthService {
         return new AuthCodeVerifyResponse(
             mailAuthService.verifyAuthCode(codeRequest.email(), codeRequest.code())
         );
-    }
-
-    @Transactional(readOnly = true)
-    public DuplCheckResponse isExistEmail(
-        EmailDuplCheckRequest emailRequest
-    ) {
-        boolean isExist = memberRepository
-            .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
-        return new DuplCheckResponse(isExist);
     }
 
     @Transactional(readOnly = true)
