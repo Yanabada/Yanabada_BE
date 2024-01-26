@@ -74,13 +74,6 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/duplication/email")
-    public ResponseBody<DuplCheckResponse> checkDuplEmail(
-        @RequestBody @Valid EmailDuplCheckRequest emailRequest
-    ) {
-        return ResponseBody.ok(authService.isExistEmail(emailRequest));
-    }
-
     @PostMapping("/duplication/nickname")
     public ResponseBody<DuplCheckResponse> checkfDuplNickName(
         @RequestBody @Valid NickNameDuplCheckRequest nickNameRequest
@@ -88,11 +81,19 @@ public class AuthController {
         return ResponseBody.ok(authService.isExistNickName(nickNameRequest));
     }
 
-    @PostMapping("/verification-code/email")
-    public ResponseBody<Void> sendAuthCodeToEmail(
+    @PostMapping("/verification-code/email/signup")
+    public ResponseBody<Void> sendAuthCodeToEmailForSignUp(
         @RequestBody @Valid EmailCodeSendRequest emailCodeSendRequest
     ) {
-        authService.sendAuthCodeToEmail(emailCodeSendRequest);
+        authService.sendAuthCodeToEmailForSignUp(emailCodeSendRequest);
+        return ResponseBody.ok();
+    }
+
+    @PostMapping("/verification-code/email/password")
+    public ResponseBody<Void> sendAuthCodeToEmailForPwdModify(
+        @RequestBody @Valid EmailCodeSendRequest emailCodeSendRequest
+    ) {
+        authService.sendAuthCodeToEmailForPwdModify(emailCodeSendRequest);
         return ResponseBody.ok();
     }
 

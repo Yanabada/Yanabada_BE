@@ -26,7 +26,7 @@ public class MailAuthService {
     private static final long EMAIL_CODE_EXPIRED_TIME = 3 * 60000L; //3분
     private static final long EMAIL_MAINTAINED_VERIFIED_TIME = 10 * 60000L; //10분
 
-    public void sendEmail(String email) {
+    public void sendAuthCodeToEmail(String email) {
         String authCode = makeRandomCode();
         String title = "[Yanabada]회원 가입 인증 이메일 입니다.";
         String content = makeContent(authCode);
