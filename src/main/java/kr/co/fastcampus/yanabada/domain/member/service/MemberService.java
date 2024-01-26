@@ -1,18 +1,9 @@
 package kr.co.fastcampus.yanabada.domain.member.service;
 
-import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
-
-import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
-import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PasswordModifyRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.PhoneNumberModifyRequest;
-import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.MemberDetailResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
@@ -30,7 +21,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MailAuthService mailAuthService;
 
     @Transactional(readOnly = true)
     public MemberDetailResponse findMember(String email, ProviderType providerType) {
@@ -65,35 +55,6 @@ public class MemberService {
     ) {
         Member member = memberRepository.getMember(email, providerType);
         member.updatePhoneNumber(phoneNumberRequest.phoneNumber());
-    }
-
-    @Transactional(readOnly = true)
-    public EmailAuthResponse verifyEmail(
-        EmailAuthRequest emailRequest
-    ) {
-        boolean isExist = memberRepository
-            .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
-        if (isExist) {
-            throw new EmailDuplicatedException();
-        }
-        return new EmailAuthResponse(mailAuthService.sendEmail(emailRequest.email()));
-    }
-
-    @Transactional(readOnly = true)
-    public DuplCheckResponse isExistEmail(
-        EmailDuplCheckRequest emailRequest
-    ) {
-        boolean isExist = memberRepository
-            .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
-        return new DuplCheckResponse(isExist);
-    }
-
-    @Transactional(readOnly = true)
-    public DuplCheckResponse isExistNickName(
-        NickNameDuplCheckRequest nickNameRequest
-    ) {
-        boolean isExist = memberRepository.existsByNickName(nickNameRequest.nickName());
-        return new DuplCheckResponse(isExist);
     }
 
     @Transactional
