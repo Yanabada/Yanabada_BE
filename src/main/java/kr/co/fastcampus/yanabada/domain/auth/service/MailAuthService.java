@@ -36,8 +36,12 @@ public class MailAuthService {
 
     public boolean verifyAuthCode(String email, String code) {
         AuthCodeDto findAuthCodeDto = redisUtils.getDataAsHash(email);
-        if(findAuthCodeDto == null) throw new EmailAuthTimeExpiredException();
-        if(!findAuthCodeDto.code().equals(code)) return false;
+        if (findAuthCodeDto == null) {
+            throw new EmailAuthTimeExpiredException();
+        }
+        if (!findAuthCodeDto.code().equals(code)) {
+            return false;
+        }
 
         AuthCodeDto newAuthCodeDto = new AuthCodeDto(findAuthCodeDto.code(), true);
         redisUtils.setDataAsHash(email, newAuthCodeDto, EMAIL_MAINTAINED_VERIFIED_TIME);
@@ -46,7 +50,9 @@ public class MailAuthService {
 
     public boolean checkEmailIsVerified(String email) {
         AuthCodeDto findAuthCodeDto = redisUtils.getDataAsHash(email);
-        if(findAuthCodeDto == null) throw new EmailNotVerifiedException();
+        if (findAuthCodeDto == null) {
+            throw new EmailNotVerifiedException();
+        }
         return findAuthCodeDto.isVerified();
     }
 
