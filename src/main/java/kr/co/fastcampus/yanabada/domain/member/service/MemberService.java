@@ -6,6 +6,7 @@ import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.MailAuthService;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.FcmTokenUpdateRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameModifyRequest;
@@ -76,6 +77,15 @@ public class MemberService {
             throw new EmailDuplicatedException();
         }
         return new EmailAuthResponse(mailAuthService.sendEmail(emailRequest.email()));
+    }
+
+    @Transactional(readOnly = true)
+    public DuplCheckResponse isExistEmail(
+        EmailDuplCheckRequest emailRequest
+    ) {
+        boolean isExist = memberRepository
+            .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
+        return new DuplCheckResponse(isExist);
     }
 
     @Transactional(readOnly = true)
