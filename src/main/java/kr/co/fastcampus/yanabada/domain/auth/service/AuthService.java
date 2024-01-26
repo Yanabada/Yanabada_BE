@@ -135,7 +135,7 @@ public class AuthService {
                 .generateTokenInfo(loginRequest.email(), ROLE_USER.name(), providerType.name());
         }
         Member member = memberRepository.getMember(loginRequest.email(), providerType);
-        CookieCreator.storeSocialLoginResponse(response, tokenIssue, member);
+        CookieCreator.storeLoginResponse(response, tokenIssue, member);
     }
 
     @Transactional
