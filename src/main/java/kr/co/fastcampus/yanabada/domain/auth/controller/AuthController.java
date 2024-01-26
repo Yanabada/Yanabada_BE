@@ -4,25 +4,22 @@ import static kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant.AUTHORIZ
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtUtils;
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
-import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailAuthRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeVerifyRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailCodeSendRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.EmailAuthResponse;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.AuthCodeVerifyResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
 import kr.co.fastcampus.yanabada.domain.auth.service.AuthService;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.EmailDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
 import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
-import kr.co.fastcampus.yanabada.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final MemberService memberService;
 
     @PostMapping("/sign-up")
     public ResponseBody<SignUpResponse> signUp(
@@ -80,23 +76,31 @@ public class AuthController {
 
     @PostMapping("/duplication/email")
     public ResponseBody<DuplCheckResponse> checkDuplEmail(
-        @RequestBody EmailDuplCheckRequest emailRequest
+        @RequestBody @Valid EmailDuplCheckRequest emailRequest
     ) {
-        return ResponseBody.ok(memberService.isExistEmail(emailRequest));
+        return ResponseBody.ok(authService.isExistEmail(emailRequest));
     }
 
     @PostMapping("/duplication/nickname")
-    public ResponseBody<DuplCheckResponse> checkDuplNickName(
-        @RequestBody NickNameDuplCheckRequest nickNameRequest
+    public ResponseBody<DuplCheckResponse> checkfDuplNickName(
+        @RequestBody @Valid NickNameDuplCheckRequest nickNameRequest
     ) {
-        return ResponseBody.ok(memberService.isExistNickName(nickNameRequest));
+        return ResponseBody.ok(authService.isExistNickName(nickNameRequest));
+    }
+
+    @PostMapping("/verification-code/email")
+    public ResponseBody<Void> sendAuthCodeToEmail(
+        @RequestBody @Valid EmailCodeSendRequest emailCodeSendRequest
+    ) {
+        authService.sendAuthCodeToEmail(emailCodeSendRequest);
+        return ResponseBody.ok();
     }
 
     @PostMapping("/verification/email")
-    public ResponseBody<EmailAuthResponse> verifyEmail(
-        @RequestBody EmailAuthRequest emailAuthRequest
+    public ResponseBody<AuthCodeVerifyResponse> verifyAuthCodeForEmail(
+        @RequestBody @Valid AuthCodeVerifyRequest codeRequest
     ) {
-        return ResponseBody.ok(memberService.verifyEmail(emailAuthRequest));
+        return ResponseBody.ok(authService.verifyAuthCode(codeRequest));
     }
 
     @PostMapping("/verification/phone")
