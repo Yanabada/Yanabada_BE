@@ -16,6 +16,7 @@ public class CookieCreator {
         TokenIssueResponse tokenIssue,
         Member member
     ) {
+        setValueInCookie(response, "isLoggedIn", "yes");
         setValueInCookie(response, "accessToken", tokenIssue.accessToken());
         setValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
         setValueInCookie(response, "id", String.valueOf(member.getId()));
@@ -23,15 +24,6 @@ public class CookieCreator {
         setValueInCookie(response, "nickName", String.valueOf(member.getNickName()));
         setValueInCookie(response, "image", String.valueOf(member.getImage()));
         setValueInCookie(response, "provider", String.valueOf(member.getProviderType()));
-    }
-
-    public static void storeSocialLoginResponse(
-        HttpServletResponse response,
-        TokenIssueResponse tokenIssue,
-        Member member
-    ) {
-        setValueInCookie(response, "isLoggedIn", "yes");
-        storeLoginResponse(response, tokenIssue, member);
     }
 
     public static void storeOauth2Attribute(
