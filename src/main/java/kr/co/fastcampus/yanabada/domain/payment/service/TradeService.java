@@ -219,6 +219,7 @@ public class TradeService {
 
         if (Objects.equals(member, trade.getSeller())) {
             trade.deleteBySeller();
+            productRepository.delete(productRepository.getProduct(trade.getProduct().getId()));
         } else if (Objects.equals(member, trade.getBuyer())) {
             trade.deleteByBuyer();
         } else {
