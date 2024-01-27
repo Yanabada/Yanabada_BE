@@ -1,10 +1,10 @@
-package kr.co.fastcampus.yanabada.domain.payment.dto.response;
+package kr.co.fastcampus.yanabada.domain.trade.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.trade.entity.Trade;
+import kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus;
 import lombok.Builder;
 
 
