@@ -92,7 +92,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         NumberTemplate<Integer> salesPercentage = Expressions.numberTemplate(
             Integer.class,
             "(({0} - {1}) * 100) / {0}",
-            order.price,
+            room.price,
             product.price
         );
         NumberExpression<Integer> statusValue = new CaseBuilder()
