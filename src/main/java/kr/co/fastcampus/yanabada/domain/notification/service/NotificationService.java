@@ -67,7 +67,7 @@ public class NotificationService {
 
     @Transactional
     public void sendChatMessage(Member sender, Member receiver, String content) {
-        if (!StringUtils.hasText(receiver.getFcmToken())) {
+        if (StringUtils.hasText(receiver.getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(CHAT_MESSAGE_TITLE)
                 .body(sender.getNickName() + ": " + content)
@@ -79,7 +79,7 @@ public class NotificationService {
 
     @Transactional
     public void sendChatCreated(ChatNotificationDto chatDto, String content) {
-        if (!StringUtils.hasText(chatDto.receiver().getFcmToken())) {
+        if (StringUtils.hasText(chatDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(CHAT_MESSAGE_TITLE)
                 .body(chatDto.sender().getNickName() + ": " + content)
@@ -102,7 +102,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRequest(TradeNotificationDto tradeNotificationDto) {
-        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
+        if (StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_REQUEST_TITLE)
                 .body(
@@ -131,7 +131,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeCanceled(TradeNotificationDto tradeNotificationDto) {
-        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
+        if (StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_CANCELED_TITLE)
                 .body(
@@ -161,7 +161,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeApproval(TradeNotificationDto tradeNotificationDto) {
-        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
+        if (StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_APPROVAL_TITLE)
                 .body(
@@ -190,7 +190,7 @@ public class NotificationService {
 
     @Transactional
     public void sendTradeRejected(TradeNotificationDto tradeNotificationDto) {
-        if (!StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
+        if (StringUtils.hasText(tradeNotificationDto.receiver().getFcmToken())) {
             Notification notification = Notification.builder()
                 .title(TRADE_REJECTED_TITLE)
                 .body(
