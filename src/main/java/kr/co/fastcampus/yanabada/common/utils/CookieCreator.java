@@ -16,6 +16,7 @@ public class CookieCreator {
         TokenIssueResponse tokenIssue,
         Member member
     ) {
+        setValueInCookie(response, "isLoggedIn", "yes");
         setValueInCookie(response, "accessToken", tokenIssue.accessToken());
         setValueInCookie(response, "refreshToken", tokenIssue.refreshToken());
         setValueInCookie(response, "id", String.valueOf(member.getId()));

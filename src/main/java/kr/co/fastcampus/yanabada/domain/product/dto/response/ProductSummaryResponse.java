@@ -50,7 +50,7 @@ public record ProductSummaryResponse(
             .saleEnd(product.getSaleEndDate())
             .rating(room.getRating())
             .salesPercentage(
-                SalesPercentageCalculator.calculate(order.getPrice(), product.getPrice())
+                SalesPercentageCalculator.calculate(room.getPrice(), product.getPrice())
             )
             .canNegotiate(product.getCanNegotiate())
             .price(room.getPrice())

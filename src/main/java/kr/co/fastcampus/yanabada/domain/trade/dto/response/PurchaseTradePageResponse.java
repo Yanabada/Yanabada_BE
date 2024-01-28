@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.payment.dto.response;
+package kr.co.fastcampus.yanabada.domain.trade.dto.response;
 
 import java.util.List;
 import lombok.Builder;

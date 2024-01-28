@@ -20,9 +20,11 @@ public interface ProductRepository
     @Query("SELECT p FROM Product p "
         + "JOIN FETCH p.order o "
         + "JOIN FETCH o.member m "
+        + "LEFT JOIN Trade t ON t.product = p "
         + "WHERE m = :member "
-        + "AND (:status IS NULL OR p.status = :status)"
-        + "AND p.status != 'CANCELED'")
+        + "AND (:status IS NULL OR p.status = :status) "
+        + "AND p.status != 'CANCELED' "
+        + "AND (p.status != 'SOLD_OUT' OR (p.status = 'SOLD_OUT' AND t.hasSellerDeleted = false))")
     Page<Product> findProductsByMemberAndStatus(
         @Param("member") Member member,
         @Param("status") ProductStatus status,
