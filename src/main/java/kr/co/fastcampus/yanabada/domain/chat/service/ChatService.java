@@ -125,7 +125,7 @@ public class ChatService {
         return ChatRoomSummaryResponse.from(
             chatRoom.getCode(),
             partner,
-            messages.get(messages.size() - 1),
+            messages.get(0),
             chatRoom.getProduct(),
             unreadCount
         );

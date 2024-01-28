@@ -1,15 +1,15 @@
-package kr.co.fastcampus.yanabada.domain.payment.controller;
+package kr.co.fastcampus.yanabada.domain.trade.controller;
 
 import kr.co.fastcampus.yanabada.common.response.ResponseBody;
 import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
-import kr.co.fastcampus.yanabada.domain.payment.dto.request.TradeSaveRequest;
-import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradeInfoResponse;
-import kr.co.fastcampus.yanabada.domain.payment.dto.response.ApprovalTradePageResponse;
-import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradeInfoResponse;
-import kr.co.fastcampus.yanabada.domain.payment.dto.response.PurchaseTradePageResponse;
-import kr.co.fastcampus.yanabada.domain.payment.dto.response.TradeIdResponse;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
-import kr.co.fastcampus.yanabada.domain.payment.service.TradeService;
+import kr.co.fastcampus.yanabada.domain.trade.dto.request.TradeSaveRequest;
+import kr.co.fastcampus.yanabada.domain.trade.dto.response.ApprovalTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.trade.dto.response.ApprovalTradePageResponse;
+import kr.co.fastcampus.yanabada.domain.trade.dto.response.PurchaseTradeInfoResponse;
+import kr.co.fastcampus.yanabada.domain.trade.dto.response.PurchaseTradePageResponse;
+import kr.co.fastcampus.yanabada.domain.trade.dto.response.TradeIdResponse;
+import kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

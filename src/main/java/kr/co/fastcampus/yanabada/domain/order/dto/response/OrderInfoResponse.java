@@ -51,7 +51,7 @@ public record OrderInfoResponse(
             .checkOutDate(order.getCheckOutDate())
             .checkInTime(room.getCheckInTime())
             .checkOutTime(room.getCheckOutTime())
-            .price(order.getPrice())
+            .price(room.getPrice())
             .minHeadCount(room.getMinHeadCount())
             .maxHeadCount(room.getMaxHeadCount())
             .reservationPersonName(order.getReservationPersonName())
