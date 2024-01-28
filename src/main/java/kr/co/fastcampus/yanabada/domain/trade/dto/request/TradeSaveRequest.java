@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.payment.dto.request;
+package kr.co.fastcampus.yanabada.domain.trade.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -9,8 +9,8 @@ import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
 import kr.co.fastcampus.yanabada.common.utils.PayFeeCalculator;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
-import kr.co.fastcampus.yanabada.domain.payment.entity.Trade;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.trade.entity.Trade;
+import kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 
 public record TradeSaveRequest(

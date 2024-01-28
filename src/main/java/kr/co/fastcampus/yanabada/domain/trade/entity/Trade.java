@@ -1,8 +1,8 @@
-package kr.co.fastcampus.yanabada.domain.payment.entity;
+package kr.co.fastcampus.yanabada.domain.trade.entity;
 
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.CANCELED;
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.COMPLETED;
-import static kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus.REJECTED;
+import static kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus.CANCELED;
+import static kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus.COMPLETED;
+import static kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus.REJECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import kr.co.fastcampus.yanabada.common.baseentity.BaseEntity;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
-import kr.co.fastcampus.yanabada.domain.payment.entity.enums.TradeStatus;
+import kr.co.fastcampus.yanabada.domain.trade.entity.enums.TradeStatus;
 import kr.co.fastcampus.yanabada.domain.product.entity.Product;
 import lombok.AccessLevel;
 import lombok.Getter;

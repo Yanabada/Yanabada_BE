@@ -52,7 +52,7 @@ public record ProductInfoResponse(
             .price(room.getPrice())
             .purchasePrice(order.getPrice())
             .salesPercentage(
-                SalesPercentageCalculator.calculate(order.getPrice(), product.getPrice())
+                SalesPercentageCalculator.calculate(room.getPrice(), product.getPrice())
             )
             .orderCode(order.getCode())
             .isAutoCancel(product.getIsAutoCancel())

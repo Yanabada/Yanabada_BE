@@ -55,7 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             /* 로그아웃 된 토큰 사용 */
             throw new TokenNotExistAtCacheException();
         }
-        System.out.println("token3 = " + token);
+
         try {
             Member findMember = memberRepository
                 .getMember(email, ProviderType.valueOf(provider));
