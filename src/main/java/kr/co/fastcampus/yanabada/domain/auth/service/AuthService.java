@@ -4,29 +4,40 @@ import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
 import static kr.co.fastcampus.yanabada.domain.member.entity.RoleType.ROLE_USER;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Random;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 import kr.co.fastcampus.yanabada.common.exception.EmailDuplicatedException;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenRefreshResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
 import kr.co.fastcampus.yanabada.common.jwt.util.JwtProvider;
 import kr.co.fastcampus.yanabada.common.utils.CookieCreator;
+import kr.co.fastcampus.yanabada.common.utils.EntityCodeGenerator;
+import kr.co.fastcampus.yanabada.common.utils.RandomNumberGenerator;
+import kr.co.fastcampus.yanabada.domain.accommodation.entity.Room;
+import kr.co.fastcampus.yanabada.domain.accommodation.repository.RoomRepository;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.AuthCodeVerifyRequest;
+import kr.co.fastcampus.yanabada.domain.auth.dto.request.EmailCodeSendRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.LoginRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.OauthSignUpRequest;
 import kr.co.fastcampus.yanabada.domain.auth.dto.request.SignUpRequest;
-import kr.co.fastcampus.yanabada.domain.auth.dto.response.LoginResponse;
+import kr.co.fastcampus.yanabada.domain.auth.dto.response.AuthCodeVerifyResponse;
 import kr.co.fastcampus.yanabada.domain.auth.dto.response.SignUpResponse;
+import kr.co.fastcampus.yanabada.domain.member.dto.request.NickNameDuplCheckRequest;
+import kr.co.fastcampus.yanabada.domain.member.dto.response.DuplCheckResponse;
 import kr.co.fastcampus.yanabada.domain.member.entity.Member;
 import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
+import kr.co.fastcampus.yanabada.domain.order.entity.Order;
+import kr.co.fastcampus.yanabada.domain.order.entity.enums.OrderStatus;
+import kr.co.fastcampus.yanabada.domain.order.entity.enums.PaymentType;
+import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.payment.entity.YanoljaPay;
 import kr.co.fastcampus.yanabada.domain.payment.repository.YanoljaPayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,9 +51,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class AuthService {
 
+    private static final String DUMMY_PERSON_NAME = "홍길동";
+    private static final String DUMMY_PERSON_PHONE_NUMBER = "010-1234-1234";
     private static final String PROFILE_AND_PNG_EXTENSION = "profile.png";
     private static final int PROFILE_IMAGE_BOUND = 5;
-    private static final Random RANDOM = new Random();
+    private static final int PROFILE_IMAGE_ORIGIN = 0;
+    private static final int ROOM_ID_BOUND = 101;
+    private static final int ROOM_ID_ORIGIN = 1;
 
     @Value("${spring.login.oauth2-password}")
     String oauthPassword;
@@ -51,19 +66,20 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
     private final YanoljaPayRepository yanoljaPayRepository;
+    private final RoomRepository roomRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenService tokenService;
+    private final MailAuthService mailAuthService;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByEmailAndProviderType(signUpRequest.email(), EMAIL)) {
-            throw new EmailDuplicatedException();
-        }
+        checkEmailDuplication(signUpRequest.email(), EMAIL);
+        mailAuthService.checkEmailIsVerified(signUpRequest.email());
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
-
         Member member = Member.builder()
             .email(signUpRequest.email())
             .nickName(signUpRequest.nickName())
@@ -76,12 +92,14 @@ public class AuthService {
 
         Member savedMember = memberRepository.save(member);
         yanoljaPayRepository.save(YanoljaPay.create(savedMember));
+        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder(member)));
 
         return SignUpResponse.from(savedMember.getId());
     }
 
     @Transactional
     public SignUpResponse oauthSignUp(OauthSignUpRequest signUpRequest) {
+        checkEmailDuplication(signUpRequest.email(), signUpRequest.provider());
 
         String encodedPassword = passwordEncoder.encode(oauthPassword);
         Member member = Member.builder()
@@ -96,13 +114,42 @@ public class AuthService {
 
         Member savedMember = memberRepository.save(member);
         yanoljaPayRepository.save(YanoljaPay.create(savedMember));
+        IntStream.range(0, 2).forEach(i -> orderRepository.save(createRandomDummyOrder(member)));
 
         return SignUpResponse.from(savedMember.getId());
     }
 
+    private void checkEmailDuplication(String signUpRequest, ProviderType kakao) {
+        if (memberRepository.existsByEmailAndProviderType(signUpRequest, kakao)) {
+            throw new EmailDuplicatedException();
+        }
+    }
+
     private String getRandomProfileImage() {
-        int randomNumber = RANDOM.nextInt(PROFILE_IMAGE_BOUND);
+        int randomNumber =
+            RandomNumberGenerator.generate(PROFILE_IMAGE_ORIGIN, PROFILE_IMAGE_BOUND);
         return s3EndPoint + randomNumber + PROFILE_AND_PNG_EXTENSION;
+    }
+
+    private Order createRandomDummyOrder(Member member) {
+        int randomRoomId = RandomNumberGenerator.generate(ROOM_ID_ORIGIN, ROOM_ID_BOUND);
+        Room randomRoom = roomRepository.getRoom((long) randomRoomId);
+        LocalDate checkInDate = LocalDate.now().plusDays(4);
+        return Order.create(
+            randomRoom,
+            member,
+            checkInDate,
+            checkInDate.plusDays(1),
+            OrderStatus.RESERVED,
+            randomRoom.getPrice(),
+            DUMMY_PERSON_NAME,
+            DUMMY_PERSON_PHONE_NUMBER,
+            DUMMY_PERSON_NAME,
+            DUMMY_PERSON_PHONE_NUMBER,
+            LocalDateTime.now(),
+            PaymentType.CREDIT,
+            EntityCodeGenerator.generate()
+        );
     }
 
     @Transactional
@@ -153,5 +200,39 @@ public class AuthService {
         String newAccessToken = jwtProvider.generateAccessToken(email, role, provider);
         tokenService.updateAccessToken(email, provider, newAccessToken);
         return new TokenRefreshResponse(newAccessToken);
+    }
+
+    @Transactional(readOnly = true)
+    public void sendAuthCodeToEmailForSignUp(
+        EmailCodeSendRequest emailRequest
+    ) {
+        boolean isExist = memberRepository
+            .existsByEmailAndProviderType(emailRequest.email(), EMAIL);
+        if (isExist) {
+            throw new EmailDuplicatedException();
+        }
+        mailAuthService.sendAuthCodeToEmail(emailRequest.email());
+    }
+
+    @Transactional(readOnly = true)
+    public void sendAuthCodeToEmailForPwdModify(
+        EmailCodeSendRequest emailRequest
+    ) {
+        mailAuthService.sendAuthCodeToEmail(emailRequest.email());
+    }
+
+    @Transactional(readOnly = true)
+    public AuthCodeVerifyResponse verifyAuthCode(AuthCodeVerifyRequest codeRequest) {
+        return new AuthCodeVerifyResponse(
+            mailAuthService.verifyAuthCode(codeRequest.email(), codeRequest.code())
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public DuplCheckResponse isExistNickName(
+        NickNameDuplCheckRequest nickNameRequest
+    ) {
+        boolean isExist = memberRepository.existsByNickName(nickNameRequest.nickName());
+        return new DuplCheckResponse(isExist);
     }
 }
