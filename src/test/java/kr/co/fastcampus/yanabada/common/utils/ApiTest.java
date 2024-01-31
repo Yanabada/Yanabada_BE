@@ -48,12 +48,12 @@ public abstract class ApiTest {
 
     @BeforeEach
     public void setup() {
-        memberRepository.save(createBuyer());
         Accommodation accommodation = accommodationRepository.save(createAccommodation());
         accommodationOptionRepository.save(createAccommodationOption(accommodation));
         Room room = roomRepository.save(createRoom(accommodation));
         roomOptionRepository.save(createRoomOption(room));
         Member seller = memberRepository.save(createSeller());
         Order order = orderRepository.save(createOrder(room, seller));
+        memberRepository.save(createBuyer());
     }
 }
