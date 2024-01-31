@@ -103,11 +103,23 @@ public class TestUtils {
         );
     }
 
-    public static Member createMember() {
+    public static Member createSeller() {
         return Member.builder()
-            .email("test@test.com")
-            .nickName("testNickname")
-            .password("1234")
+            .email("seller@test.com")
+            .nickName("sellerNickname")
+            .password("password123!")
+            .phoneNumber("010-1234-1234")
+            .roleType(ROLE_USER)
+            .image("a.jpg")
+            .providerType(EMAIL)
+            .build();
+    }
+
+    public static Member createBuyer() {
+        return Member.builder()
+            .email("buyer@test.com")
+            .nickName("buyerNickname")
+            .password("password123")
             .phoneNumber("010-1234-1234")
             .roleType(ROLE_USER)
             .image("a.jpg")

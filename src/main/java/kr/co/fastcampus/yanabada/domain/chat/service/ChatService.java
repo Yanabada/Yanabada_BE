@@ -51,10 +51,10 @@ public class ChatService {
     public ChatRoomInfoResponse getOrSaveChatRoom(ChatRoomSaveRequest request) {
         Product product = productRepository.getProduct(request.productId());
         checkNegotiationPossibility(product);
-        Long sellerId = product.getOrder().getMember().getId();
-        Long buyerId = request.buyerId();
-        checkIfOwnProduct(sellerId, buyerId);
-        return getChatRoomInfoResponse(request, product, sellerId, buyerId);
+        Member seller = memberRepository.getMember(product.getOrder().getMember().getId());
+        Member buyer = memberRepository.getMember(request.buyerId());
+        checkIfOwnProduct(seller, buyer);
+        return getChatRoomInfoResponse(request, product, seller, buyer);
     }
 
     private void checkNegotiationPossibility(Product product) {
@@ -65,23 +65,21 @@ public class ChatService {
         }
     }
 
-    private void checkIfOwnProduct(Long sellerId, Long buyerId) {
-        if (Objects.equals(sellerId, buyerId)) {
+    private void checkIfOwnProduct(Member seller, Member buyer) {
+        if (Objects.equals(seller, buyer)) {
             throw new CannotNegotiateOwnProductException();
         }
     }
 
     private ChatRoomInfoResponse getChatRoomInfoResponse(
-        ChatRoomSaveRequest request, Product product, Long sellerId, Long buyerId
+        ChatRoomSaveRequest request, Product product, Member seller, Member buyer
     ) {
-        Optional<ChatRoom> foundChatRoom = chatRoomRepository.findByProductIdAndSellerIdAndBuyerId(
-            product.getId(), sellerId, buyerId
+        Optional<ChatRoom> foundChatRoom = chatRoomRepository.findByProductIdAndSellerAndBuyer(
+            product.getId(), seller, buyer
         );
         if (foundChatRoom.isPresent()) {
             return ChatRoomInfoResponse.from(foundChatRoom.get());
         } else {
-            Member seller = memberRepository.getMember(sellerId);
-            Member buyer = memberRepository.getMember(buyerId);
             LocalDateTime now = LocalDateTime.now();
             ChatRoom chatRoom = chatRoomRepository.save(
                 request.toEntity(product, seller, buyer, now, now)
