@@ -42,7 +42,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseBody<OrderInfoResponse> getOrderInfo(
-        @PathVariable Long orderId,
+        @PathVariable("orderId") Long orderId,
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         return ResponseBody.ok(orderService.getOrderInfo(orderId, principalDetails.id()));
