@@ -13,12 +13,18 @@ import java.security.Key;
 import java.util.Date;
 import kr.co.fastcampus.yanabada.common.exception.ClaimParseFailedException;
 import kr.co.fastcampus.yanabada.common.exception.TokenExpiredException;
-import kr.co.fastcampus.yanabada.common.jwt.constant.JwtConstant;
 import kr.co.fastcampus.yanabada.common.jwt.dto.TokenIssueResponse;
 import kr.co.fastcampus.yanabada.common.jwt.service.TokenService;
+import kr.co.fastcampus.yanabada.common.security.PrincipalDetails;
+import kr.co.fastcampus.yanabada.domain.member.entity.Member;
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
+import kr.co.fastcampus.yanabada.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -27,6 +33,7 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
 
     private final TokenService tokenService;
+    private final MemberRepository memberRepository;
 
     @Value("${jwt.secretKey}")
     private String secretKeyPlain;
@@ -99,5 +106,27 @@ public class JwtProvider {
         } catch (Exception e) {
             throw new ClaimParseFailedException();
         }
+    }
+
+    public boolean isLoggedOut(String email, String provider) {
+        return !tokenService.isExistToken(email, provider);
+    }
+
+    public void saveAuthInContextHolder(
+        String email, ProviderType providerType
+    ) {
+        Member findMember = memberRepository
+            .getMember(email, providerType);
+        PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
+
+        // SecurityContext에 인증 객체를 등록
+        Authentication auth = getAuthentication(principalDetails);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    private Authentication getAuthentication(PrincipalDetails principal) {
+        return new UsernamePasswordAuthenticationToken(
+            principal, "", principal.getAuthorities()
+        );
     }
 }

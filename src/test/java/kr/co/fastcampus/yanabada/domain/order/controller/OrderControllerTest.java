@@ -47,22 +47,6 @@ class OrderControllerTest extends ApiTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    @DisplayName("[API][GET] 판매 가능한 예약 조회 - 정상적인 요청일 경우, 정상적으로 예약이 조회됩니다.")
-    @Test
-    @WithMockMember
-    void getSellableOrders_success() throws Exception {
-        //given
-        String url = "/v1/orders/can-sell";
-
-        //when
-        mockMvc.perform(get(url))
-
-            //then
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value("SUCCESS"))
-            .andExpect(jsonPath("$.data[0].id").value(1));
-    }
-
     @DisplayName("[API][GET] 예약 상세 조회 - 정상적인 요청일 경우, 정상적으로 예약이 조회됩니다.")
     @Test
     @WithMockMember

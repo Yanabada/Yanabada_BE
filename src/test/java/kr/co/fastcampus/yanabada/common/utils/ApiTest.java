@@ -4,6 +4,7 @@ import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createAccommodati
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createAccommodationOption;
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createBuyer;
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createOrder;
+import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createProduct;
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createRoom;
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createRoomOption;
 import static kr.co.fastcampus.yanabada.common.utils.TestUtils.createSeller;
@@ -20,8 +21,12 @@ import kr.co.fastcampus.yanabada.domain.order.entity.Order;
 import kr.co.fastcampus.yanabada.domain.order.repository.OrderRepository;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@ExtendWith(DatabaseClearExtension.class)
+@SpringBootTest
 public abstract class ApiTest {
 
     @Autowired
@@ -45,9 +50,8 @@ public abstract class ApiTest {
     @Autowired
     private ProductRepository productRepository;
 
-
     @BeforeEach
-    public void setup() {
+    void setup() {
         Accommodation accommodation = accommodationRepository.save(createAccommodation());
         accommodationOptionRepository.save(createAccommodationOption(accommodation));
         Room room = roomRepository.save(createRoom(accommodation));
@@ -55,5 +59,6 @@ public abstract class ApiTest {
         Member seller = memberRepository.save(createSeller());
         Order order = orderRepository.save(createOrder(room, seller));
         memberRepository.save(createBuyer());
+        productRepository.save(createProduct(order));
     }
 }
