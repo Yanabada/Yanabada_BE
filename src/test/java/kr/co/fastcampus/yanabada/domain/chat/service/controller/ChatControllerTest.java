@@ -92,9 +92,9 @@ public class ChatControllerTest extends ApiTest {
             """;
 
         ResultActions resultActions = mockMvc.perform(post(url)
-                .content(request)
-                .contentType(MEDIA_TYPE)
-            );
+            .content(request)
+            .contentType(MEDIA_TYPE)
+        );
         MvcResult mvcResult = resultActions.andReturn();
         String responseBody = mvcResult.getResponse().getContentAsString();
         JsonPath jsonPath = JsonPath.from(responseBody);
@@ -109,9 +109,9 @@ public class ChatControllerTest extends ApiTest {
 
         //when
         mockMvc.perform(put(secondUrl)
-            .content(secondRequest)
-            .contentType(MEDIA_TYPE)
-        )
+                .content(secondRequest)
+                .contentType(MEDIA_TYPE)
+            )
             //then
             .andExpect(status().is2xxSuccessful())
             .andExpect(jsonPath("$.status").value("SUCCESS"))
