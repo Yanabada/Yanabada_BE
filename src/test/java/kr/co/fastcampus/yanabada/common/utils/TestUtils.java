@@ -127,6 +127,18 @@ public class TestUtils {
             .build();
     }
 
+    public static Member createMember() {
+        return Member.builder()
+            .email("test@email.com")
+            .nickName("memberNickname")
+            .password("password123")
+            .phoneNumber("010-1234-1234")
+            .roleType(ROLE_USER)
+            .image("a.jpg")
+            .providerType(EMAIL)
+            .build();
+    }
+
     public static Product createProduct(Order order) {
         return Product.create(
             order,
