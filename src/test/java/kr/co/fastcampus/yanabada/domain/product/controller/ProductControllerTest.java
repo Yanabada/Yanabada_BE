@@ -71,4 +71,19 @@ public class ProductControllerTest extends ApiTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("SUCCESS"));
     }
+
+    @DisplayName("[API][GET] 상품 검색 - 정상적인 검색 요청일 경우, 정상적으로 상품이 검색됩니다.")
+    @Test
+    @WithMockMember
+    void getProductsBySearchRequest_success() throws Exception {
+        //given
+        String url = "/v1/products";
+
+        //when
+        mockMvc.perform(get(url))
+
+            //then
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("SUCCESS"));
+    }
 }
