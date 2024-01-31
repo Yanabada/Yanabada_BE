@@ -44,7 +44,6 @@ class OrderServiceTest {
     @Test
     void getSellableOrders() {
         //given
-        Member member = createSeller();
         Accommodation accommodation = createAccommodation();
         AccommodationOption accommodationOption = createAccommodationOption(accommodation);
         accommodation.registerAccommodationOption(accommodationOption);
@@ -52,6 +51,7 @@ class OrderServiceTest {
         RoomOption roomOption = createRoomOption(room);
         room.registerRoomOption(roomOption);
         accommodation.addRoom(room);
+        Member member = createSeller();
         Order order = createOrder(room, member);
         given(memberRepository.getMember(1L)).willReturn(member);
         given(orderRepository.getSellableByMember(member)).willReturn(List.of(order));
@@ -67,7 +67,6 @@ class OrderServiceTest {
     @Test
     void getOrderInfo() {
         //given
-        Member member = createSeller();
         Accommodation accommodation = createAccommodation();
         AccommodationOption accommodationOption = createAccommodationOption(accommodation);
         accommodation.registerAccommodationOption(accommodationOption);
@@ -75,6 +74,7 @@ class OrderServiceTest {
         RoomOption roomOption = createRoomOption(room);
         room.registerRoomOption(roomOption);
         accommodation.addRoom(room);
+        Member member = createSeller();
         Order order = createOrder(room, member);
         given(orderRepository.findById(1L)).willReturn(Optional.of(order));
         given(memberRepository.getMember(1L)).willReturn(member);
