@@ -60,8 +60,6 @@ public class ChatServiceTest {
     @Test
     @DisplayName("채팅방 생성")
     void getOrSaveChatRoom_success() {
-        Member seller = mock(Member.class);
-        Member buyer = mock(Member.class);
         Accommodation accommodation = createAccommodation();
         AccommodationOption accommodationOption = createAccommodationOption(accommodation);
         accommodation.registerAccommodationOption(accommodationOption);
@@ -69,6 +67,8 @@ public class ChatServiceTest {
         RoomOption roomOption = createRoomOption(room);
         room.registerRoomOption(roomOption);
         accommodation.addRoom(room);
+        Member seller = mock(Member.class);
+        Member buyer = mock(Member.class);
         Order order = createOrder(room, seller);
         Product product = createProduct(order);
         ChatRoom chatRoom = mock(ChatRoom.class);
@@ -90,8 +90,6 @@ public class ChatServiceTest {
     @Test
     @DisplayName("채팅방 생성 실패")
     void getOrSaveChatRoom_fail() {
-        Member seller = mock(Member.class);
-        Member buyer = mock(Member.class);
         Accommodation accommodation = createAccommodation();
         AccommodationOption accommodationOption = createAccommodationOption(accommodation);
         accommodation.registerAccommodationOption(accommodationOption);
@@ -99,6 +97,8 @@ public class ChatServiceTest {
         RoomOption roomOption = createRoomOption(room);
         room.registerRoomOption(roomOption);
         accommodation.addRoom(room);
+        Member seller = mock(Member.class);
+        Member buyer = mock(Member.class);
         Order order = createOrder(room, seller);
         Product product = createProduct(order);
         ChatRoom chatRoom = mock(ChatRoom.class);
