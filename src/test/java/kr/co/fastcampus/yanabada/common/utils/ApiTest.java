@@ -57,9 +57,8 @@ public abstract class ApiTest {
         Room room = roomRepository.save(createRoom(accommodation));
         roomOptionRepository.save(createRoomOption(room));
         Member seller = memberRepository.save(createSeller());
-        memberRepository.save(createBuyer());
         Order order = orderRepository.save(createOrder(room, seller));
+        memberRepository.save(createBuyer());
         productRepository.save(createProduct(order));
-
     }
 }
