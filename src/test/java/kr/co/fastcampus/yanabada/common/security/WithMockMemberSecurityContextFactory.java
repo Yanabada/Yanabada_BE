@@ -1,5 +1,8 @@
 package kr.co.fastcampus.yanabada.common.security;
 
+import static kr.co.fastcampus.yanabada.domain.member.entity.ProviderType.EMAIL;
+
+import kr.co.fastcampus.yanabada.domain.member.entity.ProviderType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +16,7 @@ public class WithMockMemberSecurityContextFactory
         PrincipalDetails memberDetails = PrincipalDetails.builder()
             .id(annotation.id())
             .email("test@email.com")
+            .provider(EMAIL)
             .build();
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(
