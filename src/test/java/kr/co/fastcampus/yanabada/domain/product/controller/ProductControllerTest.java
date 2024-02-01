@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+
 import kr.co.fastcampus.yanabada.common.security.WithMockMember;
 import kr.co.fastcampus.yanabada.common.utils.ApiTest;
 import kr.co.fastcampus.yanabada.domain.product.repository.ProductRepository;
@@ -34,10 +35,34 @@ public class ProductControllerTest extends ApiTest {
     @WithMockMember
     void addProduct_success() throws Exception {
         //given
+        String orderUrl = "/v1/orders";
+        String orderRequest = """
+            [
+                {
+                    "roomId" : 1,
+                    "memberId" : 1,
+                    "checkInDate" : "%s",
+                    "checkOutDate" : "%s",
+                    "status" : "RESERVED",
+                    "price" : 230000,
+                    "reservationPersonName" : "하이이",
+                    "reservationPersonPhoneNumber" : "010-2323-1212",
+                    "userPersonName" : "바이이",
+                    "userPersonPhoneNumber" : "010-56565656",
+                    "paymentType" : "CREDIT"
+                }
+            ]
+            """.formatted(LocalDate.now().plusDays(2).toString(),
+            LocalDate.now().plusDays(3).toString()
+        );
+        mockMvc.perform(post(orderUrl)
+            .content(orderRequest)
+            .contentType(MEDIA_TYPE)
+        );
         String url = "/v1/products";
         String request = """
             {
-                "orderId": 1,
+                "orderId": 2,
                 "price": 10000,
                 "description": "급하게 처분합니다. 네고 환영합니다!!!",
                 "canNegotiate": true,
