@@ -51,11 +51,12 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderInfoResponse getOrderInfo(Long orderId, Long currentUserId) {
+    public OrderInfoResponse getOrderInfo(Long orderId, Long memberId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(OrderNotFoundException::new);
+        Member member = memberRepository.getMember(memberId);
 
-        if (!order.getMember().getId().equals(currentUserId)) {
+        if (!order.getMember().equals(member)) {
             throw new AccessForbiddenException();
         }
 
