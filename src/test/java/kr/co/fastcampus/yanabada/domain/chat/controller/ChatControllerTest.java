@@ -1,4 +1,4 @@
-package kr.co.fastcampus.yanabada.domain.chat.service.controller;
+package kr.co.fastcampus.yanabada.domain.chat.controller;
 
 import static kr.co.fastcampus.yanabada.common.response.ErrorCode.CANNOT_NEGOTIATE_OWN_PRODUCT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
