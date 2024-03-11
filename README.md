@@ -249,10 +249,10 @@ PM, 디자인, 프론트, 백엔드 등 4분야가 하나의 팀이 되어, 아�
 </details>
 
 ## 🏆 수상 
-### 우수 그룹 선정
+### 우수 그룹 선정(10팀 중 1팀)
 <br>
 
-![우수그룹1.png](image%2F%EC%9A%B0%EC%88%98%EA%B7%B8%EB%A3%B91.png)
+![패스트캠퍼스X야놀자 기업연계 프로젝트_우수상 상장(BE).png](image%2F%ED%8C%A8%EC%8A%A4%ED%8A%B8%EC%BA%A0%ED%8D%BC%EC%8A%A4X%EC%95%BC%EB%86%80%EC%9E%90%20%EA%B8%B0%EC%97%85%EC%97%B0%EA%B3%84%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8_%EC%9A%B0%EC%88%98%EC%83%81%20%EC%83%81%EC%9E%A5%28BE%29.png)
 
 <br>
 
